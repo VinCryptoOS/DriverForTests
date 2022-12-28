@@ -1,5 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using System.Diagnostics;
+using System.Text;
 
 namespace DriverForTestsLib;
 
@@ -14,8 +15,8 @@ namespace DriverForTestsLib;
 public class DriverForTests
 {                                                                    /// <summary>Наиболее позднее время вывода на консоль информации о состоянии задач</summary><remarks>Не нужно пользователю</remarks>
     public DateTime waitForTasks_lastDateTime {get; protected set;} = default;
-                                                                    /// <summary>Время в секундах для обновления состояния задач на консоли</summary>
-    public int SecondToRefreshMessagesAtDisplay = 2;
+                                                                    /// <summary>Время в миллисекундах для обновления состояния задач на консоли</summary>
+    public int msToRefreshMessagesAtDisplay = 2000;
                                                                     /// <summary>Шаблон имени лог-файла для LogFileName. Символ $ будет заменён датой и временем, полученной из функции HelperClass.DateToDateFileString</summary>
     public string? LogFileNameTempl = "tests-$.log";                /// <summary>Имя лог-файла, в который будет выведено время начала и конца задач, а также исключения, возникшие в ходе выполнения задач</summary><remarks>Генерируется автоматически из LogFileNameTempl</remarks>
     public string? LogFileName      = null;
@@ -38,6 +39,9 @@ public class DriverForTests
         int PC = Environment.ProcessorCount;
         foreach (var task in tasks)
         {
+            if (!tests.ShouldBeExecuted(task))
+                continue;
+
             var acceptableThreadCount = task.waitBefore ? 1 : PC;
             waitForTasks(acceptableThreadCount, true);
 
@@ -50,7 +54,7 @@ public class DriverForTests
                     {
                         task.started = DateTime.Now;
                         task.start   = true;
-                        task.task();
+                        task.taskFunc();
                     }
                     catch (Exception e)
                     {
@@ -109,7 +113,7 @@ public class DriverForTests
 
         void WaitMessages(bool showWaitTasks = false, bool endedAllTasks = false)
         {
-            if (!endedAllTasks && (DateTime.Now - waitForTasks_lastDateTime).TotalMilliseconds < SecondToRefreshMessagesAtDisplay*1000)
+            if (!endedAllTasks && (DateTime.Now - waitForTasks_lastDateTime).TotalMilliseconds < msToRefreshMessagesAtDisplay)
                 return;
 
             waitForTasks_lastDateTime = DateTime.Now;
@@ -124,21 +128,26 @@ public class DriverForTests
 
             if (showWaitTasks && ended != tasks.Count)
             {
-                now = DateTime.Now;
-                Console.WriteLine("Выполняемые задачи: ");
-                Console.WriteLine();
+                var sb  = new StringBuilder();
+                    now = DateTime.Now;
+                var cnt = 0;
+
                 foreach (var task in tasks)
                 {
                     if (!task.ended && task.start)
                     {
                         var str = "";
-                        if (task.done > 0)
-                            str = "\t\t" + task.done.ToString("F0") + "%";
+                        // if (task.done > 0)
+                        str = task.done.ToString("F0") + "%";
 
-                        Console.WriteLine(task.Name + str);
-                        Console.WriteLine(HelperDateClass.TimeStampTo_HHMMSSfff_String(now - task.started));
+                        var ts = HelperDateClass.TimeStampTo_HHMMSSfff_String(now - task.started);
+                        sb.AppendLine($"{str, 3} {ts, 15} {task.Name}\n");
+                        cnt++;
                     }
                 }
+
+                sb.Insert(0, $"Выполняемые задачи: ({cnt})\t[{HelperDateClass.TimeStampTo_HHMMSSfff_String(now - startTime)}]\n");
+                Console.WriteLine(sb.ToString());
             }
             Thread.CurrentThread.Priority = ThreadPriority.BelowNormal;
 
@@ -164,7 +173,7 @@ public class DriverForTests
             while (started >= acceptableThreadCount)
                 lock (sync)
                 {
-                    Monitor.Wait(sync, 2000);
+                    Monitor.Wait(sync, msToRefreshMessagesAtDisplay);
                     WaitMessages(showWaitTasks);
                 }
         }
