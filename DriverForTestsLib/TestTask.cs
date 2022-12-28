@@ -32,7 +32,7 @@ public abstract class TestConstructor
         return conditions.isSatisfiesForTask(task);
     }
 
-    public delegate void ErrorTaskHandler(Type TaskType);
+    public delegate void ErrorTaskHandler(Type TaskType, bool notAutomatic);
     public static List<TestTask> getTasksFromAppDomain(ErrorTaskHandler? errorHandler)
     {
         var result = new List<TestTask>(16);
@@ -53,19 +53,26 @@ public abstract class TestConstructor
 
                     if (attributes.Length > 0)
                     {
+                        var notAutomatic = false;
+                        foreach (var attribute in attributes)
+                        {
+                            if (attribute.notAutomatic)
+                            {
+                                notAutomatic = true;
+                                errorHandler?.Invoke(type, notAutomatic);
+                                break;
+                            }
+                        }
+
+                        if (notAutomatic)
+                            continue;
+
                         // type.GetConstructors(System.Reflection.BindingFlags.CreateInstance);
                         var ci = type.GetConstructor(  new Type[] {}  );
                         if (ci == null)
                         {
-                            // Если не установлен флаг notAutomatic, сообщаем об ошибке
-                            foreach (var attribute in attributes)
-                            {
-                                if (attribute.notAutomatic)
-                                    goto notError;
-                            }
-                            errorHandler?.Invoke(type);
+                            errorHandler?.Invoke(type, false);
 
-                            notError:
                             continue;
                         }
 
@@ -248,7 +255,7 @@ public class TestTaskTagCondition
             throw new Exception($"TestTaskTagCondition.isSatisfiesForTask_TreePriority: {nameof(listOfNeedTags)} == null");
 
         var result = true;
-        var curP   = 0.0d;
+        var curP   = double.MinValue;
         foreach (var condition in listOfNeedConditions)
         {
             if (condition.isMandatoryExcludingRule)
@@ -283,7 +290,7 @@ public abstract class TestTask
     public TestTask(string Name)
     {
         this.Name = Name;
-        this.taskFunc = () => {};
+        this.taskFunc = () => { throw new NotImplementedException(); };
 
         var attributes = (  TestTagAttribute []  )
                          this.GetType().GetCustomAttributes(typeof(TestTagAttribute), true);

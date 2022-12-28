@@ -2,6 +2,15 @@ using DriverForTestsLib;
 
 namespace Tests;
 
+// [TestTagAttribute("base", notAutomatic: true)]
+class BaseExampleTestTask: TestTask
+{
+    public BaseExampleTestTask(): base("")
+    {
+        this.Name = this.GetType().Name;
+    }
+}
+
 // Некорректная задача: не имеет конструктора по умолчанию и не может быть поставлена автоматически в getTasksFromAppDomain
 [TestTagAttribute("", double.MaxValue)]
 class TestIncorrect_1: TestTask
@@ -13,9 +22,9 @@ class TestIncorrect_1: TestTask
 // Эта задача будет автоматически поставлена в очередь задач при вызове getTasksFromAppDomain и addTasksForQueue
 [TestTagAttribute("")]
 [TestTagAttribute("fast")]
-class Test1_1: TestTask
+class Test1_1: BaseExampleTestTask
 {
-    public Test1_1(): base(nameof(Test1_1))
+    public Test1_1(): base()
     {
         taskFunc = () =>
         {
@@ -60,9 +69,9 @@ class TestSingleThread_1: TestTask
 [TestTagAttribute("fast", double.MaxValue)]
 [TestTagAttribute("slow", double.MaxValue)]
 [TestTagAttribute("medium", double.MaxValue)]
-class TestSlowAndFastAndMedium_1: TestTask
+class TestSlowAndFastAndMedium_1: BaseExampleTestTask
 {
-    public TestSlowAndFastAndMedium_1(): base(nameof(TestSlowAndFastAndMedium_1))
+    public TestSlowAndFastAndMedium_1(): base()
     {
         taskFunc = () =>
         {

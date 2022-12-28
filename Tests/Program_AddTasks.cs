@@ -18,17 +18,6 @@ class Example1TestConstructor : TestConstructor
     {
         Console.WriteLine("ExampleTestConstructor.CreateTasksLists executed");
 
-        // Получаем все задачи, которые могут быть автоматически собраны из данного домена приложения
-        var list = TestConstructor.getTasksFromAppDomain
-        (
-            (Type t) =>
-            {
-                Console.Error.WriteLine("Incorrect task: " + t.FullName);
-            }
-        );
-        // Ставим эти задачи на выполнение
-        TestConstructor.addTasksForQueue(list, tasks);
-
         // Эти задачи поставлены вручную, будут выполняться параллельно
         for (int i = 0; i < Environment.ProcessorCount*3; i++)
         {
@@ -42,6 +31,29 @@ class Example1TestConstructor : TestConstructor
             var t = new TestSingleThread_1(i);
             tasks.Enqueue(t);
         }
+
+        // Получаем все задачи, которые могут быть автоматически собраны из данного домена приложения
+        var list = TestConstructor.getTasksFromAppDomain
+        (
+            (Type t, bool notAutomatic) =>
+            {
+                if (!notAutomatic)
+                    Console.Error.WriteLine("Incorrect task: " + t.FullName);
+                else
+                {
+                    foreach (var task in tasks)
+                    {
+                        var taskType = task.GetType();
+                        if (t == taskType)
+                            return;
+                    }
+
+                    Console.Error.WriteLine($"A notAutomatic task has been declared, but it is not in the list for execution: {t.FullName}");
+                }
+            }
+        );
+        // Ставим эти задачи на выполнение
+        TestConstructor.addTasksForQueue(list, tasks);
 
         Console.WriteLine("\n\nExampleTestConstructor.CreateTasksLists ended\n");
     }
