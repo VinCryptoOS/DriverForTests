@@ -96,22 +96,40 @@ class ExampleAutoSaveTask: AutoSaveTestTask
 {
     public static IEnumerable<ExampleAutoSaveTask> getTasks(bool canCreateFile = false)
     {
-        var strs = new List<ExampleAutoSaveTask>(128);
-        var plus = new string[] {"+", "", "-"};
+        var strs  = new List<ExampleAutoSaveTask>(128);
+        var plus  = new string[] {"+", "", "-"};
 
         foreach (var a1 in plus)
         foreach (var a2 in plus)
         foreach (var a3 in plus)
+        foreach (var a4 in plus)
+        foreach (var a5 in plus)
         {
-            var p = $"{a1}1 {a2}2 {a3}3";
+            var p = $"{a1}1 {a2}2 {a3}3 {a4}4 {a5}5";
             var t = new ExampleAutoSaveTask(p, canCreateFile);
             strs.Add(t);
         }
-
+        /*
+        var t = new ExampleAutoSaveTask("+1 2 3", canCreateFile);
+            strs.Add(t);
+*/
         return strs;
     }
 
-    public ExampleAutoSaveTask(string searchPattern, bool canCreateFile = false): base("AutoSaveTask " + searchPattern, new DirectoryInfo("./autotests/"), new Saver(searchPattern))
+    public static DirectoryInfo getDirectoryPath()
+    {
+        var pathToFile = typeof(Program).Assembly.Location;
+        var dir        = new DirectoryInfo(pathToFile).Parent.Parent.Parent.Parent;
+        return new DirectoryInfo(  Path.Combine(dir.FullName, "autotests")  );
+    }
+
+    public ExampleAutoSaveTask(string searchPattern, bool canCreateFile = false):
+                    base
+                    (
+                        name:               "AutoSaveTask " + searchPattern,
+                        dirForFiles:        ExampleAutoSaveTask.getDirectoryPath(),
+                        executer_and_saver: new Saver(searchPattern)
+                    )
     {
         this.executer_and_saver.canCreateFile = canCreateFile;
     }

@@ -46,7 +46,7 @@ class Example1TestConstructor : TestConstructor
         // Добавляем вручную задачи, реализующие AutoSaveTestTask
         // Если надо, устанавливаем разрешение на запись в файл в первый раз
         // #warning canCreateFile: true
-        // var canCreateFile = true;
+        // canCreateFile = true;
         foreach (var t in ExampleAutoSaveTask.getTasks(canCreateFile: canCreateFile))
         {
             tasks.Enqueue(t);

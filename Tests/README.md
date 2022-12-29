@@ -1,5 +1,8 @@
+# Общий алгоритм
 Общий алгоритм использования описан в самой библиотеке в файле [../DriverForTestsLib/README.md](../DriverForTestsLib/README.md)
 
+
+# Пример
 В примере определены задачи без тега и с тегами "base", "fast", "medium", "slow"
 Задача с тегом "base" закомментирована (раскомментируйте для того, чтобы получить "забытую" задачу)
 
@@ -8,6 +11,11 @@
 Запуск тестов в файле [Program.cs](Program.cs)
 
 Пример генерации ошибки тестирования есть в файле [ExampleTasks.cs](ExampleTasks.cs) в классе TestSlowAndFastAndMedium_1
+
+Пример реализации задачи автосохраняемых объектов также в [ExampleTasks.cs](ExampleTasks.cs) , см. класс ExampleAutoSaveTask. См. флаг canCreateFile = true для первой генерации файлов
+Запуск только автосохраняемых задач можно сделать командой
+dotnet publish/Tests.dll autosave
+
 
 В файле [README.txt](README.txt) обсуждён вывод тестового примера.
 

@@ -135,7 +135,11 @@ public class TestTaskTag
     {
         name     = tagName;
         priority = tagPriority;
+        // DebugName = "TestTaskTag.DEBUG.Name." + Interlocked.Increment(ref CountOfObjects);
     }
+/*
+    public static int    CountOfObjects;
+    public        string DebugName;*/
 }
 
 /// <summary>Описывает условие на выполнение тестовых задач</summary>

@@ -172,7 +172,7 @@ public class DriverForTests
                     if (task.error.Count > 0)
                     {
                         Console.WriteLine();
-                        Console.WriteLine("For task " + task.Name);
+                        Console.WriteLine("ERRORS for task " + task.Name);
                         foreach (var e in task.error)
                         {
                             Console.WriteLine(e.Message);
@@ -180,12 +180,13 @@ public class DriverForTests
                             if (LogFileName != null)
                             lock (tasks)
                             {
-                                File.AppendAllText( LogFileName, $"error with task {task.Name}\n{e.Message}\n{e?.ex?.StackTrace}\n\n" );
+                                File.AppendAllText( LogFileName, $"ERROR in task {task.Name}\n{e.Message}\n{e?.ex?.StackTrace}\n\n" );
                             }
                         }
                     }
                 }
 
+                Console.WriteLine();
                 PrintMainTaskState(ended, errored, tasks);
             }
         }

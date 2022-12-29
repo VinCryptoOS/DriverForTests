@@ -118,75 +118,14 @@ public abstract class TaskResultSaver
         return textFromFile == text;
     }
 
-    public static bool haveTaskResultSaverAttribute(Type type)
-    {
-        return type.GetCustomAttributes(typeof(TaskResultSaverAttribute), true).Length > 0;
-    }
 
-    public static bool haveTaskResultSaverAttribute(MemberInfo type)
-    {
-        if (type.GetCustomAttributes(typeof(TaskResultSaverAttribute), true).Length > 0)
-            return true;
-
-        var f = type as FieldInfo;
-        if (f is not null)
-        if (haveTaskResultSaverAttribute(f.FieldType))
-            return true;
-
-        var p = type as PropertyInfo;
-        if (p is not null)
-        if (haveTaskResultSaverAttribute(p.PropertyType))
-            return true;
-
-        return false;
-    }
-
-    public virtual string? getText(AutoSaveTestTask task, object result, string separator = "7y8EX6fvtloAWsY7lANx5arDxLZROJ6H", TextFromFieldProcess? _tffp = null, int nesting = 0)
-    {
-        var tffp   = _tffp;
-            tffp ??= new TextFromFieldProcess(task, separator, new StringBuilder());
-        var sb     = tffp.sb;
-
-        var rt       = result.GetType();
-        var members  = rt.GetMembers();
-        var allField = haveTaskResultSaverAttribute(rt);
-
-        // Это, в общем-то, не нужно: на случай, если объекты в разных задачах случайно начнут работать одновременно (и то весь доступ на чтение идёт)
-        // lock (result)
-        foreach (var member in members)
-        {
-            if (!member.MemberType.HasFlag(MemberTypes.Field))
-            if (!member.MemberType.HasFlag(MemberTypes.Property))
-                continue;
-
-            // Если над всем классом стоит атрибут - сохраняем все поля и свойства
-            if (!allField)
-            {
-                // Если над свойством или полем стоит атрибут - его тоже сохраняем
-                // Если сам тип поля/свойства с атрибутом - тоже сохраняем
-                if (!haveTaskResultSaverAttribute(member))
-                    continue;
-            }
-
-            sb.AppendLine
-            (
-                getTextFromField(member, result, tffp, nesting)
-            );
-        }
-
-        if (_tffp is not null)
-            return null;
-
-        return sb.ToString();
-    }
-
-    public unsafe class TextFromFieldProcess
+    public class TextFromFieldProcess
     {
         public AutoSaveTestTask task;
         public string           separator;
-        public StringBuilder    sb;
+        public long             objectCounter = 0;
 
-        public readonly struct ListedObject
+        public class ListedObject
         {
             public ListedObject(object obj, Int64 number)
             {
@@ -216,15 +155,103 @@ public abstract class TaskResultSaver
         }
 
         public ListOfObjects listOfObjects = new ListOfObjects(128);
-        public TextFromFieldProcess(AutoSaveTestTask task, string separator, StringBuilder sb)
+        public TextFromFieldProcess(AutoSaveTestTask task, string separator)
         {
             this.task      = task;
             this.separator = separator;
-            this.sb        = sb;
         }
     }
 
-    public virtual string getTextFromField(System.Reflection.MemberInfo member, object source, TextFromFieldProcess tffp, int nesting)
+    public static bool haveTaskResultSaverAttribute(Type type)
+    {
+        return type.GetCustomAttributes(typeof(TaskResultSaverAttribute), true).Length > 0;
+    }
+
+    public static bool haveTaskResultSaverAttribute(MemberInfo type)
+    {
+        if (type.GetCustomAttributes(typeof(TaskResultSaverAttribute), true).Length > 0)
+            return true;
+
+        var f = type as FieldInfo;
+        if (f is not null)
+        if (haveTaskResultSaverAttribute(f.FieldType))
+            return true;
+
+        var p = type as PropertyInfo;
+        if (p is not null)
+        if (haveTaskResultSaverAttribute(p.PropertyType))
+            return true;
+
+        return false;
+    }
+
+    public virtual string? getText(AutoSaveTestTask task, object result, string separator = "7y8EX6fvtloAWsY7lANx5arDxLZROJ6H", TextFromFieldProcess? _tffp = null, int nesting = 0)
+    {
+        var tffp   = _tffp;
+            tffp ??= new TextFromFieldProcess(task, separator);
+        var sb     = new StringBuilder(128);
+
+        if (isContainsOrRegisterNew(result, out TextFromFieldProcess.ListedObject? lob))
+        {
+            return $"\n{{already saved with number {lob?.number:D4} }}\n";
+        }
+
+        var rt       = result.GetType();
+        var members  = rt.GetMembers();
+        var allField = haveTaskResultSaverAttribute(rt);
+
+        // Это, в общем-то, не нужно: на случай, если объекты в разных задачах случайно начнут работать одновременно (и то весь доступ на чтение идёт)
+        // lock (result)
+        foreach (var member in members)
+        {
+            if (!member.MemberType.HasFlag(MemberTypes.Field))
+            if (!member.MemberType.HasFlag(MemberTypes.Property))
+                continue;
+
+            // Если над всем классом стоит атрибут - сохраняем все поля и свойства
+            if (!allField)
+            {
+                // Если над свойством или полем стоит атрибут - его тоже сохраняем
+                // Если сам тип поля/свойства с атрибутом - тоже сохраняем
+                if (!haveTaskResultSaverAttribute(member))
+                    continue;
+            }
+
+            var text = getTextFromField(member, lob, tffp, nesting);
+
+            if (text is not null)
+                sb.AppendLine(text);
+        }
+
+        return sb.ToString();
+
+        bool isContainsOrRegisterNew(object obj, out TextFromFieldProcess.ListedObject? lob)
+        {
+            lock (tffp.listOfObjects)
+            {
+                lob = tffp.listOfObjects.ContainsKey(obj);
+
+                if (lob != null)
+                    return true;
+
+                lob = new TextFromFieldProcess.ListedObject(  obj: obj, number: Interlocked.Increment(ref tffp.objectCounter)  );
+                tffp.listOfObjects.Add(lob);
+
+                return false;
+            }
+        }
+    }
+
+    public static bool isElementaryType(Type type, object? obj)
+    {
+        if (type == null)
+            return true;
+
+        return     type.IsPrimitive || type.IsEnum
+                || typeof(String).IsInstanceOfType(obj);
+    }
+
+    public virtual string? getTextFromField(System.Reflection.MemberInfo member, in TextFromFieldProcess.ListedObject? source, TextFromFieldProcess tffp, int nesting)
     {
         System.Reflection.FieldInfo?    field = member as System.Reflection.FieldInfo;
         System.Reflection.PropertyInfo? prop  = member as System.Reflection.PropertyInfo;
@@ -235,41 +262,52 @@ public abstract class TaskResultSaver
         if (!isField && !isProp)
             throw new Exception("TaskResultSaver.getTextFromField: !isField && !isProp");
 
-        var numberOfObject = tffp.listOfObjects.Count;
-        var type = isField ? "field" : "property";
-        var bstr = $"separator: number:{numberOfObject:D4}/{tffp.separator}/{nesting:D4}\n{type}: {member.Name}\n";
-        var estr = $"\n----------------\nend separator: {numberOfObject:D4}/{tffp.separator}/{nesting:D4}\n{type}: {member.Name}\n";
-
-        lock (tffp.listOfObjects)
-        {
-            var lob = tffp.listOfObjects.ContainsKey(source);
-            if (lob is not null)
-            {
-                return bstr + $"\n{{already saved with number {lob.Value.number:D4} }}\n" + estr;
-            }
-
-            tffp.listOfObjects.Add(new TextFromFieldProcess.ListedObject(source, numberOfObject));
-        }
 
         object? val;
         if (isField)
         {
-            val = field?.GetValue(source);
+            val = field?.GetValue(source?.obj);
         }
         else
         {
-            val = prop?.GetValue(source);
+            if (prop?.GetIndexParameters().Length > 0)
+                return null;
+
+            val = prop?.GetValue(source?.obj);
         }
 
+        var mType = val?.GetType();
+        // var type = isField ? "field" : "property";
+        var bstr = $"\n----------------\nseparator: number:{source?.number:D4}/{tffp.separator}/{nesting:D4}\n{member.Name}: {mType?.FullName}\t\tFrom type {source?.obj.GetType().FullName}\n";
+        var estr = $"\nend separator: {source?.number:D4}/{tffp.separator}/{nesting:D4}\t{member.Name}\n----------------\n\n";
+
         var vstr = "";
-        if (val is null)
+        if (val is null || mType == null)
         {
             vstr = "null";
         }
         else
-        if (member.GetType().IsPrimitive)
+        if (  TaskResultSaver.isElementaryType(mType, val)  )
         {
             vstr = val.ToString();
+        }
+        else
+        if (val is IEnumerable<object> vals)
+        {
+            var sba = new StringBuilder(128);
+            sba.AppendLine("values:");
+
+            int cnt = 0;
+            foreach (var v in vals)
+            {
+                if (TaskResultSaver.isElementaryType(v.GetType(), v))
+                    sba.AppendLine($"{cnt:D4}:" + v.ToString());
+                else
+                    sba.AppendLine($"{cnt:D4}:" + getText(tffp.task, v, tffp.separator, tffp, nesting + 1));
+            }
+            sba.AppendLine("end values");
+
+            vstr = sba.ToString();
         }
         else
         {
