@@ -1,0 +1,603 @@
+
+----------------
+separator: number:0001/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0000
+resultCondition: DriverForTestsLib.TestTaskTagCondition		From type DriverForTestsLib.TestConditionParser
+
+----------------
+separator: number:0002/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0001
+listOfNeedTags: 		From type DriverForTestsLib.TestTaskTagCondition
+null
+end separator: 0002/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0001	listOfNeedTags
+----------------
+
+
+
+----------------
+separator: number:0002/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0001
+conditionOperator: DriverForTestsLib.TestTaskTagCondition+ConditionOperator		From type DriverForTestsLib.TestTaskTagCondition
+TreeAnd
+end separator: 0002/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0001	conditionOperator
+----------------
+
+
+
+----------------
+separator: number:0002/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0001
+countForConditionOperator: System.Int64		From type DriverForTestsLib.TestTaskTagCondition
+1
+end separator: 0002/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0001	countForConditionOperator
+----------------
+
+
+
+----------------
+separator: number:0002/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0001
+isReversedCondition: System.Boolean		From type DriverForTestsLib.TestTaskTagCondition
+False
+end separator: 0002/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0001	isReversedCondition
+----------------
+
+
+
+----------------
+separator: number:0002/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0001
+isMandatoryExcludingRule: System.Boolean		From type DriverForTestsLib.TestTaskTagCondition
+False
+end separator: 0002/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0001	isMandatoryExcludingRule
+----------------
+
+
+
+----------------
+separator: number:0002/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0001
+priorityForCondition: System.Double		From type DriverForTestsLib.TestTaskTagCondition
+-1,7976931348623157E+308
+end separator: 0002/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0001	priorityForCondition
+----------------
+
+
+
+----------------
+separator: number:0002/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0001
+listOfNeedConditions: System.Collections.Generic.List`1[[DriverForTestsLib.TestTaskTagCondition, DriverForTestsLib, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]		From type DriverForTestsLib.TestTaskTagCondition
+values:
+0000:
+----------------
+separator: number:0003/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0002
+listOfNeedTags: 		From type DriverForTestsLib.TestTaskTagCondition
+null
+end separator: 0003/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0002	listOfNeedTags
+----------------
+
+
+
+----------------
+separator: number:0003/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0002
+conditionOperator: DriverForTestsLib.TestTaskTagCondition+ConditionOperator		From type DriverForTestsLib.TestTaskTagCondition
+TreeCount
+end separator: 0003/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0002	conditionOperator
+----------------
+
+
+
+----------------
+separator: number:0003/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0002
+countForConditionOperator: System.Int64		From type DriverForTestsLib.TestTaskTagCondition
+1
+end separator: 0003/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0002	countForConditionOperator
+----------------
+
+
+
+----------------
+separator: number:0003/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0002
+isReversedCondition: System.Boolean		From type DriverForTestsLib.TestTaskTagCondition
+True
+end separator: 0003/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0002	isReversedCondition
+----------------
+
+
+
+----------------
+separator: number:0003/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0002
+isMandatoryExcludingRule: System.Boolean		From type DriverForTestsLib.TestTaskTagCondition
+False
+end separator: 0003/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0002	isMandatoryExcludingRule
+----------------
+
+
+
+----------------
+separator: number:0003/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0002
+priorityForCondition: System.Double		From type DriverForTestsLib.TestTaskTagCondition
+-1,7976931348623157E+308
+end separator: 0003/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0002	priorityForCondition
+----------------
+
+
+
+----------------
+separator: number:0003/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0002
+listOfNeedConditions: System.Collections.Generic.List`1[[DriverForTestsLib.TestTaskTagCondition, DriverForTestsLib, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]		From type DriverForTestsLib.TestTaskTagCondition
+values:
+0000:
+----------------
+separator: number:0004/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0003
+listOfNeedTags: System.Collections.Generic.List`1[[DriverForTestsLib.TestTaskTag, DriverForTestsLib, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]		From type DriverForTestsLib.TestTaskTagCondition
+values:
+0000:
+----------------
+separator: number:0005/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0004
+name: System.String		From type DriverForTestsLib.TestTaskTag
+1
+end separator: 0005/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0004	name
+----------------
+
+
+
+----------------
+separator: number:0005/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0004
+priority: System.Double		From type DriverForTestsLib.TestTaskTag
+-1,7976931348623157E+308
+end separator: 0005/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0004	priority
+----------------
+
+
+
+end values
+
+end separator: 0004/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0003	listOfNeedTags
+----------------
+
+
+
+----------------
+separator: number:0004/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0003
+conditionOperator: DriverForTestsLib.TestTaskTagCondition+ConditionOperator		From type DriverForTestsLib.TestTaskTagCondition
+Count
+end separator: 0004/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0003	conditionOperator
+----------------
+
+
+
+----------------
+separator: number:0004/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0003
+countForConditionOperator: System.Int64		From type DriverForTestsLib.TestTaskTagCondition
+1
+end separator: 0004/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0003	countForConditionOperator
+----------------
+
+
+
+----------------
+separator: number:0004/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0003
+isReversedCondition: System.Boolean		From type DriverForTestsLib.TestTaskTagCondition
+False
+end separator: 0004/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0003	isReversedCondition
+----------------
+
+
+
+----------------
+separator: number:0004/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0003
+isMandatoryExcludingRule: System.Boolean		From type DriverForTestsLib.TestTaskTagCondition
+True
+end separator: 0004/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0003	isMandatoryExcludingRule
+----------------
+
+
+
+----------------
+separator: number:0004/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0003
+priorityForCondition: System.Double		From type DriverForTestsLib.TestTaskTagCondition
+-1,7976931348623157E+308
+end separator: 0004/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0003	priorityForCondition
+----------------
+
+
+
+----------------
+separator: number:0004/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0003
+listOfNeedConditions: 		From type DriverForTestsLib.TestTaskTagCondition
+null
+end separator: 0004/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0003	listOfNeedConditions
+----------------
+
+
+
+0000:
+----------------
+separator: number:0006/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0003
+listOfNeedTags: System.Collections.Generic.List`1[[DriverForTestsLib.TestTaskTag, DriverForTestsLib, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]		From type DriverForTestsLib.TestTaskTagCondition
+values:
+0000:
+----------------
+separator: number:0007/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0004
+name: System.String		From type DriverForTestsLib.TestTaskTag
+2
+end separator: 0007/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0004	name
+----------------
+
+
+
+----------------
+separator: number:0007/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0004
+priority: System.Double		From type DriverForTestsLib.TestTaskTag
+-1,7976931348623157E+308
+end separator: 0007/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0004	priority
+----------------
+
+
+
+end values
+
+end separator: 0006/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0003	listOfNeedTags
+----------------
+
+
+
+----------------
+separator: number:0006/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0003
+conditionOperator: DriverForTestsLib.TestTaskTagCondition+ConditionOperator		From type DriverForTestsLib.TestTaskTagCondition
+Count
+end separator: 0006/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0003	conditionOperator
+----------------
+
+
+
+----------------
+separator: number:0006/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0003
+countForConditionOperator: System.Int64		From type DriverForTestsLib.TestTaskTagCondition
+1
+end separator: 0006/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0003	countForConditionOperator
+----------------
+
+
+
+----------------
+separator: number:0006/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0003
+isReversedCondition: System.Boolean		From type DriverForTestsLib.TestTaskTagCondition
+False
+end separator: 0006/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0003	isReversedCondition
+----------------
+
+
+
+----------------
+separator: number:0006/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0003
+isMandatoryExcludingRule: System.Boolean		From type DriverForTestsLib.TestTaskTagCondition
+False
+end separator: 0006/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0003	isMandatoryExcludingRule
+----------------
+
+
+
+----------------
+separator: number:0006/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0003
+priorityForCondition: System.Double		From type DriverForTestsLib.TestTaskTagCondition
+-1,7976931348623157E+308
+end separator: 0006/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0003	priorityForCondition
+----------------
+
+
+
+----------------
+separator: number:0006/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0003
+listOfNeedConditions: 		From type DriverForTestsLib.TestTaskTagCondition
+null
+end separator: 0006/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0003	listOfNeedConditions
+----------------
+
+
+
+0000:
+----------------
+separator: number:0008/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0003
+listOfNeedTags: System.Collections.Generic.List`1[[DriverForTestsLib.TestTaskTag, DriverForTestsLib, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]		From type DriverForTestsLib.TestTaskTagCondition
+values:
+0000:
+----------------
+separator: number:0009/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0004
+name: System.String		From type DriverForTestsLib.TestTaskTag
+4
+end separator: 0009/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0004	name
+----------------
+
+
+
+----------------
+separator: number:0009/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0004
+priority: System.Double		From type DriverForTestsLib.TestTaskTag
+-1,7976931348623157E+308
+end separator: 0009/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0004	priority
+----------------
+
+
+
+end values
+
+end separator: 0008/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0003	listOfNeedTags
+----------------
+
+
+
+----------------
+separator: number:0008/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0003
+conditionOperator: DriverForTestsLib.TestTaskTagCondition+ConditionOperator		From type DriverForTestsLib.TestTaskTagCondition
+Count
+end separator: 0008/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0003	conditionOperator
+----------------
+
+
+
+----------------
+separator: number:0008/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0003
+countForConditionOperator: System.Int64		From type DriverForTestsLib.TestTaskTagCondition
+1
+end separator: 0008/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0003	countForConditionOperator
+----------------
+
+
+
+----------------
+separator: number:0008/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0003
+isReversedCondition: System.Boolean		From type DriverForTestsLib.TestTaskTagCondition
+False
+end separator: 0008/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0003	isReversedCondition
+----------------
+
+
+
+----------------
+separator: number:0008/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0003
+isMandatoryExcludingRule: System.Boolean		From type DriverForTestsLib.TestTaskTagCondition
+True
+end separator: 0008/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0003	isMandatoryExcludingRule
+----------------
+
+
+
+----------------
+separator: number:0008/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0003
+priorityForCondition: System.Double		From type DriverForTestsLib.TestTaskTagCondition
+-1,7976931348623157E+308
+end separator: 0008/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0003	priorityForCondition
+----------------
+
+
+
+----------------
+separator: number:0008/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0003
+listOfNeedConditions: 		From type DriverForTestsLib.TestTaskTagCondition
+null
+end separator: 0008/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0003	listOfNeedConditions
+----------------
+
+
+
+0000:
+----------------
+separator: number:0010/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0003
+listOfNeedTags: System.Collections.Generic.List`1[[DriverForTestsLib.TestTaskTag, DriverForTestsLib, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]		From type DriverForTestsLib.TestTaskTagCondition
+values:
+0000:
+----------------
+separator: number:0011/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0004
+name: System.String		From type DriverForTestsLib.TestTaskTag
+5
+end separator: 0011/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0004	name
+----------------
+
+
+
+----------------
+separator: number:0011/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0004
+priority: System.Double		From type DriverForTestsLib.TestTaskTag
+-1,7976931348623157E+308
+end separator: 0011/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0004	priority
+----------------
+
+
+
+end values
+
+end separator: 0010/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0003	listOfNeedTags
+----------------
+
+
+
+----------------
+separator: number:0010/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0003
+conditionOperator: DriverForTestsLib.TestTaskTagCondition+ConditionOperator		From type DriverForTestsLib.TestTaskTagCondition
+Count
+end separator: 0010/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0003	conditionOperator
+----------------
+
+
+
+----------------
+separator: number:0010/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0003
+countForConditionOperator: System.Int64		From type DriverForTestsLib.TestTaskTagCondition
+1
+end separator: 0010/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0003	countForConditionOperator
+----------------
+
+
+
+----------------
+separator: number:0010/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0003
+isReversedCondition: System.Boolean		From type DriverForTestsLib.TestTaskTagCondition
+False
+end separator: 0010/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0003	isReversedCondition
+----------------
+
+
+
+----------------
+separator: number:0010/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0003
+isMandatoryExcludingRule: System.Boolean		From type DriverForTestsLib.TestTaskTagCondition
+False
+end separator: 0010/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0003	isMandatoryExcludingRule
+----------------
+
+
+
+----------------
+separator: number:0010/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0003
+priorityForCondition: System.Double		From type DriverForTestsLib.TestTaskTagCondition
+-1,7976931348623157E+308
+end separator: 0010/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0003	priorityForCondition
+----------------
+
+
+
+----------------
+separator: number:0010/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0003
+listOfNeedConditions: 		From type DriverForTestsLib.TestTaskTagCondition
+null
+end separator: 0010/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0003	listOfNeedConditions
+----------------
+
+
+
+end values
+
+end separator: 0003/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0002	listOfNeedConditions
+----------------
+
+
+
+0000:
+----------------
+separator: number:0012/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0002
+listOfNeedTags: System.Collections.Generic.List`1[[DriverForTestsLib.TestTaskTag, DriverForTestsLib, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]		From type DriverForTestsLib.TestTaskTagCondition
+values:
+0000:
+----------------
+separator: number:0013/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0003
+name: System.String		From type DriverForTestsLib.TestTaskTag
+1
+end separator: 0013/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0003	name
+----------------
+
+
+
+----------------
+separator: number:0013/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0003
+priority: System.Double		From type DriverForTestsLib.TestTaskTag
+-1,7976931348623157E+308
+end separator: 0013/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0003	priority
+----------------
+
+
+
+0000:
+----------------
+separator: number:0014/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0003
+name: System.String		From type DriverForTestsLib.TestTaskTag
+3
+end separator: 0014/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0003	name
+----------------
+
+
+
+----------------
+separator: number:0014/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0003
+priority: System.Double		From type DriverForTestsLib.TestTaskTag
+-1,7976931348623157E+308
+end separator: 0014/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0003	priority
+----------------
+
+
+
+0000:
+----------------
+separator: number:0015/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0003
+name: System.String		From type DriverForTestsLib.TestTaskTag
+4
+end separator: 0015/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0003	name
+----------------
+
+
+
+----------------
+separator: number:0015/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0003
+priority: System.Double		From type DriverForTestsLib.TestTaskTag
+-1,7976931348623157E+308
+end separator: 0015/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0003	priority
+----------------
+
+
+
+end values
+
+end separator: 0012/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0002	listOfNeedTags
+----------------
+
+
+
+----------------
+separator: number:0012/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0002
+conditionOperator: DriverForTestsLib.TestTaskTagCondition+ConditionOperator		From type DriverForTestsLib.TestTaskTagCondition
+Count
+end separator: 0012/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0002	conditionOperator
+----------------
+
+
+
+----------------
+separator: number:0012/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0002
+countForConditionOperator: System.Int64		From type DriverForTestsLib.TestTaskTagCondition
+1
+end separator: 0012/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0002	countForConditionOperator
+----------------
+
+
+
+----------------
+separator: number:0012/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0002
+isReversedCondition: System.Boolean		From type DriverForTestsLib.TestTaskTagCondition
+False
+end separator: 0012/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0002	isReversedCondition
+----------------
+
+
+
+----------------
+separator: number:0012/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0002
+isMandatoryExcludingRule: System.Boolean		From type DriverForTestsLib.TestTaskTagCondition
+False
+end separator: 0012/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0002	isMandatoryExcludingRule
+----------------
+
+
+
+----------------
+separator: number:0012/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0002
+priorityForCondition: System.Double		From type DriverForTestsLib.TestTaskTagCondition
+-1,7976931348623157E+308
+end separator: 0012/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0002	priorityForCondition
+----------------
+
+
+
+----------------
+separator: number:0012/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0002
+listOfNeedConditions: 		From type DriverForTestsLib.TestTaskTagCondition
+null
+end separator: 0012/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0002	listOfNeedConditions
+----------------
+
+
+
+end values
+
+end separator: 0002/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0001	listOfNeedConditions
+----------------
+
+
+
+end separator: 0001/7y8EX6fvtloAWsY7lANx5arDxLZROJ6H/0000	resultCondition
+----------------
+
+

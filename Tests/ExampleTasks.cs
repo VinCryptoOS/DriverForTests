@@ -119,7 +119,10 @@ class ExampleAutoSaveTask: AutoSaveTestTask
     public static DirectoryInfo getDirectoryPath()
     {
         var pathToFile = typeof(Program).Assembly.Location;
-        var dir        = new DirectoryInfo(pathToFile).Parent.Parent.Parent.Parent;
+        var dir        = new DirectoryInfo(pathToFile)?.Parent?.Parent?.Parent?.Parent?.Parent;
+        if (dir == null)
+            throw new Exception();
+
         return new DirectoryInfo(  Path.Combine(dir.FullName, "autotests")  );
     }
 
