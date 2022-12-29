@@ -42,6 +42,16 @@ class Example1TestConstructor : TestConstructor
             tasks.Enqueue(t);
         }
 
+        var canCreateFile = false;
+        // Добавляем вручную задачи, реализующие AutoSaveTestTask
+        // Если надо, устанавливаем разрешение на запись в файл в первый раз
+        // #warning canCreateFile: true
+        // var canCreateFile = true;
+        foreach (var t in ExampleAutoSaveTask.getTasks(canCreateFile: canCreateFile))
+        {
+            tasks.Enqueue(t);
+        }
+
         // Получаем все задачи, которые могут быть автоматически собраны из данного домена приложения
         var list = TestConstructor.getTasksFromAppDomain
         (

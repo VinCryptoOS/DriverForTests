@@ -24,7 +24,7 @@ class Program
             default:
                 var testConstructor = new Example1TestConstructor();
                 var parser          = new TestConditionParser
-                                        (String.Join(',', args));
+                                        (String.Join(',', args), true);
 
                 testConstructor.conditions = parser.resultCondition;
 

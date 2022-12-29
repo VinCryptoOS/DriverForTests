@@ -4,6 +4,7 @@ using System.Diagnostics;
 namespace DriverForTestsLib;
 
 /// <summary>Класс описывает ошибку, возникшую в ходе теста</summary>
+[TaskResultSaver]
 public class TestError
 {
     public Exception? ex = null;
@@ -12,6 +13,7 @@ public class TestError
 
 /// <summary>Этот класс должен быть переопределён потомком.
 /// Он создаёт список нефильтрованных задач и определяет условия их фильтрации</summary>
+[TaskResultSaver]
 public abstract class TestConstructor
 {
                                                                                 /// <summary>Если true, то после выполнения тестов программа будет ждать нажатия Enter [Console.ReadLine()]</summary>
@@ -120,6 +122,7 @@ public abstract class TestConstructor
 }
 
 /// <summary>Описывает тег задачи</summary>
+[TaskResultSaver]
 public class TestTaskTag
 {
                                                                         /// <summary>Имя тега</summary>
@@ -136,6 +139,7 @@ public class TestTaskTag
 }
 
 /// <summary>Описывает условие на выполнение тестовых задач</summary>
+[TaskResultSaver]
 public class TestTaskTagCondition
 {
     /// <summary>Список задач связан следующими операторами
@@ -351,8 +355,8 @@ public abstract class TestTask
     public List<TestTaskTag> tags = new List<TestTaskTag>();
 
                                                                     /// <summary>Функция тестирования, которая вызывается библиотекой</summary>
-    public          TestTaskFn  taskFunc {get; protected set;}      /// <summary>Имя задачи</summary>
-    public          string      Name     {get; protected set;}      /// <summary>Если true, то задача стартовала (остаётся true навсегда)</summary>
+    public virtual TestTaskFn   taskFunc {get; protected set;}      /// <summary>Имя задачи</summary>
+    public virtual  string      Name     {get; protected set;}      /// <summary>Если true, то задача стартовала (остаётся true навсегда)</summary>
     public          bool        start = false;                      /// <summary>Если true, то задача завершена (в том числе, с исключением)</summary>
     public          bool        ended = false;                      /// <summary>Список ошибок, возникших при исполнении данной тестовой задачи</summary>
     public readonly List<TestError> error = new List<TestError>();

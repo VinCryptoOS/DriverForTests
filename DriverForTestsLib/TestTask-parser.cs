@@ -14,7 +14,7 @@ public class TestConditionParser
     /// <para>Теги для приоритетного включения являются тегами, которые будут обязательно включены</para>
     /// <para>Теги для включения будут включены тогда, когда не исключаются тегами для исключения</para>
     /// </remarks>
-    public TestConditionParser(string tags)
+    public TestConditionParser(string tags, bool outputToConsole = false)
     {
         resultCondition     = null;
         var conditions      = new TestTaskTagCondition();
@@ -61,10 +61,13 @@ public class TestConditionParser
                 yes = true;
             }
 
-            if (not)
-                Console.WriteLine($"test without tag '{arg}'");
-            else
-                Console.WriteLine($"test with tag '{arg}'");
+            if (outputToConsole)
+            {
+                if (not)
+                    Console.WriteLine($"test without tag '{arg}'");
+                else
+                    Console.WriteLine($"test with tag '{arg}'");
+            }
 
             if (not || yes)
             {

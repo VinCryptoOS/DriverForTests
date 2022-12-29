@@ -69,12 +69,6 @@ public class DriverForTests
                     catch (Exception e)
                     {
                         task.error.Add(new TestError() { ex = e, Message = "During the test the exception occured\n" + e.Message });
-
-                        if (LogFileName != null)
-                        lock (tasks)
-                        {
-                            File.AppendAllText(LogFileName, $"error with task {task.Name}\n{e.Message}\n" );
-                        }
                     }
                     finally
                     {
@@ -140,28 +134,16 @@ public class DriverForTests
             // Console.CursorLeft = 0;
             // Console.CursorTop  = 0;
 
-            var sbEnd = new StringBuilder(1024);
-            sbEnd.AppendLine("Выполнено/всего: " + ended + " / " + tasks.Count);
-            sbEnd.AppendLine("Задачи с ошибокй: " + errored);
-
-            if (errored > 0)
-                Console.BackgroundColor = ConsoleColor.Red;
-            else
-                Console.BackgroundColor = ConsoleColor.DarkGray;
-
-            Console.WriteLine(  sbEnd.ToString()  );
-
-            Console.ResetColor();
-            Console.WriteLine();
+            var sbEnd = PrintMainTaskState(ended, errored, tasks);
 
             if (LogFileName != null)
-            lock (tasks)
-                File.AppendAllText(LogFileName, sbEnd.ToString() + "\n\n");
+                lock (tasks)
+                    File.AppendAllText(LogFileName, sbEnd.ToString() + "\n\n");
 
             if (showWaitTasks && ended != tasks.Count)
             {
-                var sb  = new StringBuilder();
-                    now = DateTime.Now;
+                var sb = new StringBuilder();
+                now = DateTime.Now;
                 var cnt = 0;
 
                 foreach (var task in tasks)
@@ -173,7 +155,7 @@ public class DriverForTests
                         str = task.done.ToString("F0") + "%";
 
                         var ts = HelperDateClass.TimeStampTo_HHMMSSfff_String(now - task.started);
-                        sb.AppendLine($"{str, 3} {ts, 15} {task.Name}\n");
+                        sb.AppendLine($"{str,3} {ts,15} {task.Name}\n");
                         cnt++;
                     }
                 }
@@ -194,9 +176,17 @@ public class DriverForTests
                         foreach (var e in task.error)
                         {
                             Console.WriteLine(e.Message);
+
+                            if (LogFileName != null)
+                            lock (tasks)
+                            {
+                                File.AppendAllText( LogFileName, $"error with task {task.Name}\n{e.Message}\n{e?.ex?.StackTrace}\n\n" );
+                            }
                         }
                     }
                 }
+
+                PrintMainTaskState(ended, errored, tasks);
             }
         }
 
@@ -209,5 +199,23 @@ public class DriverForTests
                     WaitMessages(showWaitTasks);
                 }
         }
+    }
+
+    private static StringBuilder PrintMainTaskState(int ended, int errored, ConcurrentQueue<TestTask> tasks)
+    {
+        var sbEnd = new StringBuilder(1024);
+        sbEnd.AppendLine("Выполнено/всего: " + ended + " / " + tasks.Count);
+        sbEnd.AppendLine("Задачи с ошибокй: " + errored);
+
+        if (errored > 0)
+            Console.BackgroundColor = ConsoleColor.Red;
+        else
+            Console.BackgroundColor = ConsoleColor.DarkGray;
+
+        Console.WriteLine(sbEnd.ToString());
+
+        Console.ResetColor();
+        Console.WriteLine();
+        return sbEnd;
     }
 }

@@ -90,3 +90,45 @@ class TestSlowAndFastAndMedium_1: BaseExampleTestTask
         };
     }
 }
+
+[TestTagAttribute("autosave", double.MaxValue, notAutomatic: true)]
+class ExampleAutoSaveTask: AutoSaveTestTask
+{
+    public static IEnumerable<ExampleAutoSaveTask> getTasks(bool canCreateFile = false)
+    {
+        var strs = new List<ExampleAutoSaveTask>(128);
+        var plus = new string[] {"+", "", "-"};
+
+        foreach (var a1 in plus)
+        foreach (var a2 in plus)
+        foreach (var a3 in plus)
+        {
+            var p = $"{a1}1 {a2}2 {a3}3";
+            var t = new ExampleAutoSaveTask(p, canCreateFile);
+            strs.Add(t);
+        }
+
+        return strs;
+    }
+
+    public ExampleAutoSaveTask(string searchPattern, bool canCreateFile = false): base("AutoSaveTask " + searchPattern, new DirectoryInfo("./autotests/"), new Saver(searchPattern))
+    {
+        this.executer_and_saver.canCreateFile = canCreateFile;
+    }
+
+    protected class Saver: TaskResultSaver
+    {
+        public readonly string searchPattern;
+        public Saver(string searchPattern)
+        {
+            this.searchPattern = searchPattern;
+        }
+
+        public override object ExecuteTest(AutoSaveTestTask task)
+        {
+            var parser = new TestConditionParser(String.Join(',', searchPattern));
+
+            return parser;
+        }
+    }
+}
