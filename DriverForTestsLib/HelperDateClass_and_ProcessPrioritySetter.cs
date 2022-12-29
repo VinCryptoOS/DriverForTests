@@ -103,6 +103,7 @@ public class ProcessPrioritySetter: IDisposable
     public event         ExceptionInConstructorEvent? ConstructorException;
     public event         ExceptionInDestructorEvent?  DestructorException;
 
+    /// <summary>Выводит исключение на консоль (stderr)</summary><param name="e">Выводимое исключение</param>
     public virtual void OutputErrorToConsole(Exception e)
     {
         // Под Linux повышение приоритета процесса может быть запрещено. В таком случае будет выдана ошибка
@@ -113,6 +114,7 @@ public class ProcessPrioritySetter: IDisposable
         Console.Error.WriteLine($"ProcessPrioritySetter error: Failed to restore process priority: {e.Message}\n{e.StackTrace}\n\n");
     }
 
+    /// <summary>Выводит исключение на консоль (stderr)</summary><param name="e">Выводимое исключение</param>
     public virtual void OutputErrorToConsole(Exception e, ref bool doCancelWorkInClass)
     {
         Console.Error.WriteLine($"ProcessPrioritySetter error: Failed to set process priority: {e.Message}\n{e.StackTrace}\n\n");

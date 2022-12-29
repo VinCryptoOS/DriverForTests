@@ -1,3 +1,7 @@
+/*
+В этом файле мы определяем тестовые задачи
+*/
+
 using DriverForTestsLib;
 
 namespace Tests;
@@ -12,7 +16,7 @@ class BaseExampleTestTask: TestTask
 }
 
 // Некорректная задача: не имеет конструктора по умолчанию и не может быть поставлена автоматически в getTasksFromAppDomain
-[TestTagAttribute("", double.MaxValue)]
+[TestTagAttribute]
 class TestIncorrect_1: TestTask
 {
     public TestIncorrect_1(string name): base(name)
@@ -20,7 +24,6 @@ class TestIncorrect_1: TestTask
 }
 
 // Эта задача будет автоматически поставлена в очередь задач при вызове getTasksFromAppDomain и addTasksForQueue
-[TestTagAttribute("")]
 [TestTagAttribute("fast")]
 class Test1_1: BaseExampleTestTask
 {
@@ -51,7 +54,7 @@ class Test2_1: TestTask
 }
 
 // Это задача будет выполняться без многопоточности: ей будет отдан весь процессор целиком
-[TestTagAttribute("", double.MaxValue, singleThread: true, notAutomatic: true)]
+[TestTagAttribute(singleThread: true, notAutomatic: true)]
 [TestTagAttribute("slow", double.MaxValue)]
 class TestSingleThread_1: TestTask
 {
@@ -66,8 +69,9 @@ class TestSingleThread_1: TestTask
     }
 }
 
-[TestTagAttribute("fast", double.MaxValue)]
-[TestTagAttribute("slow", double.MaxValue)]
+// На эту задачу навешано сразу три тега
+[TestTagAttribute("fast",   double.MaxValue)]
+[TestTagAttribute("slow",   double.MaxValue)]
 [TestTagAttribute("medium", double.MaxValue)]
 class TestSlowAndFastAndMedium_1: BaseExampleTestTask
 {
@@ -77,6 +81,11 @@ class TestSlowAndFastAndMedium_1: BaseExampleTestTask
         {
             Console.WriteLine($"Задача {Name} началась");
             Thread.Sleep(1000);
+
+            var error = new TestError();
+            this.error.Add(error);
+            error.Message = "Это тестовая ошибка. Если в задаче возникнет исключение, такая ошибка будет сформирована автоматически";
+
             Console.WriteLine($"Задача {Name} закончилась");
         };
     }

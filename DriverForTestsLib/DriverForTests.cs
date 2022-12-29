@@ -80,15 +80,16 @@ public class DriverForTests
                     {
                         Interlocked.Decrement(ref started);
                         Interlocked.Increment(ref ended);
-                        task.ended = true;
 
                         if (task.error.Count > 0)
                             Interlocked.Increment(ref errored);
 
+                        task.ended   = true;
+                        task.done    = 100f;
+                        task.endTime = DateTime.Now;
+
                         lock (sync)
                             Monitor.PulseAll(sync);
-
-                        task.endTime = DateTime.Now;
 
                         if (LogFileName != null)
                         lock (tasks)
@@ -109,7 +110,13 @@ public class DriverForTests
         WaitMessages(false, true);
 
         var endTime = DateTime.Now;
-        Console.WriteLine("Tests ended in time " + HelperDateClass.TimeStampTo_HHMMSSfff_String(endTime - startTime));
+        var endMsg  = "Tests ended in time " + HelperDateClass.TimeStampTo_HHMMSSfff_String(endTime - startTime);
+        Console.WriteLine(endMsg);
+
+        if (LogFileName != null)
+        lock (tasks)
+            File.AppendAllText(LogFileName, "\n" + endMsg + "\n\n");
+
         if (tests.Console_ReadLine)
         {
             Console.WriteLine("Press 'Enter' to exit");
@@ -132,9 +139,24 @@ public class DriverForTests
             Console.Clear();
             // Console.CursorLeft = 0;
             // Console.CursorTop  = 0;
-            Console.WriteLine("Выполнено/всего: " + ended + " / " + tasks.Count);
-            Console.WriteLine("Задачи с ошибокй: " + errored);
+
+            var sbEnd = new StringBuilder(1024);
+            sbEnd.AppendLine("Выполнено/всего: " + ended + " / " + tasks.Count);
+            sbEnd.AppendLine("Задачи с ошибокй: " + errored);
+
+            if (errored > 0)
+                Console.BackgroundColor = ConsoleColor.Red;
+            else
+                Console.BackgroundColor = ConsoleColor.DarkGray;
+
+            Console.WriteLine(  sbEnd.ToString()  );
+
+            Console.ResetColor();
             Console.WriteLine();
+
+            if (LogFileName != null)
+            lock (tasks)
+                File.AppendAllText(LogFileName, sbEnd.ToString() + "\n\n");
 
             if (showWaitTasks && ended != tasks.Count)
             {

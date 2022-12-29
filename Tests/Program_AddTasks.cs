@@ -1,4 +1,7 @@
-﻿// #define doPerformaceTest
+﻿/*
+    Здесь мы переопределяем TestConstructor
+    В этом файле мы ставим в список на выполнение конкретные тестовые задачи
+*/
 
 using System.Collections.Concurrent;
 using System.Diagnostics;
@@ -6,7 +9,10 @@ using DriverForTestsLib;
 
 namespace Tests;
 
-
+/// <summary>Определяем класс-наследлник TestConstructor.
+/// Этот класс регистрирует тестовые задачи на выполнение.
+/// Регистрация идёт без фильтрации.
+/// Фильтрация по тегам идёт непосредственно перед выполнением</summary>
 class Example1TestConstructor : TestConstructor
 {
     public Example1TestConstructor()
@@ -14,6 +20,8 @@ class Example1TestConstructor : TestConstructor
         this.ProcessPriority = ProcessPriorityClass.Idle;
     }
 
+    /// <summary>Этот метод регистрирует необходимые тестовые задачи на выполнение</summary>
+    /// <param name="tasks">Список задач, который будет заполнен данным методом</param>
     public override void CreateTasksLists(ConcurrentQueue<TestTask> tasks)
     {
         Console.WriteLine("ExampleTestConstructor.CreateTasksLists executed");
@@ -25,7 +33,9 @@ class Example1TestConstructor : TestConstructor
             tasks.Enqueue(t);
         }
 
-        // Эти задачи поставлены вручную, будут выполняться последовательно, одна за другой
+        // Эти задачи поставлены вручную,
+        // они будут выполняться последовательно, одна за другой,
+        // т.к. на них определён атрибут с параметром singleThread: true
         for (int i = 0; i < Environment.ProcessorCount; i++)
         {
             var t = new TestSingleThread_1(i);
@@ -35,12 +45,18 @@ class Example1TestConstructor : TestConstructor
         // Получаем все задачи, которые могут быть автоматически собраны из данного домена приложения
         var list = TestConstructor.getTasksFromAppDomain
         (
+            // Этот обработчик срабатывает тогда, когда задача либо неавтоматическая,
+            // либо не имеет нужного конструктора
+            // Здесь мы также проверяем, что мы не забыли поставить ручные (неавтоматические) задачи
             (Type t, bool notAutomatic) =>
             {
                 if (!notAutomatic)
                     Console.Error.WriteLine("Incorrect task: " + t.FullName);
                 else
                 {
+                    // Проверяем ручные задачи, что мы никакую не забыли поставить
+                    // Так как все ручные задачи мы уже поставили перед вызовом getTasksFromAppDomain
+                    // здесь если задача не зарегистрирована на выполнение, то это значит, что мы её забыли
                     foreach (var task in tasks)
                     {
                         var taskType = task.GetType();
