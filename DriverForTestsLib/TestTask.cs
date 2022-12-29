@@ -3,7 +3,8 @@ using System.Diagnostics;
 
 namespace DriverForTestsLib;
 
-public class Error
+/// <summary>Класс описывает ошибку, возникшую в ходе теста</summary>
+public class TestError
 {
     public Exception? ex = null;
     public string     Message = "";
@@ -312,7 +313,7 @@ public abstract class TestTask
     public          string      Name     {get; protected set;}
     public          bool        start = false;
     public          bool        ended = false;
-    public readonly List<Error> error = new List<Error>();
+    public readonly List<TestError> error = new List<TestError>();
 
     public DateTime started = default;
     public DateTime endTime = default;

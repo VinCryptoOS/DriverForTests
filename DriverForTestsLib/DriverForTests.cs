@@ -29,19 +29,29 @@ public class DriverForTests
         var startTime = now;
         LogFileName   = LogFileNameTempl?.Replace("$", HelperDateClass.DateToDateFileString(now));
 
-        System.Collections.Concurrent.ConcurrentQueue<TestTask> tasks = new ConcurrentQueue<TestTask>();
-        tests.CreateTasksLists(tasks);
+        System.Collections.Concurrent.ConcurrentQueue<TestTask> AllTasks = new ConcurrentQueue<TestTask>();
+        tests.CreateTasksLists(AllTasks);
 
         Object sync = new Object();
         int started = 0;            // Количество запущенных прямо сейчас задач
         int ended   = 0;            // Количество завершённых задач
         int errored = 0;            // Количество задач, завершённых с ошибкой
         int PC = Environment.ProcessorCount;
+
+        var tasks = new ConcurrentQueue<TestTask>();
+        Parallel.ForEach<TestTask>
+        (
+            AllTasks,
+              (TestTask task, ParallelLoopState pls, long index) =>
+            {
+                if (tests.ShouldBeExecuted(task))
+                    tasks.Enqueue(task);
+            }
+        );
+
+
         foreach (var task in tasks)
         {
-            if (!tests.ShouldBeExecuted(task))
-                continue;
-
             var acceptableThreadCount = task.waitBefore ? 1 : PC;
             waitForTasks(acceptableThreadCount, true);
 
@@ -58,7 +68,7 @@ public class DriverForTests
                     }
                     catch (Exception e)
                     {
-                        task.error.Add(new Error() { ex = e, Message = "During the test the exception occured\n" + e.Message });
+                        task.error.Add(new TestError() { ex = e, Message = "During the test the exception occured\n" + e.Message });
 
                         if (LogFileName != null)
                         lock (tasks)
