@@ -4,7 +4,6 @@ using System.Diagnostics;
 namespace DriverForTestsLib;
 
 /// <summary>Класс описывает ошибку, возникшую в ходе теста</summary>
-[TaskResultSaver]
 public class TestError
 {
     public Exception? ex = null;
@@ -13,12 +12,8 @@ public class TestError
 
 /// <summary>Этот класс должен быть переопределён потомком.
 /// Он создаёт список нефильтрованных задач и определяет условия их фильтрации</summary>
-[TaskResultSaver]
 public abstract class TestConstructor
-{
-                                                                                /// <summary>Если true, то после выполнения тестов программа будет ждать нажатия Enter [Console.ReadLine()]</summary>
-    public bool                  Console_ReadLine = false;                      /// <summary>Процессу будет присвоен приоритет ProcessPriority при старте задач. Может быть null</summary>
-    public ProcessPriorityClass? ProcessPriority  = null;                       /// <summary>Условие на выполнение задач</summary>
+{                                                                               /// <summary>Условие на выполнение задач</summary>
     public TestTaskTagCondition? conditions;                                    /// <summary>Общий приоритет на выполнение.<para>Если у задачи нет хотя бы одного тега с приоритетом не менее generalPriorityForTasks, то она будет пропущена. Задачи без тегов выполняются</para></summary>
     public double                generalPriorityForTasks = double.MinValue;
 
@@ -48,7 +43,7 @@ public abstract class TestConstructor
     /// <summary>Это статический метод, который получает тестовые задачи из всех загруженных сборок</summary>
     /// <param name="errorHandler">Обработчик задач, которые автоматически не могут быть получены</param>
     /// <returns>Возвращает список задач, которые можно вручную добавить в список на выполнение (смотреть addTasksForQueue)</returns>
-    public static List<TestTask> getTasksFromAppDomain(ErrorTaskHandler? errorHandler)
+    public List<TestTask> getTasksFromAppDomain(ErrorTaskHandler? errorHandler)
     {
         var result = new List<TestTask>(16);
 
@@ -88,7 +83,7 @@ public abstract class TestConstructor
                         continue;
 
                     // Ищем конструтор по умолчанию. Если его нет, сообщаем об ошибке
-                    var ci = type.GetConstructor(  new Type[] {}  );
+                    var ci = type.GetConstructor(  new Type[] {typeof(TestConstructor)}  );
                     if (ci == null)
                     {
                         errorHandler?.Invoke(type, false);
@@ -97,7 +92,7 @@ public abstract class TestConstructor
                     }
 
                     // Создаём экземпляр тестовой задачи конструктором по умолчанию
-                    var t = ci?.Invoke(new object[] {});
+                    var t = ci?.Invoke(new object[] {this});
                     if (t is not null)
                     {
                         var task = (TestTask) t;
@@ -122,7 +117,6 @@ public abstract class TestConstructor
 }
 
 /// <summary>Описывает тег задачи</summary>
-[TaskResultSaver]
 public class TestTaskTag
 {
                                                                         /// <summary>Имя тега</summary>
@@ -143,7 +137,6 @@ public class TestTaskTag
 }
 
 /// <summary>Описывает условие на выполнение тестовых задач</summary>
-[TaskResultSaver]
 public class TestTaskTagCondition
 {
     /// <summary>Список задач связан следующими операторами
@@ -331,14 +324,28 @@ public abstract class TestTask
     /// <summary>Определение типа делегата для вызова конкретной задачи</summary>
     public delegate void TestTaskFn();
 
-    /// <param name="Name">Имя задачи: может быть не уникальным, однако, для идентификации задач в логе рекомендуется уникальное имя</param>
-    public TestTask(string Name)
-    {
-        this.Name = Name;
-        this.taskFunc = () => { throw new NotImplementedException(); };
+    /// <summary>Конструктор этой тестовой задачи для вызова метода ShouldBeExecuted</summary>
+    public TestConstructor? constructor {get; protected set;}
 
-        var attributes = (  TestTagAttribute []  )
-                         this.GetType().GetCustomAttributes(typeof(TestTagAttribute), true);
+    /// <summary>Определяет, нужно ли выполнять данную задачу исходя из фильтров</summary>
+    /// <returns>Возвращает true, если задача должна быть выполнена в данной серии тестов</returns>
+    public bool ShouldBeExecuted()
+    {
+        if (constructor == null)
+            return true;
+
+        return constructor.ShouldBeExecuted(this);
+    }
+
+    /// <param name="Name">Имя задачи: может быть не уникальным, однако, для идентификации задач в логе рекомендуется уникальное имя</param>
+    public TestTask(string Name, TestConstructor? constructor)
+    {
+        this.Name        = Name;
+        this.constructor = constructor;
+        this.taskFunc    = () => { throw new NotImplementedException(); };
+
+        var attributes   = (  TestTagAttribute []  )
+                           this.GetType().GetCustomAttributes(typeof(TestTagAttribute), true);
 
         // Применение атрибутов к задаче
         foreach (var attribute in attributes)

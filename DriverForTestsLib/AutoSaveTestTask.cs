@@ -13,7 +13,7 @@ public class AutoSaveTestTask: TestTask
     /// <param name="name">Имя задачи (имя файла, должно быть уникально и содержать символы, допустимые для файлов)</param>
     /// <param name="dirForFiles">Директория для хранения файлов</param>
     /// <param name="executer_and_saver">Задача, которая будет выполняться</param>
-    public AutoSaveTestTask(string name, DirectoryInfo dirForFiles, TaskResultSaver executer_and_saver): base(name)
+    public AutoSaveTestTask(string name, DirectoryInfo dirForFiles, TaskResultSaver executer_and_saver, TestConstructor constructor): base(name, constructor)
     {
         this.dirForFiles = dirForFiles;
         this.path        = Path.Combine(dirForFiles.FullName, name);
@@ -49,7 +49,7 @@ public class AutoSaveTestTask: TestTask
 }
 
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Property | AttributeTargets.Field, Inherited = false, AllowMultiple = true)]
-public class TaskResultSaverAttribute: Attribute
+public class TaskResultSaver_DoNotSaveAttribute: Attribute
 {}
 
 public class AutoSaveTestError: TestError
@@ -94,6 +94,9 @@ public abstract class TaskResultSaver
                 var e = new AutoSaveTestError();
                 e.Message = $"AutoSaveTestError: file '{fi.FullName}' not exists; created";
                 task.error.Add(e);
+
+                using (File.Open(fi.FullName, FileMode.CreateNew))
+                {}
 
                 File.WriteAllText(fi.FullName, text);
             }
@@ -162,34 +165,59 @@ public abstract class TaskResultSaver
         }
     }
 
-    public static bool haveTaskResultSaverAttribute(Type type)
+    public static bool haveTaskResultSaver_DoNotSaveAttribute(Type type)
     {
-        return type.GetCustomAttributes(typeof(TaskResultSaverAttribute), true).Length > 0;
+        return type.GetCustomAttributes(typeof(TaskResultSaver_DoNotSaveAttribute), true).Length > 0;
     }
 
-    public static bool haveTaskResultSaverAttribute(MemberInfo type)
+    public static bool haveTaskResultSaver_DoNotSaveAttribute(MemberInfo type)
     {
-        if (type.GetCustomAttributes(typeof(TaskResultSaverAttribute), true).Length > 0)
+        if (type.GetCustomAttributes(typeof(TaskResultSaver_DoNotSaveAttribute), true).Length > 0)
             return true;
 
         var f = type as FieldInfo;
         if (f is not null)
-        if (haveTaskResultSaverAttribute(f.FieldType))
+        if (haveTaskResultSaver_DoNotSaveAttribute(f.FieldType))
             return true;
 
         var p = type as PropertyInfo;
         if (p is not null)
-        if (haveTaskResultSaverAttribute(p.PropertyType))
+        if (haveTaskResultSaver_DoNotSaveAttribute(p.PropertyType))
             return true;
 
         return false;
     }
 
-    public virtual string? getText(AutoSaveTestTask task, object result, string separator = "7y8EX6fvtloAWsY7lANx5arDxLZROJ6H", TextFromFieldProcess? _tffp = null, int nesting = 0)
+    readonly struct IEnumerable_Object_Wrapper
+    {
+        public IEnumerable_Object_Wrapper(IEnumerable<object> @object)
+        {
+            this.enumerableObject = @object;
+        }
+
+        public readonly IEnumerable<object> enumerableObject;
+    }
+
+    public virtual string? getText(AutoSaveTestTask task, object? result, string separator = "7y8EX6fvtloAWsY7lANx5arDxLZROJ6H", TextFromFieldProcess? _tffp = null, int nesting = 0)
     {
         var tffp   = _tffp;
             tffp ??= new TextFromFieldProcess(task, separator);
         var sb     = new StringBuilder(128);
+
+        if (result == null)
+            return "null";
+
+        if (_tffp == null && result is IEnumerable<object> obj)
+        {
+            return getText
+            (
+                task:      task,
+                result:    new IEnumerable_Object_Wrapper(obj),
+                separator: separator,
+                _tffp:     tffp,
+                nesting:   nesting
+            );
+        }
 
         if (isContainsOrRegisterNew(result, out TextFromFieldProcess.ListedObject? lob))
         {
@@ -198,7 +226,7 @@ public abstract class TaskResultSaver
 
         var rt       = result.GetType();
         var members  = rt.GetMembers();
-        var allField = haveTaskResultSaverAttribute(rt);
+        var allField = !haveTaskResultSaver_DoNotSaveAttribute(rt);
 
         // Это, в общем-то, не нужно: на случай, если объекты в разных задачах случайно начнут работать одновременно (и то весь доступ на чтение идёт)
         // lock (result)
@@ -211,9 +239,9 @@ public abstract class TaskResultSaver
             // Если над всем классом стоит атрибут - сохраняем все поля и свойства
             if (!allField)
             {
-                // Если над свойством или полем стоит атрибут - его тоже сохраняем
-                // Если сам тип поля/свойства с атрибутом - тоже сохраняем
-                if (!haveTaskResultSaverAttribute(member))
+                // Если над свойством или полем стоит атрибут - его не сохраняем
+                // Если сам тип поля/свойства с атрибутом - не сохраняем
+                if (haveTaskResultSaver_DoNotSaveAttribute(member))
                     continue;
             }
 
@@ -292,6 +320,10 @@ public abstract class TaskResultSaver
             vstr = val.ToString();
         }
         else
+        {
+            vstr = getText(tffp.task, val, tffp.separator, tffp, nesting + 1);
+        }
+
         if (val is IEnumerable<object> vals)
         {
             var sba = new StringBuilder(128);
@@ -304,14 +336,15 @@ public abstract class TaskResultSaver
                     sba.AppendLine($"{cnt:D4}:" + v.ToString());
                 else
                     sba.AppendLine($"{cnt:D4}:" + getText(tffp.task, v, tffp.separator, tffp, nesting + 1));
+
+                cnt++;
             }
             sba.AppendLine("end values");
 
-            vstr = sba.ToString();
-        }
-        else
-        {
-            vstr = getText(tffp.task, val, tffp.separator, tffp, nesting + 1);
+            if (vstr != null && vstr.Length > 0)
+                vstr += "\n\n" + sba.ToString();
+            else
+                vstr += sba.ToString();
         }
 
         return bstr + vstr + estr;

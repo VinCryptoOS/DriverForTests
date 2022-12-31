@@ -16,21 +16,27 @@ public class DriverForTests
 {                                                                    /// <summary>Наиболее позднее время вывода на консоль информации о состоянии задач</summary><remarks>Не нужно пользователю</remarks>
     public DateTime waitForTasks_lastDateTime {get; protected set;} = default;
                                                                     /// <summary>Время в миллисекундах для обновления состояния задач на консоли</summary>
-    public int msToRefreshMessagesAtDisplay = 2000;
+    public int msToRefreshMessagesAtDisplay = 2000;                 /// <summary>Время в секундах, которое должна выполняться задача, чтобы вызвать своё отображение на консоли</summary>
+    public int minSecondsToMessageAboutExecutedTask = 8;
                                                                     /// <summary>Шаблон имени лог-файла для LogFileName. Символ $ будет заменён датой и временем, полученной из функции HelperClass.DateToDateFileString</summary>
     public string? LogFileNameTempl = "tests-$.log";                /// <summary>Имя лог-файла, в который будет выведено время начала и конца задач, а также исключения, возникшие в ходе выполнения задач</summary><remarks>Генерируется автоматически из LogFileNameTempl</remarks>
     public string? LogFileName      = null;
 
-    public int ExecuteTests(TestConstructor tests)
+    /// <summary>Получает список тестов и выполняет их</summary>
+    /// <param name="testConstructors">Список контрукторов тестов, которые сконструируют задачи</param>
+    /// <param name="doConsole_ReadLine">Если true, то после выполнения тестов программа будет ждать нажатия Enter [Console.ReadLine()]</param>
+    /// <returns>Количество ошибок, найденных тестами. 0 - ошибок не найдено</returns>
+    public int ExecuteTests(IEnumerable<TestConstructor> testConstructors, bool doConsole_ReadLine = false)
     {
-        using var processPrioritySetter = new ProcessPrioritySetter(tests.ProcessPriority, true);
+        using var processPrioritySetter = new ProcessPrioritySetter(ProcessPriorityClass.Idle, true);
 
         var now       = DateTime.Now;
         var startTime = now;
         LogFileName   = LogFileNameTempl?.Replace("$", HelperDateClass.DateToDateFileString(now));
 
         System.Collections.Concurrent.ConcurrentQueue<TestTask> AllTasks = new ConcurrentQueue<TestTask>();
-        tests.CreateTasksLists(AllTasks);
+        foreach (var testConstructor in testConstructors)
+            testConstructor.CreateTasksLists(AllTasks);
 
         Object sync = new Object();
         int started = 0;            // Количество запущенных прямо сейчас задач
@@ -38,16 +44,13 @@ public class DriverForTests
         int errored = 0;            // Количество задач, завершённых с ошибкой
         int PC = Environment.ProcessorCount;
 
+        // Это специально делается последовательно, чтобы сохранить порядок задач для выполнения
         var tasks = new ConcurrentQueue<TestTask>();
-        Parallel.ForEach<TestTask>
-        (
-            AllTasks,
-              (TestTask task, ParallelLoopState pls, long index) =>
-            {
-                if (tests.ShouldBeExecuted(task))
-                    tasks.Enqueue(task);
-            }
-        );
+        foreach (var task in AllTasks)
+        {
+            if (task.ShouldBeExecuted())
+                tasks.Enqueue(task);
+        }
 
 
         foreach (var task in tasks)
@@ -111,16 +114,13 @@ public class DriverForTests
         lock (tasks)
             File.AppendAllText(LogFileName, "\n" + endMsg + "\n\n");
 
-        if (tests.Console_ReadLine)
+        if (doConsole_ReadLine)
         {
             Console.WriteLine("Press 'Enter' to exit");
             Console.ReadLine();
         }
 
         return errored;
-
-
-
 
         void WaitMessages(bool showWaitTasks = false, bool endedAllTasks = false)
         {
@@ -136,32 +136,42 @@ public class DriverForTests
 
             var sbEnd = PrintMainTaskState(ended, errored, tasks);
 
+/*
             if (LogFileName != null)
                 lock (tasks)
                     File.AppendAllText(LogFileName, sbEnd.ToString() + "\n\n");
-
+*/
             if (showWaitTasks && ended != tasks.Count)
             {
                 var sb = new StringBuilder();
                 now = DateTime.Now;
                 var cnt = 0;
+                var cntToMessage = 0;
 
                 foreach (var task in tasks)
                 {
                     if (!task.ended && task.start)
                     {
+                        cnt++;
+
                         var str = "";
                         // if (task.done > 0)
                         str = task.done.ToString("F0") + "%";
 
-                        var ts = HelperDateClass.TimeStampTo_HHMMSSfff_String(now - task.started);
-                        sb.AppendLine($"{str,3} {ts,15} {task.Name}\n");
-                        cnt++;
+                        var ts  = now - task.started;
+                        if (ts.TotalSeconds >= minSecondsToMessageAboutExecutedTask)
+                            cntToMessage++;
+
+                        var tss = HelperDateClass.TimeStampTo_HHMMSSfff_String(ts);
+                        sb.AppendLine($"{str,3} {tss,15} {task.Name}\n");
                     }
                 }
 
-                sb.Insert(0, $"Выполняемые задачи: ({cnt})\t[{HelperDateClass.TimeStampTo_HHMMSSfff_String(now - startTime)}]\n");
-                Console.WriteLine(sb.ToString());
+                if (cntToMessage > 0)
+                {
+                    sb.Insert(0, $"Выполняемые задачи: ({cnt})\t[{HelperDateClass.TimeStampTo_HHMMSSfff_String(now - startTime)}]\n");
+                    Console.WriteLine(sb.ToString());
+                }
             }
             Thread.CurrentThread.Priority = ThreadPriority.BelowNormal;
 
@@ -217,6 +227,7 @@ public class DriverForTests
 
         Console.ResetColor();
         Console.WriteLine();
+
         return sbEnd;
     }
 }

@@ -16,9 +16,7 @@ namespace Tests;
 class Example1TestConstructor : TestConstructor
 {
     public Example1TestConstructor()
-    {
-        this.ProcessPriority = ProcessPriorityClass.Idle;
-    }
+    {}
 
     /// <summary>Этот метод регистрирует необходимые тестовые задачи на выполнение</summary>
     /// <param name="tasks">Список задач, который будет заполнен данным методом</param>
@@ -29,7 +27,7 @@ class Example1TestConstructor : TestConstructor
         // Эти задачи поставлены вручную, будут выполняться параллельно
         for (int i = 0; i < Environment.ProcessorCount*3; i++)
         {
-            var t = new Test2_1(i);
+            var t = new Test2_1(i, this);
             tasks.Enqueue(t);
         }
 
@@ -38,22 +36,35 @@ class Example1TestConstructor : TestConstructor
         // т.к. на них определён атрибут с параметром singleThread: true
         for (int i = 0; i < Environment.ProcessorCount; i++)
         {
-            var t = new TestSingleThread_1(i);
+            var t = new TestSingleThread_1(i, this);
             tasks.Enqueue(t);
         }
 
         var canCreateFile = false;
         // Добавляем вручную задачи, реализующие AutoSaveTestTask
         // Если надо, устанавливаем разрешение на запись в файл в первый раз
-        // #warning canCreateFile: true
-        // canCreateFile = true;
-        foreach (var t in ExampleAutoSaveTask.getTasks(canCreateFile: canCreateFile))
-        {
-            tasks.Enqueue(t);
-        }
+        #warning canCreateFile: true
+        canCreateFile = true;
+        TestConstructor.addTasksForQueue
+        (
+            source:     ExampleAutoSaveTask.getTasks(this, canCreateFile: canCreateFile),
+            tasksQueue: tasks
+        );
+
+        // Добавляем задачи ParallelTasks_Tests - это задачи проверки на то, что тесты выполняются в заданном порядке (waitBefore)
+        canCreateFile = false;
+        #warning canCreateFile: true
+        canCreateFile = true;
+
+        var PTT = new ParallelTasks_Tests(this, canCreateFile: canCreateFile);
+        TestConstructor.addTasksForQueue
+        (
+            source:     PTT.getTasks(),
+            tasksQueue: tasks
+        );
 
         // Получаем все задачи, которые могут быть автоматически собраны из данного домена приложения
-        var list = TestConstructor.getTasksFromAppDomain
+        var list = this.getTasksFromAppDomain
         (
             // Этот обработчик срабатывает тогда, когда задача либо неавтоматическая,
             // либо не имеет нужного конструктора

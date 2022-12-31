@@ -15,7 +15,10 @@ class Program
         {
             // Если нет аргументов, то просто выполняем все тесты
             case 0:
-                driver.ExecuteTests( new Example1TestConstructor() );
+                driver.ExecuteTests
+                (
+                    new TestConstructor[] { new Example1TestConstructor() }
+                );
                 break;
 
             // Если аргументы есть, то мы объединяем их всех через запятую и передаём в парсер
@@ -27,8 +30,10 @@ class Program
                                         (String.Join(',', args), true);
 
                 testConstructor.conditions = parser.resultCondition;
-
-                driver.ExecuteTests(testConstructor);
+                driver.ExecuteTests
+                (
+                    new TestConstructor[] { testConstructor }
+                );
 
                 break;
         }
