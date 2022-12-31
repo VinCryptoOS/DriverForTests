@@ -107,7 +107,7 @@ public class DriverForTests
         WaitMessages(false, true);
 
         var endTime = DateTime.Now;
-        var endMsg  = "Tests ended in time " + HelperDateClass.TimeStampTo_HHMMSSfff_String(endTime - startTime);
+        var endMsg  = "Tests ended in time " + HelperDateClass.TimeStampTo_HHMMSSfff_String(endTime - startTime) + "\t\t" + DateTime.Now.ToLongDateString() + "\t" + DateTime.Now.ToLongTimeString();
         Console.WriteLine(endMsg);
 
         if (LogFileName != null)

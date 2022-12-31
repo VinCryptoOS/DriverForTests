@@ -125,7 +125,6 @@ public abstract class TaskResultSaver
     public class TextFromFieldProcess
     {
         public AutoSaveTestTask task;
-        public string           separator;
         public long             objectCounter = 0;
 
         public class ListedObject
@@ -158,10 +157,9 @@ public abstract class TaskResultSaver
         }
 
         public ListOfObjects listOfObjects = new ListOfObjects(128);
-        public TextFromFieldProcess(AutoSaveTestTask task, string separator)
+        public TextFromFieldProcess(AutoSaveTestTask task)
         {
             this.task      = task;
-            this.separator = separator;
         }
     }
 
@@ -226,10 +224,10 @@ public abstract class TaskResultSaver
         return replaced;
     }
 
-    public virtual string? getText(AutoSaveTestTask task, object? result, string separator = "7y8EX6fvtloAWsY7lANx5arDxLZROJ6H", TextFromFieldProcess? _tffp = null, int nesting = 0)
+    public virtual string? getText(AutoSaveTestTask task, object? result, string FullName = "", TextFromFieldProcess? _tffp = null, int nesting = 0)
     {
         var tffp   = _tffp;
-            tffp ??= new TextFromFieldProcess(task, separator);
+            tffp ??= new TextFromFieldProcess(task);
         var sb     = new StringBuilder(128);
 
         if (result == null)
@@ -241,7 +239,7 @@ public abstract class TaskResultSaver
             (
                 task:      task,
                 result:    new IEnumerable_Object_Wrapper(obj),
-                separator: separator,
+                FullName:  FullName,
                 _tffp:     tffp,
                 nesting:   nesting
             );
@@ -277,7 +275,7 @@ public abstract class TaskResultSaver
                     continue;
             }
 
-            var text = getTextFromField(member, lob, tffp, nesting + 1);
+            var text = getTextFromField(member, lob, tffp, nesting + 1, FullName + "." + member.Name);
 
             if (text is not null)
                 sb.AppendLine(text);
@@ -311,7 +309,7 @@ public abstract class TaskResultSaver
                 || typeof(String).IsInstanceOfType(obj);
     }
 
-    public virtual string? getTextFromField(System.Reflection.MemberInfo member, in TextFromFieldProcess.ListedObject? source, TextFromFieldProcess tffp, int nesting)
+    public virtual string? getTextFromField(System.Reflection.MemberInfo member, in TextFromFieldProcess.ListedObject? source, TextFromFieldProcess tffp, int nesting, string FullName)
     {
         System.Reflection.FieldInfo?    field = member as System.Reflection.FieldInfo;
         System.Reflection.PropertyInfo? prop  = member as System.Reflection.PropertyInfo;
@@ -344,7 +342,7 @@ public abstract class TaskResultSaver
         var bstr = addIndentation
             (
               nesting:        nesting,
-              stringToChange: $"\n{member.Name}:\t\t{mType?.FullName}\t\tfrom №{source?.number:D4}"
+              stringToChange: $"\n{member.Name}:\t\t{mType?.FullName}\t\tfrom №{source?.number:D4}\t\t{FullName}"
             );
         var estr = "";
 
@@ -361,7 +359,14 @@ public abstract class TaskResultSaver
         }
         else
         {
-            vstr = getText(tffp.task, val, tffp.separator, tffp, nesting);
+            vstr = getText(tffp.task, val, FullName, tffp, nesting);
+
+            estr = addIndentation
+            (
+              nesting:        nesting,
+              stringToChange: $"\nend of {FullName}:\t\tfrom №{source?.number:D4}",
+              false
+            );
         }
 
         if (val is IEnumerable<object> vals)
@@ -380,7 +385,7 @@ public abstract class TaskResultSaver
                 if (TaskResultSaver.isElementaryType(v.GetType(), v))
                     sba.AppendLine(number + v.ToString());
                 else
-                    sba.AppendLine(number + getText(tffp.task, v, tffp.separator, tffp, nesting + 2));
+                    sba.AppendLine(number + getText(tffp.task, v, FullName + $"[{cnt:D4}]", tffp, nesting + 2));
 
                 cnt++;
             }

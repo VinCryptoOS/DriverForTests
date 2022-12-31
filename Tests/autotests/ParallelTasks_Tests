@@ -1,9 +1,9 @@
 	
-	enumerableObject:		System.Collections.Generic.List`1[[System.String, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]		from №0001		
-		Capacity:		System.Int32		from №0002
+	enumerableObject:		System.Collections.Generic.List`1[[System.String, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]		from №0001		.enumerableObject		
+		Capacity:		System.Int32		from №0002		.enumerableObject.Capacity
 			1024
 		
-		Count:		System.Int32		from №0002
+		Count:		System.Int32		from №0002		.enumerableObject.Count
 			696
 
 
@@ -706,3 +706,4 @@
 			0695: task in sequence: 11
 		[end values]
 
+	end of .enumerableObject:		from №0001

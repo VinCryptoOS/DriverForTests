@@ -1,198 +1,204 @@
 	
-	resultCondition:		DriverForTestsLib.TestTaskTagCondition		from №0001		
-		listOfNeedTags:				from №0002
+	resultCondition:		DriverForTestsLib.TestTaskTagCondition		from №0001		.resultCondition		
+		listOfNeedTags:				from №0002		.resultCondition.listOfNeedTags
 			null
 		
-		conditionOperator:		DriverForTestsLib.TestTaskTagCondition+ConditionOperator		from №0002
+		conditionOperator:		DriverForTestsLib.TestTaskTagCondition+ConditionOperator		from №0002		.resultCondition.conditionOperator
 			TreeAnd
 		
-		countForConditionOperator:		System.Int64		from №0002
+		countForConditionOperator:		System.Int64		from №0002		.resultCondition.countForConditionOperator
 			1
 		
-		isReversedCondition:		System.Boolean		from №0002
+		isReversedCondition:		System.Boolean		from №0002		.resultCondition.isReversedCondition
 			False
 		
-		isMandatoryExcludingRule:		System.Boolean		from №0002
+		isMandatoryExcludingRule:		System.Boolean		from №0002		.resultCondition.isMandatoryExcludingRule
 			False
 		
-		priorityForCondition:		System.Double		from №0002
+		priorityForCondition:		System.Double		from №0002		.resultCondition.priorityForCondition
 			-1,7976931348623157E+308
 		
-		listOfNeedConditions:		System.Collections.Generic.List`1[[DriverForTestsLib.TestTaskTagCondition, DriverForTestsLib, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]		from №0002			
-			Capacity:		System.Int32		from №0003
+		listOfNeedConditions:		System.Collections.Generic.List`1[[DriverForTestsLib.TestTaskTagCondition, DriverForTestsLib, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]		from №0002		.resultCondition.listOfNeedConditions			
+			Capacity:		System.Int32		from №0003		.resultCondition.listOfNeedConditions.Capacity
 				4
 			
-			Count:		System.Int32		from №0003
+			Count:		System.Int32		from №0003		.resultCondition.listOfNeedConditions.Count
 				2
 
 
 			[values:]		TestTaskTagCondition
 				0000: 					
-					listOfNeedTags:				from №0004
+					listOfNeedTags:				from №0004		.resultCondition.listOfNeedConditions[0000].listOfNeedTags
 						null
 					
-					conditionOperator:		DriverForTestsLib.TestTaskTagCondition+ConditionOperator		from №0004
+					conditionOperator:		DriverForTestsLib.TestTaskTagCondition+ConditionOperator		from №0004		.resultCondition.listOfNeedConditions[0000].conditionOperator
 						TreeCount
 					
-					countForConditionOperator:		System.Int64		from №0004
+					countForConditionOperator:		System.Int64		from №0004		.resultCondition.listOfNeedConditions[0000].countForConditionOperator
 						1
 					
-					isReversedCondition:		System.Boolean		from №0004
+					isReversedCondition:		System.Boolean		from №0004		.resultCondition.listOfNeedConditions[0000].isReversedCondition
 						True
 					
-					isMandatoryExcludingRule:		System.Boolean		from №0004
+					isMandatoryExcludingRule:		System.Boolean		from №0004		.resultCondition.listOfNeedConditions[0000].isMandatoryExcludingRule
 						False
 					
-					priorityForCondition:		System.Double		from №0004
+					priorityForCondition:		System.Double		from №0004		.resultCondition.listOfNeedConditions[0000].priorityForCondition
 						-1,7976931348623157E+308
 					
-					listOfNeedConditions:		System.Collections.Generic.List`1[[DriverForTestsLib.TestTaskTagCondition, DriverForTestsLib, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]		from №0004						
-						Capacity:		System.Int32		from №0005
+					listOfNeedConditions:		System.Collections.Generic.List`1[[DriverForTestsLib.TestTaskTagCondition, DriverForTestsLib, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]		from №0004		.resultCondition.listOfNeedConditions[0000].listOfNeedConditions						
+						Capacity:		System.Int32		from №0005		.resultCondition.listOfNeedConditions[0000].listOfNeedConditions.Capacity
 							4
 						
-						Count:		System.Int32		from №0005
+						Count:		System.Int32		from №0005		.resultCondition.listOfNeedConditions[0000].listOfNeedConditions.Count
 							2
 
 
 						[values:]		TestTaskTagCondition
 							0000: 								
-								listOfNeedTags:		System.Collections.Generic.List`1[[DriverForTestsLib.TestTaskTag, DriverForTestsLib, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]		from №0006									
-									Capacity:		System.Int32		from №0007
+								listOfNeedTags:		System.Collections.Generic.List`1[[DriverForTestsLib.TestTaskTag, DriverForTestsLib, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]		from №0006		.resultCondition.listOfNeedConditions[0000].listOfNeedConditions[0000].listOfNeedTags									
+									Capacity:		System.Int32		from №0007		.resultCondition.listOfNeedConditions[0000].listOfNeedConditions[0000].listOfNeedTags.Capacity
 										4
 									
-									Count:		System.Int32		from №0007
+									Count:		System.Int32		from №0007		.resultCondition.listOfNeedConditions[0000].listOfNeedConditions[0000].listOfNeedTags.Count
 										1
 
 
 									[values:]		TestTaskTag
 										0000: 											
-											name:		System.String		from №0008
+											name:		System.String		from №0008		.resultCondition.listOfNeedConditions[0000].listOfNeedConditions[0000].listOfNeedTags[0000].name
 												1
 											
-											priority:		System.Double		from №0008
+											priority:		System.Double		from №0008		.resultCondition.listOfNeedConditions[0000].listOfNeedConditions[0000].listOfNeedTags[0000].priority
 												-1,7976931348623157E+308
 
 									[end values]
 
+								end of .resultCondition.listOfNeedConditions[0000].listOfNeedConditions[0000].listOfNeedTags:		from №0006
 								
-								conditionOperator:		DriverForTestsLib.TestTaskTagCondition+ConditionOperator		from №0006
+								conditionOperator:		DriverForTestsLib.TestTaskTagCondition+ConditionOperator		from №0006		.resultCondition.listOfNeedConditions[0000].listOfNeedConditions[0000].conditionOperator
 									Count
 								
-								countForConditionOperator:		System.Int64		from №0006
+								countForConditionOperator:		System.Int64		from №0006		.resultCondition.listOfNeedConditions[0000].listOfNeedConditions[0000].countForConditionOperator
 									1
 								
-								isReversedCondition:		System.Boolean		from №0006
+								isReversedCondition:		System.Boolean		from №0006		.resultCondition.listOfNeedConditions[0000].listOfNeedConditions[0000].isReversedCondition
 									False
 								
-								isMandatoryExcludingRule:		System.Boolean		from №0006
+								isMandatoryExcludingRule:		System.Boolean		from №0006		.resultCondition.listOfNeedConditions[0000].listOfNeedConditions[0000].isMandatoryExcludingRule
 									False
 								
-								priorityForCondition:		System.Double		from №0006
+								priorityForCondition:		System.Double		from №0006		.resultCondition.listOfNeedConditions[0000].listOfNeedConditions[0000].priorityForCondition
 									-1,7976931348623157E+308
 								
-								listOfNeedConditions:				from №0006
+								listOfNeedConditions:				from №0006		.resultCondition.listOfNeedConditions[0000].listOfNeedConditions[0000].listOfNeedConditions
 									null
 
 							0001: 								
-								listOfNeedTags:		System.Collections.Generic.List`1[[DriverForTestsLib.TestTaskTag, DriverForTestsLib, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]		from №0009									
-									Capacity:		System.Int32		from №0010
+								listOfNeedTags:		System.Collections.Generic.List`1[[DriverForTestsLib.TestTaskTag, DriverForTestsLib, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]		from №0009		.resultCondition.listOfNeedConditions[0000].listOfNeedConditions[0001].listOfNeedTags									
+									Capacity:		System.Int32		from №0010		.resultCondition.listOfNeedConditions[0000].listOfNeedConditions[0001].listOfNeedTags.Capacity
 										4
 									
-									Count:		System.Int32		from №0010
+									Count:		System.Int32		from №0010		.resultCondition.listOfNeedConditions[0000].listOfNeedConditions[0001].listOfNeedTags.Count
 										1
 
 
 									[values:]		TestTaskTag
 										0000: 											
-											name:		System.String		from №0011
+											name:		System.String		from №0011		.resultCondition.listOfNeedConditions[0000].listOfNeedConditions[0001].listOfNeedTags[0000].name
 												5
 											
-											priority:		System.Double		from №0011
+											priority:		System.Double		from №0011		.resultCondition.listOfNeedConditions[0000].listOfNeedConditions[0001].listOfNeedTags[0000].priority
 												-1,7976931348623157E+308
 
 									[end values]
 
+								end of .resultCondition.listOfNeedConditions[0000].listOfNeedConditions[0001].listOfNeedTags:		from №0009
 								
-								conditionOperator:		DriverForTestsLib.TestTaskTagCondition+ConditionOperator		from №0009
+								conditionOperator:		DriverForTestsLib.TestTaskTagCondition+ConditionOperator		from №0009		.resultCondition.listOfNeedConditions[0000].listOfNeedConditions[0001].conditionOperator
 									Count
 								
-								countForConditionOperator:		System.Int64		from №0009
+								countForConditionOperator:		System.Int64		from №0009		.resultCondition.listOfNeedConditions[0000].listOfNeedConditions[0001].countForConditionOperator
 									1
 								
-								isReversedCondition:		System.Boolean		from №0009
+								isReversedCondition:		System.Boolean		from №0009		.resultCondition.listOfNeedConditions[0000].listOfNeedConditions[0001].isReversedCondition
 									False
 								
-								isMandatoryExcludingRule:		System.Boolean		from №0009
+								isMandatoryExcludingRule:		System.Boolean		from №0009		.resultCondition.listOfNeedConditions[0000].listOfNeedConditions[0001].isMandatoryExcludingRule
 									True
 								
-								priorityForCondition:		System.Double		from №0009
+								priorityForCondition:		System.Double		from №0009		.resultCondition.listOfNeedConditions[0000].listOfNeedConditions[0001].priorityForCondition
 									-1,7976931348623157E+308
 								
-								listOfNeedConditions:				from №0009
+								listOfNeedConditions:				from №0009		.resultCondition.listOfNeedConditions[0000].listOfNeedConditions[0001].listOfNeedConditions
 									null
 
 						[end values]
 
+					end of .resultCondition.listOfNeedConditions[0000].listOfNeedConditions:		from №0004
 
 				0001: 					
-					listOfNeedTags:		System.Collections.Generic.List`1[[DriverForTestsLib.TestTaskTag, DriverForTestsLib, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]		from №0012						
-						Capacity:		System.Int32		from №0013
+					listOfNeedTags:		System.Collections.Generic.List`1[[DriverForTestsLib.TestTaskTag, DriverForTestsLib, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]		from №0012		.resultCondition.listOfNeedConditions[0001].listOfNeedTags						
+						Capacity:		System.Int32		from №0013		.resultCondition.listOfNeedConditions[0001].listOfNeedTags.Capacity
 							4
 						
-						Count:		System.Int32		from №0013
+						Count:		System.Int32		from №0013		.resultCondition.listOfNeedConditions[0001].listOfNeedTags.Count
 							4
 
 
 						[values:]		TestTaskTag
 							0000: 								
-								name:		System.String		from №0014
+								name:		System.String		from №0014		.resultCondition.listOfNeedConditions[0001].listOfNeedTags[0000].name
 									2
 								
-								priority:		System.Double		from №0014
+								priority:		System.Double		from №0014		.resultCondition.listOfNeedConditions[0001].listOfNeedTags[0000].priority
 									-1,7976931348623157E+308
 
 							0001: 								
-								name:		System.String		from №0015
+								name:		System.String		from №0015		.resultCondition.listOfNeedConditions[0001].listOfNeedTags[0001].name
 									3
 								
-								priority:		System.Double		from №0015
+								priority:		System.Double		from №0015		.resultCondition.listOfNeedConditions[0001].listOfNeedTags[0001].priority
 									-1,7976931348623157E+308
 
 							0002: 								
-								name:		System.String		from №0016
+								name:		System.String		from №0016		.resultCondition.listOfNeedConditions[0001].listOfNeedTags[0002].name
 									4
 								
-								priority:		System.Double		from №0016
+								priority:		System.Double		from №0016		.resultCondition.listOfNeedConditions[0001].listOfNeedTags[0002].priority
 									-1,7976931348623157E+308
 
 							0003: 								
-								name:		System.String		from №0017
+								name:		System.String		from №0017		.resultCondition.listOfNeedConditions[0001].listOfNeedTags[0003].name
 									5
 								
-								priority:		System.Double		from №0017
+								priority:		System.Double		from №0017		.resultCondition.listOfNeedConditions[0001].listOfNeedTags[0003].priority
 									-1,7976931348623157E+308
 
 						[end values]
 
+					end of .resultCondition.listOfNeedConditions[0001].listOfNeedTags:		from №0012
 					
-					conditionOperator:		DriverForTestsLib.TestTaskTagCondition+ConditionOperator		from №0012
+					conditionOperator:		DriverForTestsLib.TestTaskTagCondition+ConditionOperator		from №0012		.resultCondition.listOfNeedConditions[0001].conditionOperator
 						Count
 					
-					countForConditionOperator:		System.Int64		from №0012
+					countForConditionOperator:		System.Int64		from №0012		.resultCondition.listOfNeedConditions[0001].countForConditionOperator
 						1
 					
-					isReversedCondition:		System.Boolean		from №0012
+					isReversedCondition:		System.Boolean		from №0012		.resultCondition.listOfNeedConditions[0001].isReversedCondition
 						False
 					
-					isMandatoryExcludingRule:		System.Boolean		from №0012
+					isMandatoryExcludingRule:		System.Boolean		from №0012		.resultCondition.listOfNeedConditions[0001].isMandatoryExcludingRule
 						False
 					
-					priorityForCondition:		System.Double		from №0012
+					priorityForCondition:		System.Double		from №0012		.resultCondition.listOfNeedConditions[0001].priorityForCondition
 						-1,7976931348623157E+308
 					
-					listOfNeedConditions:				from №0012
+					listOfNeedConditions:				from №0012		.resultCondition.listOfNeedConditions[0001].listOfNeedConditions
 						null
 
 			[end values]
 
+		end of .resultCondition.listOfNeedConditions:		from №0002
 
+	end of .resultCondition:		from №0001
