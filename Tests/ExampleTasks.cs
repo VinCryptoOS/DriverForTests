@@ -69,10 +69,11 @@ class TestSingleThread_1: TestTask
     }
 }
 
-// На эту задачу навешано сразу три тега
+// На эту задачу навешано сразу несколько тегов
 [TestTagAttribute("fast",   double.MaxValue)]
 [TestTagAttribute("slow",   double.MaxValue)]
 [TestTagAttribute("medium", double.MaxValue)]
+[TestTagAttribute("error", double.MaxValue)]
 class TestSlowAndFastAndMedium_1: BaseExampleTestTask
 {
     public TestSlowAndFastAndMedium_1(TestConstructor constructor): base(constructor)
@@ -139,7 +140,7 @@ class ParallelTasks_Tests: ExampleAutoSaveTask_parent
         public Task(string Name, TestConstructor? constructor, List<string> taskNames) : base(Name, constructor)
         {
             taskFunc = () =>
-            {
+            {/* // Это комментируем, т.к. begun и ended переупорядочиваются 
                 lock (taskNames)
                     if (waitAfter)
                         taskNames.Add("task begun waitAfter in sequence: " + Name);
@@ -152,7 +153,15 @@ class ParallelTasks_Tests: ExampleAutoSaveTask_parent
                     if (waitAfter)
                         taskNames.Add("task ended waitAfter in sequence: " + Name);
                     else
-                        taskNames.Add("task ended in sequence: " + Name);
+                        taskNames.Add("task ended in sequence: " + Name);*/
+
+                lock (taskNames)
+                    taskNames.Add("task in sequence: " + Name);
+
+                Thread.Sleep(SleepTime_In_ms);
+
+                lock (taskNames)
+                    taskNames.Add("task in sequence: " + Name);
             };
         }
     }

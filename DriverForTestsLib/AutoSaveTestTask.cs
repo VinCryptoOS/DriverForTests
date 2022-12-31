@@ -198,6 +198,34 @@ public abstract class TaskResultSaver
         public readonly IEnumerable<object> enumerableObject;
     }
 
+    protected SortedList<int, string> indentationStrings = new SortedList<int, string>();
+    public string getIndent(int nesting)
+    {
+        if (indentationStrings.ContainsKey(nesting))
+            return indentationStrings[nesting];
+
+        var sb = new StringBuilder(nesting);
+        sb.Append('\t', nesting);
+
+        var val = sb.ToString();
+        indentationStrings.Add(nesting, val);
+
+        return val;
+    }
+
+    public string addIndentation(int nesting, string? stringToChange, bool addToStart = true)
+    {
+        if (stringToChange == null)
+            return "null" + getIndent(nesting);
+
+        var replaced = stringToChange.Replace("\n", "\n" + getIndent(nesting));
+
+        if (addToStart)
+            return getIndent(nesting) + replaced;
+
+        return replaced;
+    }
+
     public virtual string? getText(AutoSaveTestTask task, object? result, string separator = "7y8EX6fvtloAWsY7lANx5arDxLZROJ6H", TextFromFieldProcess? _tffp = null, int nesting = 0)
     {
         var tffp   = _tffp;
@@ -205,7 +233,7 @@ public abstract class TaskResultSaver
         var sb     = new StringBuilder(128);
 
         if (result == null)
-            return "null";
+            return addIndentation(nesting, "null");
 
         if (_tffp == null && result is IEnumerable<object> obj)
         {
@@ -221,7 +249,11 @@ public abstract class TaskResultSaver
 
         if (isContainsOrRegisterNew(result, out TextFromFieldProcess.ListedObject? lob))
         {
-            return $"\n{{already saved with number {lob?.number:D4} }}\n";
+            return addIndentation
+            (
+              nesting:        nesting + 1,
+              stringToChange: $"\n{{already saved with number {lob?.number:D4} }}\n"
+            );
         }
 
         var rt       = result.GetType();
@@ -245,7 +277,7 @@ public abstract class TaskResultSaver
                     continue;
             }
 
-            var text = getTextFromField(member, lob, tffp, nesting);
+            var text = getTextFromField(member, lob, tffp, nesting + 1);
 
             if (text is not null)
                 sb.AppendLine(text);
@@ -306,40 +338,53 @@ public abstract class TaskResultSaver
 
         var mType = val?.GetType();
         // var type = isField ? "field" : "property";
-        var bstr = $"\n----------------\nseparator: number:{source?.number:D4}/{tffp.separator}/{nesting:D4}\n{member.Name}: {mType?.FullName}\t\tFrom type {source?.obj.GetType().FullName}\n";
-        var estr = $"\nend separator: {source?.number:D4}/{tffp.separator}/{nesting:D4}\t{member.Name}\n----------------\n\n";
+//        var bstr = $"\n----------------\nseparator: number:{source?.number:D4}/{tffp.separator}/{nesting:D4}\n{member.Name}: {mType?.FullName}\t\tFrom type {source?.obj.GetType().FullName}\n";
+//         var estr = $"\nend separator: {source?.number:D4}/{tffp.separator}/{nesting:D4}\t{member.Name}\n----------------\n\n";
+
+        var bstr = addIndentation
+            (
+              nesting:        nesting,
+              stringToChange: $"\n{member.Name}:\t\t{mType?.FullName}\t\tfrom №{source?.number:D4}"
+            );
+        var estr = "";
+
 
         var vstr = "";
         if (val is null || mType == null)
         {
-            vstr = "null";
+            vstr = addIndentation(nesting+1, "\nnull", false);
         }
         else
         if (  TaskResultSaver.isElementaryType(mType, val)  )
         {
-            vstr = val.ToString();
+            vstr = addIndentation(nesting+1, "\n" + val.ToString(), false);
         }
         else
         {
-            vstr = getText(tffp.task, val, tffp.separator, tffp, nesting + 1);
+            vstr = getText(tffp.task, val, tffp.separator, tffp, nesting);
         }
 
         if (val is IEnumerable<object> vals)
         {
             var sba = new StringBuilder(128);
-            sba.AppendLine("values:");
+            sba.Append(getIndent(nesting+1) + "[values:]");
 
             int cnt = 0;
             foreach (var v in vals)
             {
+                if (cnt == 0)
+                    sba.AppendLine($"\t\t{v.GetType().Name}");
+
+                var number = getIndent(nesting+2) + $"{cnt:D4}: ";
+
                 if (TaskResultSaver.isElementaryType(v.GetType(), v))
-                    sba.AppendLine($"{cnt:D4}:" + v.ToString());
+                    sba.AppendLine(number + v.ToString());
                 else
-                    sba.AppendLine($"{cnt:D4}:" + getText(tffp.task, v, tffp.separator, tffp, nesting + 1));
+                    sba.AppendLine(number + getText(tffp.task, v, tffp.separator, tffp, nesting + 2));
 
                 cnt++;
             }
-            sba.AppendLine("end values");
+            sba.AppendLine(getIndent(nesting+1) + "[end values]");
 
             if (vstr != null && vstr.Length > 0)
                 vstr += "\n\n" + sba.ToString();
