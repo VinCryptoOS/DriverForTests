@@ -26,7 +26,8 @@ public class DriverForTests
     {                                                                           /// <summary>После окончания тестов ожидать ввода Enter [Console.ReadLine()]</summary>
         public readonly bool doConsole_ReadLine       {get; init;}              /// <summary>Вести лог-файл</summary>
         public readonly bool doKeepLogFile            {get; init;}              /// <summary>До первого вывода ожидать n миллисекунд. Используется, чтобы дать возможность программисту прочитать сообщения, которые выдавались на консоль перед запуском тестов</summary>
-        public readonly int  sleepInMs_ForFirstOutput {get; init;}
+        public readonly int  sleepInMs_ForFirstOutput {get; init;}              /// <summary>Макисмальное количество потоков, которое будет исползовано для одновременного запуска тестов</summary>
+        public readonly int? maxThreadCount           {get; init;}
 
         public ExecuteTestsOptions()
         {}
@@ -56,7 +57,7 @@ public class DriverForTests
         int started = 0;            // Количество запущенных прямо сейчас задач
         int ended   = 0;            // Количество завершённых задач
         int errored = 0;            // Количество задач, завершённых с ошибкой
-        int PC = Environment.ProcessorCount;
+        int PC = options.maxThreadCount ?? Environment.ProcessorCount;
 
         // Это специально делается последовательно, чтобы сохранить порядок задач для выполнения
         var tasks = new ConcurrentQueue<TestTask>();

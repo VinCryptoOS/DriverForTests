@@ -1,9 +1,9 @@
 
-{object number 0001 }
+{object number 0001}
 
 	
 	enumerableObject:		System.Collections.Generic.List`1[[System.String, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]		from №0001		.enumerableObject	
-	{object number 0002 }
+	{object number 0002}
 	
 		
 		Capacity:		System.Int32		from №0002		.enumerableObject.Capacity
@@ -12,11 +12,7 @@
 		Count:		System.Int32		from №0002		.enumerableObject.Count
 			696
 		
-		:		System.Collections.Generic.List`1[[System.String, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]		from №0002		.enumerableObject[IEnumerable]			
-			{already saved with number 0002 }
-			
-
-			[values:]		String
+		:		System.Collections.Generic.List`1[[System.String, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]		from №0002		.enumerableObject[IEnumerable]			[values:]		String
 				0000: task in sequence: 00
 				0001: task in sequence: 00
 				0002: task in sequence: 00
@@ -715,7 +711,6 @@
 				0695: task in sequence: 11
 			[end values]
 
-		end of .enumerableObject[IEnumerable]:		from №0002
 
 
 		[values:]		String

@@ -274,6 +274,11 @@ public abstract class TaskResultSaver
         if (result == null)
             return addIndentation(nesting, "null");
 
+        if (result is byte[] bytes)
+        {
+            return getTextForByteArray(nesting, bytes);
+        }
+
         if (_tffp == null && result is IEnumerable<object> obj)
         {
             return getText
@@ -291,7 +296,7 @@ public abstract class TaskResultSaver
             return addIndentation
             (
               nesting:        nesting + 1,
-              stringToChange: $"\n{{already saved with number {lob?.number:D4} }}\n"
+              stringToChange: $"\n{{already saved with number {lob?.number:D4}{"}"}\n"
             );
         }
 
@@ -300,7 +305,7 @@ public abstract class TaskResultSaver
             addIndentation
             (
                 nesting:        nesting,
-                stringToChange: $"\n{{object number {lob?.number:D4} }}\n"
+                stringToChange: $"\n{{object number {lob?.number:D4}{"}"}\n"
             )
         );
 
@@ -331,7 +336,7 @@ public abstract class TaskResultSaver
                 sb.AppendLine(text);
         }
 
-        if (result is IEnumerable<object> eobj)
+        if (result is System.Collections.Generic.IEnumerable<object> || result is System.Collections.IEnumerable)
         {
             var text = getTextFromField(null, lob, tffp, nesting + 1, FullName + "[IEnumerable]");
 
@@ -356,6 +361,48 @@ public abstract class TaskResultSaver
                 return false;
             }
         }
+    }
+
+    protected string AddSpacesToHexString(string str)
+    {
+        var sb  = new StringBuilder();
+        int i = 0;
+        for (; i < str.Length - 4; i += 4)
+        {
+            sb.Append(  str[i .. (i+4)]  );
+            sb.Append(" ");
+
+            if ((i % hexMax) == hexMax - 4)
+                sb.Append("  ");
+        }
+        if (i < str.Length)
+            sb.Append(str[i .. ]);
+
+        return sb.ToString().TrimEnd();
+    }
+
+    protected const int hexMax  = 2 << 3;   // 2 << 3 == 4
+    protected const int hexMax2 = hexMax  * 2;
+    protected const int hexMax4 = hexMax2 * 2;
+    protected string getTextForByteArray(int nesting, byte[] bytes)
+    {
+        var str = Convert.ToHexString(bytes);
+        var sb  = new StringBuilder();
+        int i = 0;
+        for (; i < str.Length - hexMax4 - 1; i += hexMax2)
+        {
+            var s = AddSpacesToHexString(  str[i .. (i+hexMax2)]  );
+
+            sb.Append(    addIndentation(nesting + 1, "\n" + s, false)    );
+        }
+
+        if (i < str.Length)
+        {
+            var ns = AddSpacesToHexString(  str[i .. ]  );
+            sb.Append(addIndentation(  nesting + 1, "\n" + ns, false  ));
+        }
+
+        return $"byte[{bytes.LongLength}]:" + sb.ToString();
     }
 
     public static bool isElementaryType(Type type, object? obj)
@@ -407,6 +454,10 @@ public abstract class TaskResultSaver
             );
         var estr = "";
 
+        if (val is byte[] bytes)
+        {
+            return getTextForByteArray(nesting, bytes);
+        }
 
         var vstr = "";
         if (val is null || mType == null)
@@ -419,6 +470,7 @@ public abstract class TaskResultSaver
             vstr = addIndentation(nesting+1, "\n" + val.ToString(), false);
         }
         else
+        if (member != null)
         {
             vstr = getText(tffp.task, val, FullName, tffp, nesting);
 
@@ -430,25 +482,26 @@ public abstract class TaskResultSaver
             );
         }
 
-        if (val is IEnumerable<object> vals)
+        if (val is IEnumerable<object> || val is System.Collections.IEnumerable)
         {
-            var sba = new StringBuilder(128);
+            var sba  = new StringBuilder(128);
             sba.Append(getIndent(nesting+1) + "[values:]");
 
             int cnt = 0;
-            foreach (var v in vals)
+            if (val is IEnumerable<object> vals)
             {
-                if (cnt == 0)
-                    sba.AppendLine($"\t\t{v.GetType().Name}");
-
-                var number = getIndent(nesting+2) + $"{cnt:D4}: ";
-
-                if (TaskResultSaver.isElementaryType(v.GetType(), v))
-                    sba.AppendLine(number + v.ToString());
-                else
-                    sba.AppendLine(number + getText(tffp.task, v, FullName + $"[{cnt:D4}]", tffp, nesting + 2));
-
-                cnt++;
+                foreach (var v in vals)
+                {
+                    cnt = getTextForArrayVal(tffp, nesting, FullName, sba, cnt, v);
+                }
+            }
+            else
+            if (val is System.Collections.IEnumerable valsA)
+            {
+                foreach (var v in valsA)
+                {
+                    cnt = getTextForArrayVal(tffp, nesting, FullName, sba, cnt, v);
+                }
             }
             sba.AppendLine(getIndent(nesting+1) + "[end values]");
 
@@ -459,5 +512,21 @@ public abstract class TaskResultSaver
         }
 
         return bstr + vstr + estr;
+    }
+
+    protected int getTextForArrayVal(TextFromFieldProcess tffp, int nesting, string FullName, StringBuilder sba, int cnt, object v)
+    {
+        if (cnt == 0)
+            sba.AppendLine($"\t\t{v.GetType().Name}");
+
+        var number = getIndent(nesting + 2) + $"{cnt:D4}: ";
+
+        if (TaskResultSaver.isElementaryType(v.GetType(), v))
+            sba.AppendLine(number + v.ToString());
+        else
+            sba.AppendLine(number + getText(tffp.task, v, FullName + $"[{cnt:D4}]", tffp, nesting + 2));
+
+        cnt++;
+        return cnt;
     }
 }

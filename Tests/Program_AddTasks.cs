@@ -4,8 +4,8 @@
 */
 
 // Раскомментировать, если нужно заново создать файлы
-// #define CAN_CREATEFILE_FOR_AUTOSAVE
-// #define CAN_CREATEFILE_FOR_PTT
+#define CAN_CREATEFILE_FOR_AUTOSAVE
+#define CAN_CREATEFILE_FOR_PTT
 
 using System.Collections.Concurrent;
 using System.Diagnostics;
@@ -16,7 +16,7 @@ namespace Tests;
 /// <summary>Определяем класс-наследлник TestConstructor.
 /// Этот класс регистрирует тестовые задачи на выполнение.
 /// Регистрация идёт без фильтрации.
-/// Фильтрация по тегам идёт непосредственно перед выполнением</summary>
+/// Фильтрация по тегам идёт непосредствеУдалинно перед выполнением</summary>
 class Example1TestConstructor : TestConstructor
 {
     public Example1TestConstructor()

@@ -18,6 +18,7 @@ class Program
                 driver.ExecuteTests
                 (
                     new TestConstructor[] { new Example1TestConstructor() }
+                    // , new DriverForTests.ExecuteTestsOptions() {maxThreadCount = 1}
                 );
                 break;
 

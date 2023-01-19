@@ -13,7 +13,7 @@
 
   <Target Name="Tests"  AfterTargets="Publish">
     <!-- Message Importance="High" Text="Configuration is $(ProjectDir)" / -->
-    <Exec Command="dotnet $(OutputPath)publish/Tests.dll" WorkingDirectory="$(ProjectDir)" />
+    <Exec Command="dotnet $(OutputPath)publish/Tests.dll -error" WorkingDirectory="$(ProjectDir)" />
   </Target>
 
 </Project>

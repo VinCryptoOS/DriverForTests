@@ -59,6 +59,9 @@
         <member name="P:DriverForTestsLib.DriverForTests.ExecuteTestsOptions.sleepInMs_ForFirstOutput">
             <summary>До первого вывода ожидать n миллисекунд. Используется, чтобы дать возможность программисту прочитать сообщения, которые выдавались на консоль перед запуском тестов</summary>
         </member>
+        <member name="P:DriverForTestsLib.DriverForTests.ExecuteTestsOptions.maxThreadCount">
+            <summary>Макисмальное количество потоков, которое будет исползовано для одновременного запуска тестов</summary>
+        </member>
         <member name="M:DriverForTestsLib.DriverForTests.ExecuteTests(System.Collections.Generic.IEnumerable{DriverForTestsLib.TestConstructor},DriverForTestsLib.DriverForTests.ExecuteTestsOptions)">
             <summary>Получает список тестов и выполняет их</summary>
             <param name="testConstructors">Список контрукторов тестов, которые сконструируют задачи</param>
