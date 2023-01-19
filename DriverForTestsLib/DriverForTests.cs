@@ -22,17 +22,29 @@ public class DriverForTests
     public string? LogFileNameTempl = "tests-$.log";                /// <summary>Имя лог-файла, в который будет выведено время начала и конца задач, а также исключения, возникшие в ходе выполнения задач</summary><remarks>Генерируется автоматически из LogFileNameTempl</remarks>
     public string? LogFileName      = null;
 
+    public readonly ref struct ExecuteTestsOptions
+    {
+        public readonly bool doConsole_ReadLine;
+        public readonly int  sleepInMs_ForFirstOutput {get; init;}
+
+        public ExecuteTestsOptions()
+        {
+        }
+    }
+
+    public DateTime startTime {get; protected set;}
+
     /// <summary>Получает список тестов и выполняет их</summary>
     /// <param name="testConstructors">Список контрукторов тестов, которые сконструируют задачи</param>
     /// <param name="doConsole_ReadLine">Если true, то после выполнения тестов программа будет ждать нажатия Enter [Console.ReadLine()]</param>
     /// <returns>Количество ошибок, найденных тестами. 0 - ошибок не найдено</returns>
-    public int ExecuteTests(IEnumerable<TestConstructor> testConstructors, bool doConsole_ReadLine = false)
+    public int ExecuteTests(IEnumerable<TestConstructor> testConstructors, ExecuteTestsOptions options = default)
     {
         using var processPrioritySetter = new ProcessPrioritySetter(ProcessPriorityClass.Idle, true);
 
-        var now       = DateTime.Now;
-        var startTime = now;
-        LogFileName   = LogFileNameTempl?.Replace("$", HelperDateClass.DateToDateFileString(now));
+        var now     = DateTime.Now;
+        startTime   = now;
+        LogFileName = LogFileNameTempl?.Replace("$", HelperDateClass.DateToDateFileString(now));
 
         System.Collections.Concurrent.ConcurrentQueue<TestTask> AllTasks = new ConcurrentQueue<TestTask>();
         foreach (var testConstructor in testConstructors)
@@ -56,7 +68,7 @@ public class DriverForTests
         foreach (var task in tasks)
         {
             var acceptableThreadCount = task.waitBefore ? 1 : PC;
-            waitForTasks(acceptableThreadCount, true);
+            waitForTasks(options, acceptableThreadCount, true);
 
             Interlocked.Increment(ref started);
             ThreadPool.QueueUserWorkItem
@@ -100,11 +112,11 @@ public class DriverForTests
             );
 
             acceptableThreadCount = task.waitAfter ? 1 : PC;
-            waitForTasks(acceptableThreadCount, true);
+            waitForTasks(options, acceptableThreadCount, true);
         }
 
-        waitForTasks(1,     true);
-        WaitMessages(false, true);
+        waitForTasks(options, 1,     true);
+        WaitMessages(options, false, true);
 
         var endTime = DateTime.Now;
         var endMsg  = "Tests ended in time " + HelperDateClass.TimeStampTo_HHMMSSfff_String(endTime - startTime) + "\t\t" + DateTime.Now.ToLongDateString() + "\t" + DateTime.Now.ToLongTimeString();
@@ -114,7 +126,7 @@ public class DriverForTests
         lock (tasks)
             File.AppendAllText(LogFileName, "\n" + endMsg + "\n\n");
 
-        if (doConsole_ReadLine)
+        if (options.doConsole_ReadLine)
         {
             Console.WriteLine("Press 'Enter' to exit");
             Console.ReadLine();
@@ -122,12 +134,20 @@ public class DriverForTests
 
         return errored;
 
-        void WaitMessages(bool showWaitTasks = false, bool endedAllTasks = false)
+        void WaitMessages(ExecuteTestsOptions options, bool showWaitTasks = false, bool endedAllTasks = false)
         {
-            if (!endedAllTasks && (DateTime.Now - waitForTasks_lastDateTime).TotalMilliseconds < msToRefreshMessagesAtDisplay)
+            var now = DateTime.Now;
+
+            // Ожидаем задержку во времени первого вывода
+            if (!endedAllTasks)
+            if (options.sleepInMs_ForFirstOutput > 0 && !Console.KeyAvailable)
+            if ((now - startTime).TotalMilliseconds < options.sleepInMs_ForFirstOutput)
                 return;
 
-            waitForTasks_lastDateTime = DateTime.Now;
+            if (!endedAllTasks && (now - waitForTasks_lastDateTime).TotalMilliseconds < msToRefreshMessagesAtDisplay)
+                return;
+
+            waitForTasks_lastDateTime = now;
 
             Thread.CurrentThread.Priority = ThreadPriority.Highest;
             Console.Clear();
@@ -201,13 +221,13 @@ public class DriverForTests
             }
         }
 
-        void waitForTasks(int acceptableThreadCount, bool showWaitTasks = false)
+        void waitForTasks(ExecuteTestsOptions options, int acceptableThreadCount, bool showWaitTasks = false)
         {
             while (started >= acceptableThreadCount)
                 lock (sync)
                 {
                     Monitor.Wait(sync, msToRefreshMessagesAtDisplay);
-                    WaitMessages(showWaitTasks);
+                    WaitMessages(options, showWaitTasks);
                 }
         }
     }
