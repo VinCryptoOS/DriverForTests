@@ -23,7 +23,7 @@ public class DriverForTests
     public string? LogFileName      = null;
 
     public readonly ref struct ExecuteTestsOptions
-    {                                                                           /// <summary>После окончания тестов ожидать ввода Enter</summary>
+    {                                                                           /// <summary>После окончания тестов ожидать ввода Enter [Console.ReadLine()]</summary>
         public readonly bool doConsole_ReadLine       {get; init;}              /// <summary>Вести лог-файл</summary>
         public readonly bool doKeepLogFile            {get; init;}              /// <summary>До первого вывода ожидать n миллисекунд. Используется, чтобы дать возможность программисту прочитать сообщения, которые выдавались на консоль перед запуском тестов</summary>
         public readonly int  sleepInMs_ForFirstOutput {get; init;}
@@ -36,7 +36,7 @@ public class DriverForTests
 
     /// <summary>Получает список тестов и выполняет их</summary>
     /// <param name="testConstructors">Список контрукторов тестов, которые сконструируют задачи</param>
-    /// <param name="doConsole_ReadLine">Если true, то после выполнения тестов программа будет ждать нажатия Enter [Console.ReadLine()]</param>
+    /// <param name="options">Дополнительные опции запуска тестов</param>
     /// <returns>Количество ошибок, найденных тестами. 0 - ошибок не найдено</returns>
     public int ExecuteTests(IEnumerable<TestConstructor> testConstructors, ExecuteTestsOptions options = default)
     {
@@ -136,13 +136,27 @@ public class DriverForTests
 
         return errored;
 
+
+        bool keyAvailable()
+        {
+            try
+            {
+                return Console.KeyAvailable;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
         void WaitMessages(ExecuteTestsOptions options, bool showWaitTasks = false, bool endedAllTasks = false)
         {
             var now = DateTime.Now;
 
             // Ожидаем задержку во времени первого вывода
+            // Если это промежуточный вывод, и на консоли нет ввода, и время ожидания вывода ещё не истекло
             if (!endedAllTasks)
-            if (options.sleepInMs_ForFirstOutput > 0 && !Console.KeyAvailable)
+            if (options.sleepInMs_ForFirstOutput > 0 && !keyAvailable())
             if ((now - startTime).TotalMilliseconds < options.sleepInMs_ForFirstOutput)
                 return;
 

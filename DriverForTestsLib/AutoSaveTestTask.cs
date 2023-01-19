@@ -6,24 +6,51 @@ namespace DriverForTestsLib;
 
 public class AutoSaveTestTask: TestTask
 {
+    #nullable disable
+    protected DirectoryInfo _dirForFiles;
                                                                 /// <summary>Директория для хранения файлов</summary>
-    public DirectoryInfo dirForFiles { get; protected set; }    /// <summary>Путь для файла</summary>
-    public string        path        { get; protected set; }
+    public DirectoryInfo dirForFiles
+    {
+        get => _dirForFiles;
+        protected set
+        {
+            this._dirForFiles = value;
+            this.path         = Path.Combine(dirForFiles.FullName, Name);
+        }
+    }
+
+    public string _path;                                            /// <summary>Путь для файла</summary>
+    public string  path
+    {
+        get => _path;
+        protected set
+        {
+            // Имя файла в Linux не должно заканчиваться на пробельные символы
+            if (value.EndsWith(" "))
+                value = value[0 .. ^1] + ".";
+
+            _path = value;
+        }
+    }
+
+    #nullable restore
 
     /// <param name="name">Имя задачи (имя файла, должно быть уникально и содержать символы, допустимые для файлов)</param>
     /// <param name="dirForFiles">Директория для хранения файлов</param>
     /// <param name="executer_and_saver">Задача, которая будет выполняться</param>
+    /// <param name="constructor">Конструктор задач, который создаёт эту задачу</param>
     public AutoSaveTestTask(string name, DirectoryInfo dirForFiles, TaskResultSaver executer_and_saver, TestConstructor constructor): base(name, constructor)
     {
         this.dirForFiles = dirForFiles;
-        this.path        = Path.Combine(dirForFiles.FullName, name);
-
-        if (!dirForFiles.Exists)
-            dirForFiles.Create();
 
         this.executer_and_saver = executer_and_saver;
         this._taskFunc = () =>
         {
+            // this - т.к. dirForFiles может измениться к моменту запуска тестов
+            if (this.executer_and_saver.canCreateFile)
+            if (!this.dirForFiles.Exists)
+                this.dirForFiles.Create();
+
             var result = this.executer_and_saver.ExecuteTest(this);
             this.executer_and_saver.Save(this, result);
         };
@@ -72,40 +99,54 @@ public abstract class TaskResultSaver
     {
         var fi = getSaveFileInfo(task, result);
 
-        var text = getText(task, result);
-        if (text is null)
-            throw new Exception($"TaskResultSaver.Save.getText == null for task '{task.Name}'");
-
-        if (fi.Exists)
+        // Все сохранения должны быть в идентичной культуре
+        var cc = Thread.CurrentThread.CurrentCulture;
+        try
         {
-            if (!doCompare(fi, text))
+            Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
+
+            var text = getText(task, result);
+            if (text is null)
+                throw new Exception($"TaskResultSaver.Save.getText == null for task '{task.Name}'");
+
+            if (fi.Exists)
             {
-                var e = new AutoSaveTestError();
-                e.Message = $"AutoSaveTestError: new string is not equal to string that was got from file '{fi.FullName}'";
-                task.error.Add(e);
-            }
+                if (!doCompare(fi, text))
+                {
+                    var e = new AutoSaveTestError();
+                    e.Message = $"AutoSaveTestError: new string is not equal to string that was got from file '{fi.FullName}'";
+                    task.error.Add(e);
 
-            return;
-        }
-        else
-        {
-            if (canCreateFile)
-            {
-                var e = new AutoSaveTestError();
-                e.Message = $"AutoSaveTestError: file '{fi.FullName}' not exists; created";
-                task.error.Add(e);
+                    File.WriteAllText(fi.FullName + ".error", text);
+                }
 
-                using (File.Open(fi.FullName, FileMode.CreateNew))
-                {}
-
-                File.WriteAllText(fi.FullName, text);
+                return;
             }
             else
             {
-                var e = new AutoSaveTestError();
-                e.Message = $"AutoSaveTestError: file '{fi.FullName}' not exists; file creation is restricted";
-                task.error.Add(e);
+                if (canCreateFile)
+                {
+                    var e = new AutoSaveTestError();
+                    e.Message = $"AutoSaveTestError: file '{fi.FullName}' not exists; created";
+                    task.error.Add(e);
+
+                    using (File.Open(fi.FullName, FileMode.CreateNew))
+                    {}
+
+                    File.WriteAllText(fi.FullName, text);
+                }
+                else
+                {
+                    var e = new AutoSaveTestError();
+                    e.Message = $"AutoSaveTestError: file '{fi.FullName}' not exists; file creation is restricted by canCreateFile flag";
+                    task.error.Add(e);
+                }
             }
+
+        }
+        finally
+        {
+            Thread.CurrentThread.CurrentCulture = cc;
         }
     }
 
@@ -254,6 +295,15 @@ public abstract class TaskResultSaver
             );
         }
 
+        sb.AppendLine
+        (
+            addIndentation
+            (
+                nesting:        nesting,
+                stringToChange: $"\n{{object number {lob?.number:D4} }}\n"
+            )
+        );
+
         var rt       = result.GetType();
         var members  = rt.GetMembers();
         var allField = !haveTaskResultSaver_DoNotSaveAttribute(rt);
@@ -276,6 +326,14 @@ public abstract class TaskResultSaver
             }
 
             var text = getTextFromField(member, lob, tffp, nesting + 1, FullName + "." + member.Name);
+
+            if (text is not null)
+                sb.AppendLine(text);
+        }
+
+        if (result is IEnumerable<object> eobj)
+        {
+            var text = getTextFromField(null, lob, tffp, nesting + 1, FullName + "[IEnumerable]");
 
             if (text is not null)
                 sb.AppendLine(text);
@@ -309,7 +367,7 @@ public abstract class TaskResultSaver
                 || typeof(String).IsInstanceOfType(obj);
     }
 
-    public virtual string? getTextFromField(System.Reflection.MemberInfo member, in TextFromFieldProcess.ListedObject? source, TextFromFieldProcess tffp, int nesting, string FullName)
+    public virtual string? getTextFromField(System.Reflection.MemberInfo? member, in TextFromFieldProcess.ListedObject? source, TextFromFieldProcess tffp, int nesting, string FullName)
     {
         System.Reflection.FieldInfo?    field = member as System.Reflection.FieldInfo;
         System.Reflection.PropertyInfo? prop  = member as System.Reflection.PropertyInfo;
@@ -317,9 +375,9 @@ public abstract class TaskResultSaver
         bool isField = field is not null ? true: false;
         bool isProp  = prop  is not null ? true: false;
         
-        if (!isField && !isProp)
+        /*if (!isField && !isProp)
             throw new Exception("TaskResultSaver.getTextFromField: !isField && !isProp");
-
+            */
 
         object? val;
         if (isField)
@@ -327,12 +385,15 @@ public abstract class TaskResultSaver
             val = field?.GetValue(source?.obj);
         }
         else
+        if (isProp)
         {
             if (prop?.GetIndexParameters().Length > 0)
                 return null;
 
             val = prop?.GetValue(source?.obj);
         }
+        else
+            val = source?.obj;
 
         var mType = val?.GetType();
         // var type = isField ? "field" : "property";
@@ -342,7 +403,7 @@ public abstract class TaskResultSaver
         var bstr = addIndentation
             (
               nesting:        nesting,
-              stringToChange: $"\n{member.Name}:\t\t{mType?.FullName}\t\tfrom №{source?.number:D4}\t\t{FullName}"
+              stringToChange: $"\n{member?.Name}:\t\t{mType?.FullName}\t\tfrom №{source?.number:D4}\t\t{FullName}"
             );
         var estr = "";
 

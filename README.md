@@ -12,6 +12,8 @@ For [.NET 7.0](https://dotnet.microsoft.com/download)
 Билд:
 dotnet publish -c Release
 
+После билда автоматически запускаются тесты
+
 
 # [./DriverForTestsLib](./DriverForTestsLib)
 

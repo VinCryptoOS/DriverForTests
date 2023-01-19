@@ -114,7 +114,7 @@ public class ProcessPrioritySetter: IDisposable
         Console.Error.WriteLine($"ProcessPrioritySetter error: Failed to restore process priority: {e.Message}\n{e.StackTrace}\n\n");
     }
 
-    /// <summary>Выводит исключение на консоль (stderr)</summary><param name="e">Выводимое исключение</param>
+    /// <summary>Выводит исключение на консоль (stderr)</summary><param name="e">Выводимое исключение</param><param name="doCancelWorkInClass">Если вернуть true, то конструктор удалит объект</param>
     public virtual void OutputErrorToConsole(Exception e, ref bool doCancelWorkInClass)
     {
         Console.Error.WriteLine($"ProcessPrioritySetter error: Failed to set process priority: {e.Message}\n{e.StackTrace}\n\n");

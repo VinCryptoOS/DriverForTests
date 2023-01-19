@@ -196,8 +196,9 @@ class ExampleAutoSaveTask_parent: AutoSaveTestTask
 
     public static DirectoryInfo getDirectoryPath(string DirName = "autotests")
     {
-        var pathToFile = typeof(Program).Assembly.Location;
-        var dir        = new DirectoryInfo(pathToFile)?.Parent?.Parent?.Parent?.Parent?.Parent;
+        // var pathToFile = typeof(Program).Assembly.Location;
+        var pathToFile = System.AppContext.BaseDirectory;
+        var dir        = new DirectoryInfo(pathToFile)?.Parent?.Parent?.Parent?.Parent;
         if (dir == null)
             throw new Exception();
 

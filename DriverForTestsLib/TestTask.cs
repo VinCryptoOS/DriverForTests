@@ -35,7 +35,7 @@ public abstract class TestConstructor
     }
 
     /// <summary>Этот метод используется для сообщения в вызывающую программу о том,
-    //  что при автоматической постановке задач выявлена невозможность её постановки</summary>
+    /// что при автоматической постановке задач выявлена невозможность её постановки</summary>
     /// <param name="TaskType">Тип тестовой задачи, которую метод пытался поставить</param>
     /// <param name="notAutomatic">Если true, то в одном из атрибутов задачи установлен флаг notAutomatic, то есть она штатно не должна добавляться автоматически</param>
     public delegate void ErrorTaskHandler(Type TaskType, bool notAutomatic);
@@ -338,6 +338,7 @@ public abstract class TestTask
     }
 
     /// <param name="Name">Имя задачи: может быть не уникальным, однако, для идентификации задач в логе рекомендуется уникальное имя</param>
+    /// <param name="constructor">Конструктор, который создаёт эту задачу</param>
     public TestTask(string Name, TestConstructor? constructor)
     {
         this.Name        = Name;

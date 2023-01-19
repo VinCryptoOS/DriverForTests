@@ -9,7 +9,8 @@ public class TestConditionParser
     public TestTaskTagCondition? resultCondition = null;
 
     /// <summary>Парсит простую строку параметров</summary>
-    /// <param name="tags">Строка вида +ТегДляПриоритетногоВключения ПростоТегДляВключения -ТегДляИсключения</param> <summary>
+    /// <param name="tags">Строка вида +ТегДляПриоритетногоВключения ПростоТегДляВключения -ТегДляИсключения</param>
+    /// <param name="outputToConsole">true - вывести на консоль теги</param>
     /// <remarks>
     /// <para>Теги для приоритетного включения являются тегами, которые будут обязательно включены</para>
     /// <para>Теги для включения будут включены тогда, когда не исключаются тегами для исключения</para>
@@ -65,6 +66,9 @@ public class TestConditionParser
             {
                 if (not)
                     Console.WriteLine($"test without tag '{arg}'");
+                else
+                if (yes)
+                    Console.WriteLine($"test with  mandatory  tag '{arg}'");
                 else
                     Console.WriteLine($"test with tag '{arg}'");
             }
