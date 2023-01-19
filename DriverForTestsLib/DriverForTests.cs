@@ -23,8 +23,9 @@ public class DriverForTests
     public string? LogFileName      = null;
 
     public readonly ref struct ExecuteTestsOptions
-    {
-        public readonly bool doConsole_ReadLine;
+    {                                                                           /// <summary>После окончания тестов ожидать ввода Enter</summary>
+        public readonly bool doConsole_ReadLine       {get; init;}              /// <summary>Вести лог-файл</summary>
+        public readonly bool doKeepLogFile            {get; init;}              /// <summary>До первого вывода ожидать n миллисекунд. Используется, чтобы дать возможность программисту прочитать сообщения, которые выдавались на консоль перед запуском тестов</summary>
         public readonly int  sleepInMs_ForFirstOutput {get; init;}
 
         public ExecuteTestsOptions()
@@ -45,6 +46,8 @@ public class DriverForTests
         var now     = DateTime.Now;
         startTime   = now;
         LogFileName = LogFileNameTempl?.Replace("$", HelperDateClass.DateToDateFileString(now));
+        if (!options.doKeepLogFile)
+            LogFileName = null;
 
         System.Collections.Concurrent.ConcurrentQueue<TestTask> AllTasks = new ConcurrentQueue<TestTask>();
         foreach (var testConstructor in testConstructors)

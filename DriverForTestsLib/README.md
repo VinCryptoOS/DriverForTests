@@ -28,6 +28,7 @@
 
 5. Если нужно, необходимо определить в наследнике TestConstructor условие conditions на выполняемые тесты.
     Регистрация задач для тестов всегда полная, без фильтрации. Перед тестами проверяются conditions.
+    См. также класс [TestConditionParser](./DriverForTestsLib/TestTask-parser.cs)
 
 6. Для запуска тестов вызвать driver.ExecuteTests( new Example1TestConstructor() );
     где Example1TestConstructor - это класс-фабрика, в котором был переопределён метод CreateTasksLists

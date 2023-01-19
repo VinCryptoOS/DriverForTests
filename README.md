@@ -9,6 +9,9 @@ For [.NET 7.0](https://dotnet.microsoft.com/download)
 
 Каждый тест должен быть вручную оформлен как класс-наследник TestTask
 
+Билд:
+dotnet publish -c Release
+
 
 # [./DriverForTestsLib](./DriverForTestsLib)
 
