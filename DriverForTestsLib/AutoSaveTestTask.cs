@@ -274,7 +274,7 @@ public abstract class TaskResultSaver
         if (result == null)
             return addIndentation(nesting, "null");
 
-        if (result is byte[] bytes)
+        if (_tffp == null && result is byte[] bytes)
         {
             return getTextForByteArray(nesting, bytes);
         }
@@ -305,9 +305,14 @@ public abstract class TaskResultSaver
             addIndentation
             (
                 nesting:        nesting,
-                stringToChange: $"\n{{object number {lob?.number:D4}{"}"}\n"
+                stringToChange: $"\n{{object number {lob?.number:D4}{"}"}"
             )
         );
+
+        if (result is byte[] bytes2)
+        {
+            return sb.ToString() + getTextForByteArray(nesting, bytes2);
+        }
 
         var rt       = result.GetType();
         var members  = rt.GetMembers();
@@ -345,6 +350,9 @@ public abstract class TaskResultSaver
         }
 
         return sb.ToString();
+
+
+
 
         bool isContainsOrRegisterNew(object obj, out TextFromFieldProcess.ListedObject? lob)
         {
@@ -391,18 +399,28 @@ public abstract class TaskResultSaver
         int i = 0;
         for (; i < str.Length - hexMax4 - 1; i += hexMax2)
         {
-            var s = AddSpacesToHexString(  str[i .. (i+hexMax2)]  );
-
-            sb.Append(    addIndentation(nesting + 1, "\n" + s, false)    );
+            var s = AddSpacesToHexString(    str[ i .. (i+hexMax2) ]    );
+            sb.Append("\n" + s);
         }
 
         if (i < str.Length)
         {
             var ns = AddSpacesToHexString(  str[i .. ]  );
-            sb.Append(addIndentation(  nesting + 1, "\n" + ns, false  ));
+            sb.Append("\n" + ns);
         }
 
-        return $"byte[{bytes.LongLength}]:" + sb.ToString();
+        return addIndentation
+                (
+                    nesting,
+                    $"byte[{bytes.LongLength}]:"
+                )
+            +
+                addIndentation
+                (
+                    nesting + 1,
+                    sb.ToString(),
+                    false
+                );
     }
 
     public static bool isElementaryType(Type type, object? obj)
@@ -440,7 +458,7 @@ public abstract class TaskResultSaver
             val = prop?.GetValue(source?.obj);
         }
         else
-            val = source?.obj;
+            val = source?.obj;  // Это массивы и другие IEnumerator без параметрического полиморфизма
 
         var mType = val?.GetType();
         // var type = isField ? "field" : "property";
@@ -456,7 +474,7 @@ public abstract class TaskResultSaver
 
         if (val is byte[] bytes)
         {
-            return getTextForByteArray(nesting, bytes);
+            return getText(tffp.task, bytes, FullName, tffp, nesting);
         }
 
         var vstr = "";
@@ -470,22 +488,10 @@ public abstract class TaskResultSaver
             vstr = addIndentation(nesting+1, "\n" + val.ToString(), false);
         }
         else
-        if (member != null)
-        {
-            vstr = getText(tffp.task, val, FullName, tffp, nesting);
-
-            estr = addIndentation
-            (
-              nesting:        nesting,
-              stringToChange: $"\nend of {FullName}:\t\tfrom №{source?.number:D4}",
-              false
-            );
-        }
-
         if (val is IEnumerable<object> || val is System.Collections.IEnumerable)
         {
             var sba  = new StringBuilder(128);
-            sba.Append(getIndent(nesting+1) + "[values:]");
+            sba.Append("\n" + getIndent(nesting+1) + "[values:]");
 
             int cnt = 0;
             if (val is IEnumerable<object> vals)
@@ -510,6 +516,20 @@ public abstract class TaskResultSaver
             else
                 vstr += sba.ToString();
         }
+        else
+        if (member != null)
+        {
+            vstr = getText(tffp.task, val, FullName, tffp, nesting);
+
+            estr = addIndentation
+            (
+              nesting:        nesting,
+              stringToChange: $"\nend of {FullName}:\t\tfrom №{source?.number:D4}",
+              false
+            );
+        }
+        else
+            throw new Exception();
 
         return bstr + vstr + estr;
     }

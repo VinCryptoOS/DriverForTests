@@ -4,8 +4,8 @@
 */
 
 // Раскомментировать, если нужно заново создать файлы
-#define CAN_CREATEFILE_FOR_AUTOSAVE
-#define CAN_CREATEFILE_FOR_PTT
+// #define CAN_CREATEFILE_FOR_AUTOSAVE
+// #define CAN_CREATEFILE_FOR_PTT
 
 using System.Collections.Concurrent;
 using System.Diagnostics;
