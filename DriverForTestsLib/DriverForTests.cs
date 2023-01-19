@@ -29,8 +29,7 @@ public class DriverForTests
         public readonly int  sleepInMs_ForFirstOutput {get; init;}
 
         public ExecuteTestsOptions()
-        {
-        }
+        {}
     }
 
     public DateTime startTime {get; protected set;}
