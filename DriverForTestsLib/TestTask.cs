@@ -467,6 +467,7 @@ public class TestTagAttribute: Attribute
     /// <param name="priority">Приоритет тега</param>
     /// <param name="singleThread">Задача для эксплюзивного выполнения на всём процессоре (другие тестовые задачи не будут выполняться одновременно)</param>
     /// <param name="notAutomatic">Задача не будет автоматически поставлена на выполнение (требуется ручная регистрация)</param>
+    /// <param name="duration">Задачи с большим duration, чем в фильтре задач, не будут выполнены</param>
     public TestTagAttribute(string? tagName = null, double priority = 0d, bool singleThread = false, bool notAutomatic = false, double duration = -1d)
     {
         if (tagName is not null)

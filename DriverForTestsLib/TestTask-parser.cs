@@ -65,11 +65,11 @@ public class TestConditionParser
                 yes = true;
             }
             else
-            if (arg.StartsWith("*"))
+            if (arg.StartsWith("<"))
             {
                 arg = arg.Substring(1);
-                duration = double.Parse(arg);
                 dur = true;
+                duration = double.Parse(arg);
             }
             else
             if (arg == "?")
@@ -84,9 +84,12 @@ public class TestConditionParser
                     Console.WriteLine($"test with  mandatory  tag '{arg}'");
                 else
                 if (dur)
+                {
                     Console.WriteLine($"test with duration <= '{duration}'");
+                    continue;
+                }
                 else
-                    Console.WriteLine($"test with tag '{arg}'");
+                    Console.WriteLine($"test with tag '{arg ?? "<all tags>"}'");
             }
 
             if (not || yes)
@@ -105,7 +108,7 @@ public class TestConditionParser
 
             if (!not)
             {
-                var tag = new TestTaskTag(arg, double.MinValue, -1d);
+                var tag = new TestTaskTag(arg, double.MinValue, duration);
                 yesCondition.listOfNeedTags.Add(tag);
             }
         }
