@@ -2,7 +2,7 @@
 В этом файле мы определяем тестовые задачи
 */
 
-#define CAN_CREATEFILE_FOR_TestBytes
+// #define CAN_CREATEFILE_FOR_TestBytes
 
 
 using System.Text;
