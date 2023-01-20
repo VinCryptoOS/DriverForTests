@@ -2,6 +2,10 @@
 В этом файле мы определяем тестовые задачи
 */
 
+#define CAN_CREATEFILE_FOR_TestBytes
+
+
+using System.Text;
 using DriverForTestsLib;
 
 namespace Tests;
@@ -261,6 +265,112 @@ class ExampleAutoSaveTask: ExampleAutoSaveTask_parent
             var parser = new TestConditionParser(String.Join(',', searchPattern));
 
             return parser;
+        }
+    }
+}
+
+
+[TestTagAttribute("autosave")]
+class TestBytes_TestTask: ExampleAutoSaveTask_parent
+{
+    public TestBytes_TestTask(TestConstructor constructor):
+                    base
+                    (
+                        name:               "testBytes",
+                        dirForFiles:        ExampleAutoSaveTask.getDirectoryPath(),
+                        executer_and_saver: new Saver(),
+                        constructor:        constructor
+                    )
+    {
+        #if CAN_CREATEFILE_FOR_TestBytes
+            this.executer_and_saver.canCreateFile = true;
+            #warning CAN_CREATEFILE_FOR_TestBytes
+        #else
+            this.executer_and_saver.canCreateFile = false;
+        #endif
+    }
+
+    protected class Saver: TaskResultSaver
+    {
+        public Saver()
+        {}
+
+        public static readonly string[] Str = {"Строка текста"};
+        public override object ExecuteTest(AutoSaveTestTask task)
+        {
+            var lst = new List<byte[]>();
+
+            lst.Add(new byte[] {});
+            lst.Add(new byte[] {0});
+            lst.Add(new byte[] {1});
+            lst.Add(new byte[] {1, 2});
+            lst.Add(new byte[] {1, 2, 3});
+
+            for (int i = 0; i < 128; i++)
+            {
+                var b = new byte[i];
+                lst.Add(b);
+
+                for (int j = 0; j < b.Length; j++)
+                    b[j] = (byte) (j - i);
+            }
+
+            for (int i = 0; i < Str.Length; i++)
+            {
+                lst.Add(Encoding.UTF32.GetBytes(Str[i]));
+                lst.Add(Encoding.UTF8 .GetBytes(Str[i]));
+            }
+
+            return lst;
+        }
+    }
+}
+
+[TestTagAttribute("autosave")]
+class TestObjects_TestTask: ExampleAutoSaveTask_parent
+{
+    public TestObjects_TestTask(TestConstructor constructor):
+                    base
+                    (
+                        name:               "testObjects",
+                        dirForFiles:        ExampleAutoSaveTask.getDirectoryPath(),
+                        executer_and_saver: new Saver(),
+                        constructor:        constructor
+                    )
+    {
+        #if CAN_CREATEFILE_FOR_TestBytes
+            this.executer_and_saver.canCreateFile = true;
+            #warning CAN_CREATEFILE_FOR_TestBytes
+        #else
+            this.executer_and_saver.canCreateFile = false;
+        #endif
+    }
+
+    protected class Saver: TaskResultSaver
+    {
+        public Saver()
+        {}
+
+        public static readonly string[] Str = {"Строка текста"};
+        public override object ExecuteTest(AutoSaveTestTask task)
+        {
+            var lst = new List<object>();
+
+            for (int i = 0; i < Str.Length; i++)
+            {
+                lst.Add(new int[] {0, 1, 2, 3, 4, 5, 65536, 1 << 16, 1 << 32, 1 << 63});
+                lst.Add(Str[i]);
+                lst.Add(Encoding.UTF32.GetBytes(Str[i]));
+                lst.Add(Encoding.UTF8 .GetBytes(Str[i]));
+                lst.Add(1);
+                lst.Add((1, 2, 3, 4, 5, 189));
+                lst.Add(((11, 12), 2, 3, 4, 5, (61, 62, 63)));
+                lst.Add(new byte[,]  { {0, 1, 2}, {3, 4, 5} });
+                lst.Add(new byte[][] { new byte[]{0, 1, 2}, new byte[]{} });
+                lst.Add(new object[] { 1, new byte[]{0, 1, 2}, new int[]{0, 1, 2} });
+            }
+
+            return lst;
         }
     }
 }

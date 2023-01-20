@@ -349,6 +349,16 @@ public abstract class TaskResultSaver
                 sb.AppendLine(text);
         }
 
+        sb.Append
+        (
+            addIndentation
+            (
+                nesting: nesting,
+                stringToChange: $"\nend of {"{"}{lob?.number:D4}{"}"} {FullName}",
+                false
+            )
+        );
+
         return sb.ToString();
 
 
@@ -468,7 +478,7 @@ public abstract class TaskResultSaver
         var bstr = addIndentation
             (
               nesting:        nesting,
-              stringToChange: $"\n{member?.Name}:\t\t{mType?.FullName}\t\tfrom №{source?.number:D4}\t\t{FullName}"
+              stringToChange: $"\n{member?.Name ?? "[IEnumerable]"}:\t\t{mType?.FullName}\t\t{FullName}"
             );
         var estr = "";
 
@@ -477,7 +487,8 @@ public abstract class TaskResultSaver
             return getText(tffp.task, bytes, FullName, tffp, nesting);
         }
 
-        var vstr = "";
+        var  vstr = "";
+        bool isEnumerable = val is IEnumerable<object> || val is System.Collections.IEnumerable;
         if (val is null || mType == null)
         {
             vstr = addIndentation(nesting+1, "\nnull", false);
@@ -488,17 +499,18 @@ public abstract class TaskResultSaver
             vstr = addIndentation(nesting+1, "\n" + val.ToString(), false);
         }
         else
-        if (val is IEnumerable<object> || val is System.Collections.IEnumerable)
+        if (isEnumerable && member == null)
         {
             var sba  = new StringBuilder(128);
-            sba.Append("\n" + getIndent(nesting+1) + "[values:]");
+            sba.Append("\n" + getIndent(nesting+1) + "[values:]\n");
 
-            int cnt = 0;
+            int   cnt   = 0;
+            Type? pType = null;
             if (val is IEnumerable<object> vals)
             {
                 foreach (var v in vals)
                 {
-                    cnt = getTextForArrayVal(tffp, nesting, FullName, sba, cnt, v);
+                    cnt = getTextForArrayVal(tffp, nesting, FullName, sba, cnt, v, ref pType);
                 }
             }
             else
@@ -506,7 +518,7 @@ public abstract class TaskResultSaver
             {
                 foreach (var v in valsA)
                 {
-                    cnt = getTextForArrayVal(tffp, nesting, FullName, sba, cnt, v);
+                    cnt = getTextForArrayVal(tffp, nesting, FullName, sba, cnt, v, ref pType);
                 }
             }
             sba.AppendLine(getIndent(nesting+1) + "[end values]");
@@ -519,14 +531,7 @@ public abstract class TaskResultSaver
         else
         if (member != null)
         {
-            vstr = getText(tffp.task, val, FullName, tffp, nesting);
-
-            estr = addIndentation
-            (
-              nesting:        nesting,
-              stringToChange: $"\nend of {FullName}:\t\tfrom №{source?.number:D4}",
-              false
-            );
+            getMemberText(source, tffp, nesting, FullName, val, out estr, out vstr, source.number);
         }
         else
             throw new Exception();
@@ -534,17 +539,30 @@ public abstract class TaskResultSaver
         return bstr + vstr + estr;
     }
 
-    protected int getTextForArrayVal(TextFromFieldProcess tffp, int nesting, string FullName, StringBuilder sba, int cnt, object v)
+    private void getMemberText(TextFromFieldProcess.ListedObject? source, TextFromFieldProcess tffp, int nesting, string FullName, object? val, out string estr, out string? vstr, long objectNumber)
     {
-        if (cnt == 0)
-            sba.AppendLine($"\t\t{v.GetType().Name}");
+        vstr = getText(tffp.task, val, FullName, tffp, nesting);
 
-        var number = getIndent(nesting + 2) + $"{cnt:D4}: ";
+        estr = "";
+    }
 
-        if (TaskResultSaver.isElementaryType(v.GetType(), v))
-            sba.AppendLine(number + v.ToString());
+    protected int getTextForArrayVal(TextFromFieldProcess tffp, int nesting, string FullName, StringBuilder sba, int cnt, object v, ref Type? prevType)
+    {
+        var vt      = v.GetType();
+        var typeStr = "";
+        if (prevType != vt)
+        {
+            typeStr  = $"\t\t[:{vt.Name}]";
+            prevType = vt;
+        }
+
+        var cntStr = $"{cnt:D2}:";
+        var number = getIndent(nesting + 2) + $"{cntStr, -8}";
+
+        if (TaskResultSaver.isElementaryType(vt, v))
+            sba.AppendLine(number + v.ToString() + typeStr);
         else
-            sba.AppendLine(number + getText(tffp.task, v, FullName + $"[{cnt:D4}]", tffp, nesting + 2));
+            sba.AppendLine(number + typeStr + getText(tffp.task, v, FullName + $"[{cnt:D4}]", tffp, nesting + 2));
 
         cnt++;
         return cnt;
