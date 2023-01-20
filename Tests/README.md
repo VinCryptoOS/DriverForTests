@@ -13,7 +13,7 @@
 
 Пример генерации ошибки тестирования есть в файле [ExampleTasks.cs](ExampleTasks.cs) в классе TestSlowAndFastAndMedium_1
 
-Пример реализации задачи автосохраняемых объектов также в [ExampleTasks.cs](ExampleTasks.cs) , см. класс ExampleAutoSaveTask. См. флаг canCreateFile = true для первой генерации файлов
+Пример реализации задачи автосохраняемых объектов также в [ExampleTasks.cs](ExampleTasks.cs) , см. класс ExampleAutoSaveTask. См. флаг canCreateFile = true для первой генерации файлов (Реализовано через define в [Program_AddTasks.cs](Program_AddTasks.cs) и [ExampleTasks.cs](ExampleTasks.cs))
 Запуск только автосохраняемых задач можно сделать командой
 dotnet net7.0/publish/Tests.dll autosave
 В зависимости от папки, может быть dotnet ./Tests/bin/Debug/net7.0/publish/Tests.dll autosave

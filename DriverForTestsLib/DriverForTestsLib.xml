@@ -62,6 +62,9 @@
         <member name="P:DriverForTestsLib.DriverForTests.ExecuteTestsOptions.maxThreadCount">
             <summary>Макисмальное количество потоков, которое будет исползовано для одновременного запуска тестов</summary>
         </member>
+        <member name="P:DriverForTestsLib.DriverForTests.ExecuteTestsOptions.logNamesOfTests">
+            <summary>Вести учёт запущенных тестов. 0 - не вести, 1 - вести в логе, 2 - вести в консоли, 3 - оба варианта</summary>
+        </member>
         <member name="M:DriverForTestsLib.DriverForTests.ExecuteTests(System.Collections.Generic.IEnumerable{DriverForTestsLib.TestConstructor},DriverForTestsLib.DriverForTests.ExecuteTestsOptions)">
             <summary>Получает список тестов и выполняет их</summary>
             <param name="testConstructors">Список контрукторов тестов, которые сконструируют задачи</param>
@@ -135,6 +138,9 @@
         <member name="F:DriverForTestsLib.TestConstructor.generalPriorityForTasks">
             <summary>Общий приоритет на выполнение.<para>Если у задачи нет хотя бы одного тега с приоритетом не менее generalPriorityForTasks, то она будет пропущена. Задачи без тегов выполняются</para></summary>
         </member>
+        <member name="F:DriverForTestsLib.TestConstructor.generalDuration">
+            <summary>Общий параметр длительности на выполнение.<para>Если у задачи есть хотя бы один тег с приоритетом более generalDuration, то она будет пропущена. Задачи без тегов выполняются. Тег с параметром менее 0 не учитывается</para></summary>
+        </member>
         <member name="M:DriverForTestsLib.TestConstructor.CreateTasksLists(System.Collections.Concurrent.ConcurrentQueue{DriverForTestsLib.TestTask})">
             <summary>Метод, заполняющий нефильтрованный список задач для выполнения в тестах</summary>
             <param name="tasks">Список для заполнения задачами</param>
@@ -162,14 +168,15 @@
             <summary>Описывает тег задачи</summary>
         </member>
         <member name="F:DriverForTestsLib.TestTaskTag.name">
-            <summary>Имя тега</summary>
+            <summary>Имя тега. Должно быть всегда не null для конкретной задачи. Если null, то это значит, что это тег фильтра: если с таким тегом сравнивается задача, то он будет удовлетворять любому другому тегу</summary>
         </member>
         <member name="F:DriverForTestsLib.TestTaskTag.priority">
             <summary>Приоритет тега: чем больше, тем выше приоритет</summary>
         </member>
-        <member name="M:DriverForTestsLib.TestTaskTag.#ctor(System.String,System.Double)">
+        <member name="M:DriverForTestsLib.TestTaskTag.#ctor(System.String,System.Double,System.Double)">
             <param name="tagName">Имя тега</param>
             <param name="tagPriority">Приоритет тега</param>
+            <param name="tagDuration">Параметр длительности задачи</param>
         </member>
         <member name="T:DriverForTestsLib.TestTaskTagCondition">
             <summary>Описывает условие на выполнение тестовых задач</summary>
@@ -281,14 +288,15 @@
         <member name="F:DriverForTestsLib.TestTask.done">
             <summary>Выполнение задачи в процентах (0-100)</summary><remarks>Задача может не использовать этот параметр</remarks>
         </member>
-        <member name="M:DriverForTestsLib.TestTask.isSatisfiesThePriority(System.Double)">
-            <summary>Проверяет, удовлетворяет ли задача указанному приоритету</summary>
+        <member name="M:DriverForTestsLib.TestTask.isSatisfiesThePriorityAndDuration(System.Double,System.Double)">
+            <summary>Проверяет, удовлетворяет ли задача указанному приоритету и параметру длительности</summary>
             <param name="generalPriorityForTasks">Заданный приоритет</param>
+            <param name="maxDuration">Заданный параметр времени выполнения (-1d - нет требований)</param>
             <returns>true, если нет тегов вообще и или есть хоть один тег с приоритетом не менее generalPriorityForTasks</returns>
         </member>
         <member name="M:DriverForTestsLib.TestTask.isSatisfiesTag(DriverForTestsLib.TestTaskTag)">
             <summary>Определяет, удовлетворяет ли задача заданному тегу с учётом указанного приоритета</summary>
-            <param name="tag">Заданный тег, которому должна удовлетворять задача</param>
+            <param name="tag">Заданный тег, которому должна удовлетворять задача. Если тегов с таким именем нет - не удовлетворяет</param>
             <returns>true, если задача удовлетворяет тегу</returns>
         </member>
         <member name="T:DriverForTestsLib.TestTagAttribute">
@@ -304,7 +312,10 @@
         <member name="F:DriverForTestsLib.TestTagAttribute.notAutomatic">
             <summary>Если true, то задача не будет автоматически регистрироваться на выполнение функцией TestConstructor.getTasksFromAppDomain (нужно добавить её вручную)</summary>
         </member>
-        <member name="M:DriverForTestsLib.TestTagAttribute.#ctor(System.String,System.Double,System.Boolean,System.Boolean)">
+        <member name="F:DriverForTestsLib.TestTagAttribute.duration">
+            <summary>Предполагаемый параметр времени выполнения для фильтрации медленных тестов. Отрицательное значение - игнорируется</summary>
+        </member>
+        <member name="M:DriverForTestsLib.TestTagAttribute.#ctor(System.String,System.Double,System.Boolean,System.Boolean,System.Double)">
             <param name="tagName">Имя тега (может быть null)</param>
             <param name="priority">Приоритет тега</param>
             <param name="singleThread">Задача для эксплюзивного выполнения на всём процессоре (другие тестовые задачи не будут выполняться одновременно)</param>

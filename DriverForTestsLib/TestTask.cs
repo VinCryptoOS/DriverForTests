@@ -15,7 +15,8 @@ public class TestError
 public abstract class TestConstructor
 {                                                                               /// <summary>Условие на выполнение задач</summary>
     public TestTaskTagCondition? conditions;                                    /// <summary>Общий приоритет на выполнение.<para>Если у задачи нет хотя бы одного тега с приоритетом не менее generalPriorityForTasks, то она будет пропущена. Задачи без тегов выполняются</para></summary>
-    public double                generalPriorityForTasks = double.MinValue;
+    public double                generalPriorityForTasks = double.MinValue;     /// <summary>Общий параметр длительности на выполнение.<para>Если у задачи есть хотя бы один тег с приоритетом более generalDuration, то она будет пропущена. Задачи без тегов выполняются. Тег с параметром менее 0 не учитывается</para></summary>
+    public double                generalDuration         = -1d;
 
     /// <summary>Метод, заполняющий нефильтрованный список задач для выполнения в тестах</summary>
     /// <param name="tasks">Список для заполнения задачами</param>
@@ -25,7 +26,7 @@ public abstract class TestConstructor
     /// <returns>true - задачу нужно запускать</returns>
     public virtual bool ShouldBeExecuted(TestTask task)
     {
-        if (!task.isSatisfiesThePriority(generalPriorityForTasks))
+        if (!task.isSatisfiesThePriorityAndDuration(generalPriorityForTasks, generalDuration))
             return false;
 
         if (conditions == null)
@@ -119,16 +120,19 @@ public abstract class TestConstructor
 /// <summary>Описывает тег задачи</summary>
 public class TestTaskTag
 {
-                                                                        /// <summary>Имя тега</summary>
-    public readonly string name;                                        /// <summary>Приоритет тега: чем больше, тем выше приоритет</summary>
-    public readonly double priority = 0.0d;
+                                                                        /// <summary>Имя тега. Должно быть всегда не null для конкретной задачи. Если null, то это значит, что это тег фильтра: если с таким тегом сравнивается задача, то он будет удовлетворять любому другому тегу</summary>
+    public readonly string? name;                                       /// <summary>Приоритет тега: чем больше, тем выше приоритет</summary>
+    public readonly double  priority = 0.0d;
+    public readonly double  duration = -1d;
 
     /// <param name="tagName">Имя тега</param>
     /// <param name="tagPriority">Приоритет тега</param>
-    public TestTaskTag(string tagName, double tagPriority)
+    /// <param name="tagDuration">Параметр длительности задачи</param>
+    public TestTaskTag(string? tagName, double tagPriority, double tagDuration)
     {
         name     = tagName;
         priority = tagPriority;
+        duration = tagDuration;
         // DebugName = "TestTaskTag.DEBUG.Name." + Interlocked.Increment(ref CountOfObjects);
     }
 /*
@@ -353,7 +357,12 @@ public abstract class TestTask
         {
             // Добавляем теги из атрибутов
             if (attribute.tag is not null)
+            {
+                if (attribute.tag.name == null)
+                    throw new ArgumentNullException("TestTaskTag can not null (null for filter patterns only)");
+
                 tags.Add(attribute.tag);
+            }
 
             // Устанавливаем флаг экслюзивной задачи, который выделен весь процессор целиком
             if (attribute.singleThread)
@@ -383,38 +392,64 @@ public abstract class TestTask
     /// <summary>Выполнение задачи в процентах (0-100)</summary><remarks>Задача может не использовать этот параметр</remarks>
     public float done = 0f;
 
-    /// <summary>Проверяет, удовлетворяет ли задача указанному приоритету</summary>
+    /// <summary>Проверяет, удовлетворяет ли задача указанному приоритету и параметру длительности</summary>
     /// <param name="generalPriorityForTasks">Заданный приоритет</param>
+    /// <param name="maxDuration">Заданный параметр времени выполнения (-1d - нет требований)</param>
     /// <returns>true, если нет тегов вообще и или есть хоть один тег с приоритетом не менее generalPriorityForTasks</returns>
-    public virtual bool isSatisfiesThePriority(double generalPriorityForTasks)
+    public virtual bool isSatisfiesThePriorityAndDuration(double generalPriorityForTasks, double maxDuration)
     {
         if (tags.Count <= 0)
             return true;
 
+        bool isSatisfiesThePriority = false;
         foreach (var tag in tags)
         {
             if (tag.priority >= generalPriorityForTasks)
-                return true;
+            {
+                isSatisfiesThePriority = true;
+                break;
+            }
+        }
+        if (!isSatisfiesThePriority)
+            return false;
+
+        // Если maxDuration - значит, требований не предъявляется
+        if (maxDuration < 0)
+            return true;
+
+
+        foreach (var tag in tags)
+        {
+            if (tag.duration > maxDuration)
+            {
+                return false;
+            }
         }
 
-        return false;
+        return true;
     }
 
     /// <summary>Определяет, удовлетворяет ли задача заданному тегу с учётом указанного приоритета</summary>
-    /// <param name="tag">Заданный тег, которому должна удовлетворять задача</param>
+    /// <param name="tag">Заданный тег, которому должна удовлетворять задача. Если тегов с таким именем нет - не удовлетворяет</param>
     /// <returns>true, если задача удовлетворяет тегу</returns>
     public virtual bool isSatisfiesTag(TestTaskTag tag)
     {
+        bool isSatisfiesThePriority = false;
         foreach (var t in tags)
         {
-            if (t.name != tag.name)
+            if (tag.name != null)           // null удовлетворяет любому поисковому условию
+            if (t.name   != tag.name)
                 continue;
 
             if (t.priority >= tag.priority)
-                return true;
+                isSatisfiesThePriority = true;
+
+            if (t.duration >= 0 && tag.duration >= 0)
+            if (t.duration > tag.duration)
+                return false;
         }
 
-        return false;
+        return isSatisfiesThePriority;
     }
 }
 
@@ -425,18 +460,20 @@ public class TestTagAttribute: Attribute
 {                                                                           /// <summary>Тег, установленный атрибутом (может быть null)</summary>
     public readonly TestTaskTag? tag;                                       /// <summary>Если true, то тестовая задача выполняется одна на всём процессоре (другие тестовые задачи не выполняются в это время)</summary>
     public readonly bool         singleThread = false;                      /// <summary>Если true, то задача не будет автоматически регистрироваться на выполнение функцией TestConstructor.getTasksFromAppDomain (нужно добавить её вручную)</summary>
-    public readonly bool         notAutomatic = false;
+    public readonly bool         notAutomatic = false;                      /// <summary>Предполагаемый параметр времени выполнения для фильтрации медленных тестов. Отрицательное значение - игнорируется</summary>
+    public readonly double       duration     = -1d;
 
     /// <param name="tagName">Имя тега (может быть null)</param>
     /// <param name="priority">Приоритет тега</param>
     /// <param name="singleThread">Задача для эксплюзивного выполнения на всём процессоре (другие тестовые задачи не будут выполняться одновременно)</param>
     /// <param name="notAutomatic">Задача не будет автоматически поставлена на выполнение (требуется ручная регистрация)</param>
-    public TestTagAttribute(string? tagName = null, double priority = 0d, bool singleThread = false, bool notAutomatic = false)
+    public TestTagAttribute(string? tagName = null, double priority = 0d, bool singleThread = false, bool notAutomatic = false, double duration = -1d)
     {
         if (tagName is not null)
-            tag = new TestTaskTag(tagName, priority);
+            tag = new TestTaskTag(tagName, priority, duration);
 
         this.singleThread = singleThread;
         this.notAutomatic = notAutomatic;
+        this.duration     = duration;
     }
 }

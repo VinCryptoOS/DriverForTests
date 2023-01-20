@@ -87,6 +87,9 @@
 														
 														priority:		System.Double		.resultCondition.listOfNeedConditions[IEnumerable][0000].listOfNeedConditions[IEnumerable][0000].listOfNeedTags[IEnumerable][0000].priority
 															-1.7976931348623157E+308
+														
+														duration:		System.Double		.resultCondition.listOfNeedConditions[IEnumerable][0000].listOfNeedConditions[IEnumerable][0000].listOfNeedTags[IEnumerable][0000].duration
+															-1
 
 													end of {0008} .resultCondition.listOfNeedConditions[IEnumerable][0000].listOfNeedConditions[IEnumerable][0000].listOfNeedTags[IEnumerable][0000]
 												[end values]
@@ -135,6 +138,9 @@
 														
 														priority:		System.Double		.resultCondition.listOfNeedConditions[IEnumerable][0000].listOfNeedConditions[IEnumerable][0001].listOfNeedTags[IEnumerable][0000].priority
 															-1.7976931348623157E+308
+														
+														duration:		System.Double		.resultCondition.listOfNeedConditions[IEnumerable][0000].listOfNeedConditions[IEnumerable][0001].listOfNeedTags[IEnumerable][0000].duration
+															-1
 
 													end of {0011} .resultCondition.listOfNeedConditions[IEnumerable][0000].listOfNeedConditions[IEnumerable][0001].listOfNeedTags[IEnumerable][0000]
 												[end values]
@@ -189,6 +195,9 @@
 										
 										priority:		System.Double		.resultCondition.listOfNeedConditions[IEnumerable][0001].listOfNeedTags[IEnumerable][0000].priority
 											-1.7976931348623157E+308
+										
+										duration:		System.Double		.resultCondition.listOfNeedConditions[IEnumerable][0001].listOfNeedTags[IEnumerable][0000].duration
+											-1
 
 									end of {0014} .resultCondition.listOfNeedConditions[IEnumerable][0001].listOfNeedTags[IEnumerable][0000]
 									01:     									
@@ -199,6 +208,9 @@
 										
 										priority:		System.Double		.resultCondition.listOfNeedConditions[IEnumerable][0001].listOfNeedTags[IEnumerable][0001].priority
 											-1.7976931348623157E+308
+										
+										duration:		System.Double		.resultCondition.listOfNeedConditions[IEnumerable][0001].listOfNeedTags[IEnumerable][0001].duration
+											-1
 
 									end of {0015} .resultCondition.listOfNeedConditions[IEnumerable][0001].listOfNeedTags[IEnumerable][0001]
 									02:     									
@@ -209,6 +221,9 @@
 										
 										priority:		System.Double		.resultCondition.listOfNeedConditions[IEnumerable][0001].listOfNeedTags[IEnumerable][0002].priority
 											-1.7976931348623157E+308
+										
+										duration:		System.Double		.resultCondition.listOfNeedConditions[IEnumerable][0001].listOfNeedTags[IEnumerable][0002].duration
+											-1
 
 									end of {0016} .resultCondition.listOfNeedConditions[IEnumerable][0001].listOfNeedTags[IEnumerable][0002]
 									03:     									
@@ -219,6 +234,9 @@
 										
 										priority:		System.Double		.resultCondition.listOfNeedConditions[IEnumerable][0001].listOfNeedTags[IEnumerable][0003].priority
 											-1.7976931348623157E+308
+										
+										duration:		System.Double		.resultCondition.listOfNeedConditions[IEnumerable][0001].listOfNeedTags[IEnumerable][0003].duration
+											-1
 
 									end of {0017} .resultCondition.listOfNeedConditions[IEnumerable][0001].listOfNeedTags[IEnumerable][0003]
 								[end values]

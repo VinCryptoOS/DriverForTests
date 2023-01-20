@@ -93,6 +93,9 @@
 										
 										priority:		System.Double		.resultCondition.listOfNeedConditions[IEnumerable][0001].listOfNeedTags[IEnumerable][0000].priority
 											-1.7976931348623157E+308
+										
+										duration:		System.Double		.resultCondition.listOfNeedConditions[IEnumerable][0001].listOfNeedTags[IEnumerable][0000].duration
+											-1
 
 									end of {0008} .resultCondition.listOfNeedConditions[IEnumerable][0001].listOfNeedTags[IEnumerable][0000]
 								[end values]

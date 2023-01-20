@@ -22,12 +22,13 @@ public class DriverForTests
     public string? LogFileNameTempl = "tests-$.log";                /// <summary>Имя лог-файла, в который будет выведено время начала и конца задач, а также исключения, возникшие в ходе выполнения задач</summary><remarks>Генерируется автоматически из LogFileNameTempl</remarks>
     public string? LogFileName      = null;
 
-    public readonly ref struct ExecuteTestsOptions
+    public readonly struct ExecuteTestsOptions
     {                                                                           /// <summary>После окончания тестов ожидать ввода Enter [Console.ReadLine()]</summary>
         public readonly bool doConsole_ReadLine       {get; init;}              /// <summary>Вести лог-файл</summary>
         public readonly bool doKeepLogFile            {get; init;}              /// <summary>До первого вывода ожидать n миллисекунд. Используется, чтобы дать возможность программисту прочитать сообщения, которые выдавались на консоль перед запуском тестов</summary>
         public readonly int  sleepInMs_ForFirstOutput {get; init;}              /// <summary>Макисмальное количество потоков, которое будет исползовано для одновременного запуска тестов</summary>
-        public readonly int? maxThreadCount           {get; init;}
+        public readonly int? maxThreadCount           {get; init;}              /// <summary>Вести учёт запущенных тестов. 0 - не вести, 1 - вести в логе, 2 - вести в консоли, 3 - оба варианта</summary>
+        public readonly int  logNamesOfTests          {get; init;}
 
         public ExecuteTestsOptions()
         {}
@@ -104,10 +105,12 @@ public class DriverForTests
                             Monitor.PulseAll(sync);
 
                         if (LogFileName != null)
+                        if ((options.logNamesOfTests & 1) > 0)
                         lock (tasks)
                         {
                             File.AppendAllText(LogFileName, "task " + task.Name + "\n");
                             File.AppendAllText(LogFileName, "task started at " + HelperDateClass.DateToDateString(task.started) + "\n");
+                            File.AppendAllText(LogFileName, $"Duration: {(task.endTime - task.started).TotalMilliseconds:F0} ms\n");
                             File.AppendAllText(LogFileName, "task ended   at " + HelperDateClass.DateToDateString(task.endTime) + "\n\n");
                         }
                     }
@@ -120,6 +123,16 @@ public class DriverForTests
 
         waitForTasks(options, 1,     true);
         WaitMessages(options, false, true);
+
+        if ((options.logNamesOfTests & 2) > 0)
+        {
+            Console.WriteLine("Tasks positive filtered:");
+            foreach (var task in tasks)
+            {
+                Console.WriteLine($"\t{task.Name, 32}\t{(task.endTime - task.started).TotalMilliseconds:F0} ms");
+            }
+        }
+
 
         var endTime = DateTime.Now;
         var endMsg  = "Tests ended in time " + HelperDateClass.TimeStampTo_HHMMSSfff_String(endTime - startTime) + "\t\t" + DateTime.Now.ToLongDateString() + "\t" + DateTime.Now.ToLongTimeString();

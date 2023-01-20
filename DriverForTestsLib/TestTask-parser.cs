@@ -43,12 +43,15 @@ public class TestConditionParser
 
         var args = tags.Split(new string[] {" ", ","}, StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
 
+        double duration = -1d;
+
         // Каждый аргумент - имя тега
         foreach (var _arg in args)
         {
             var arg = _arg;
             var not = false;
             var yes = false;
+            var dur = false;
             // Убираем "-", говорящий, что данный тег нужно исключить
             if (arg.StartsWith("-"))
             {
@@ -61,6 +64,16 @@ public class TestConditionParser
                 arg = arg.Substring(1);
                 yes = true;
             }
+            else
+            if (arg.StartsWith("*"))
+            {
+                arg = arg.Substring(1);
+                duration = double.Parse(arg);
+                dur = true;
+            }
+            else
+            if (arg == "?")
+                arg = null;
 
             if (outputToConsole)
             {
@@ -69,6 +82,9 @@ public class TestConditionParser
                 else
                 if (yes)
                     Console.WriteLine($"test with  mandatory  tag '{arg}'");
+                else
+                if (dur)
+                    Console.WriteLine($"test with duration <= '{duration}'");
                 else
                     Console.WriteLine($"test with tag '{arg}'");
             }
@@ -79,7 +95,7 @@ public class TestConditionParser
                 condition.conditionOperator = TestTaskTagCondition.ConditionOperator.Count;
                 condition.listOfNeedTags    = new List<TestTaskTag>
                 {
-                    new TestTaskTag(arg, double.MinValue)
+                    new TestTaskTag(arg, double.MinValue, duration)
                 };
 
                 condition.countForConditionOperator = 1;
@@ -89,7 +105,7 @@ public class TestConditionParser
 
             if (!not)
             {
-                var tag = new TestTaskTag(arg, double.MinValue);
+                var tag = new TestTaskTag(arg, double.MinValue, -1d);
                 yesCondition.listOfNeedTags.Add(tag);
             }
         }
