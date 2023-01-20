@@ -122,8 +122,7 @@ public class DriverForTests
         }
 
         waitForTasks(options, 1,     true);
-        WaitMessages(options, false, true);
-
+        Console.Clear();
         if ((options.logNamesOfTests & 2) > 0)
         {
             Console.WriteLine("Tasks positive filtered:");
@@ -132,6 +131,7 @@ public class DriverForTests
                 Console.WriteLine($"\t{task.Name, 32}\t{(task.endTime - task.started).TotalMilliseconds:F0} ms");
             }
         }
+        WaitMessages(options, false, true);
 
 
         var endTime = DateTime.Now;
@@ -180,11 +180,11 @@ public class DriverForTests
             waitForTasks_lastDateTime = now;
 
             Thread.CurrentThread.Priority = ThreadPriority.Highest;
-            Console.Clear();
-            // Console.CursorLeft = 0;
-            // Console.CursorTop  = 0;
-
-            var sbEnd = PrintMainTaskState(ended, errored, tasks);
+            if (!endedAllTasks)     // В конце очистка идёт в другом месте
+            {
+                Console.Clear();
+                PrintMainTaskState(ended, errored, tasks);
+            }
 
 /*
             if (LogFileName != null)
