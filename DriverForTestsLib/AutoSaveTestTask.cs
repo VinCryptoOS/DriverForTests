@@ -529,7 +529,7 @@ public abstract class TaskResultSaver
                 vstr += sba.ToString();
         }
         else
-        if (member != null)
+        if (member != null && source != null)
         {
             getMemberText(source, tffp, nesting, FullName, val, out estr, out vstr, source.number);
         }
