@@ -109,6 +109,7 @@ public abstract class TaskResultSaver
             if (text is null)
                 throw new Exception($"TaskResultSaver.Save.getText == null for task '{task.Name}'");
 
+            fi.Refresh();
             if (fi.Exists)
             {
                 if (!doCompare(fi, text))
