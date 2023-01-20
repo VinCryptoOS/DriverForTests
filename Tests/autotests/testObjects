@@ -1,0 +1,281 @@
+
+{object number 0001}
+	
+	enumerableObject:		System.Collections.Generic.List`1[[System.Object, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]		.enumerableObject	
+	{object number 0002}
+		
+		Capacity:		System.Int32		.enumerableObject.Capacity
+			16
+		
+		Count:		System.Int32		.enumerableObject.Count
+			10
+		
+		[IEnumerable]:		System.Collections.Generic.List`1[[System.Object, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]		.enumerableObject[IEnumerable]
+			[values:]
+				00:     		[:Int32[]]				
+				{object number 0003}
+					
+					Length:		System.Int32		.enumerableObject[IEnumerable][0000].Length
+						10
+					
+					LongLength:		System.Int64		.enumerableObject[IEnumerable][0000].LongLength
+						10
+					
+					Rank:		System.Int32		.enumerableObject[IEnumerable][0000].Rank
+						1
+					
+					SyncRoot:		System.Int32[]		.enumerableObject[IEnumerable][0000].SyncRoot						
+						{already saved with number 0003}
+						
+					
+					IsReadOnly:		System.Boolean		.enumerableObject[IEnumerable][0000].IsReadOnly
+						False
+					
+					IsFixedSize:		System.Boolean		.enumerableObject[IEnumerable][0000].IsFixedSize
+						True
+					
+					IsSynchronized:		System.Boolean		.enumerableObject[IEnumerable][0000].IsSynchronized
+						False
+					
+					[IEnumerable]:		System.Int32[]		.enumerableObject[IEnumerable][0000][IEnumerable]
+						[values:]
+							00:     0		[:Int32]
+							01:     1
+							02:     2
+							03:     3
+							04:     4
+							05:     5
+							06:     65536
+							07:     65536
+							08:     1
+							09:     -2147483648
+						[end values]
+
+
+				end of {0003} .enumerableObject[IEnumerable][0000]
+				01:     Строка текста		[:String]
+				02:     		[:Byte[]]				
+				{object number 0004}
+				byte[52]:
+					2104 0000 4204 0000   4004 0000 3E04 0000
+					3A04 0000 3004 0000   2000 0000 4204 0000
+					3504 0000 3A04 0000   4104 0000 4204 0000   3004 0000
+				03:     				
+				{object number 0005}
+				byte[25]:
+					D0A1 D182 D180 D0BE   D0BA D0B0 20D1 82D0   B5D0 BAD1 81D1 82D0   B0
+				04:     1		[:Int32]
+				05:     		[:ValueTuple`6]				
+				{object number 0006}
+					
+					Item1:		System.Int32		.enumerableObject[IEnumerable][0005].Item1
+						1
+					
+					Item2:		System.Int32		.enumerableObject[IEnumerable][0005].Item2
+						2
+					
+					Item3:		System.Int32		.enumerableObject[IEnumerable][0005].Item3
+						3
+					
+					Item4:		System.Int32		.enumerableObject[IEnumerable][0005].Item4
+						4
+					
+					Item5:		System.Int32		.enumerableObject[IEnumerable][0005].Item5
+						5
+					
+					Item6:		System.Int32		.enumerableObject[IEnumerable][0005].Item6
+						189
+
+				end of {0006} .enumerableObject[IEnumerable][0005]
+				06:     		[:ValueTuple`6]				
+				{object number 0007}
+					
+					Item1:		System.ValueTuple`2[[System.Int32, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Int32, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]		.enumerableObject[IEnumerable][0006].Item1					
+					{object number 0008}
+						
+						Item1:		System.Int32		.enumerableObject[IEnumerable][0006].Item1.Item1
+							11
+						
+						Item2:		System.Int32		.enumerableObject[IEnumerable][0006].Item1.Item2
+							12
+
+					end of {0008} .enumerableObject[IEnumerable][0006].Item1
+					
+					Item2:		System.Int32		.enumerableObject[IEnumerable][0006].Item2
+						2
+					
+					Item3:		System.Int32		.enumerableObject[IEnumerable][0006].Item3
+						3
+					
+					Item4:		System.Int32		.enumerableObject[IEnumerable][0006].Item4
+						4
+					
+					Item5:		System.Int32		.enumerableObject[IEnumerable][0006].Item5
+						5
+					
+					Item6:		System.ValueTuple`3[[System.Int32, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Int32, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Int32, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]		.enumerableObject[IEnumerable][0006].Item6					
+					{object number 0009}
+						
+						Item1:		System.Int32		.enumerableObject[IEnumerable][0006].Item6.Item1
+							61
+						
+						Item2:		System.Int32		.enumerableObject[IEnumerable][0006].Item6.Item2
+							62
+						
+						Item3:		System.Int32		.enumerableObject[IEnumerable][0006].Item6.Item3
+							63
+
+					end of {0009} .enumerableObject[IEnumerable][0006].Item6
+
+				end of {0007} .enumerableObject[IEnumerable][0006]
+				07:     		[:Byte[,]]				
+				{object number 0010}
+					
+					Length:		System.Int32		.enumerableObject[IEnumerable][0007].Length
+						6
+					
+					LongLength:		System.Int64		.enumerableObject[IEnumerable][0007].LongLength
+						6
+					
+					Rank:		System.Int32		.enumerableObject[IEnumerable][0007].Rank
+						2
+					
+					SyncRoot:		System.Byte[,]		.enumerableObject[IEnumerable][0007].SyncRoot						
+						{already saved with number 0010}
+						
+					
+					IsReadOnly:		System.Boolean		.enumerableObject[IEnumerable][0007].IsReadOnly
+						False
+					
+					IsFixedSize:		System.Boolean		.enumerableObject[IEnumerable][0007].IsFixedSize
+						True
+					
+					IsSynchronized:		System.Boolean		.enumerableObject[IEnumerable][0007].IsSynchronized
+						False
+					
+					[IEnumerable]:		System.Byte[,]		.enumerableObject[IEnumerable][0007][IEnumerable]
+						[values:]
+							00:     0		[:Byte]
+							01:     1
+							02:     2
+							03:     3
+							04:     4
+							05:     5
+						[end values]
+
+
+				end of {0010} .enumerableObject[IEnumerable][0007]
+				08:     		[:Byte[][]]				
+				{object number 0011}
+					
+					Length:		System.Int32		.enumerableObject[IEnumerable][0008].Length
+						2
+					
+					LongLength:		System.Int64		.enumerableObject[IEnumerable][0008].LongLength
+						2
+					
+					Rank:		System.Int32		.enumerableObject[IEnumerable][0008].Rank
+						1
+					
+					SyncRoot:		System.Byte[][]		.enumerableObject[IEnumerable][0008].SyncRoot						
+						{already saved with number 0011}
+						
+					
+					IsReadOnly:		System.Boolean		.enumerableObject[IEnumerable][0008].IsReadOnly
+						False
+					
+					IsFixedSize:		System.Boolean		.enumerableObject[IEnumerable][0008].IsFixedSize
+						True
+					
+					IsSynchronized:		System.Boolean		.enumerableObject[IEnumerable][0008].IsSynchronized
+						False
+					
+					[IEnumerable]:		System.Byte[][]		.enumerableObject[IEnumerable][0008][IEnumerable]
+						[values:]
+							00:     		[:Byte[]]							
+							{object number 0012}
+							byte[3]:
+								0001 02
+							01:     							
+							{object number 0013}
+							byte[0]:
+						[end values]
+
+
+				end of {0011} .enumerableObject[IEnumerable][0008]
+				09:     		[:Object[]]				
+				{object number 0014}
+					
+					Length:		System.Int32		.enumerableObject[IEnumerable][0009].Length
+						3
+					
+					LongLength:		System.Int64		.enumerableObject[IEnumerable][0009].LongLength
+						3
+					
+					Rank:		System.Int32		.enumerableObject[IEnumerable][0009].Rank
+						1
+					
+					SyncRoot:		System.Object[]		.enumerableObject[IEnumerable][0009].SyncRoot						
+						{already saved with number 0014}
+						
+					
+					IsReadOnly:		System.Boolean		.enumerableObject[IEnumerable][0009].IsReadOnly
+						False
+					
+					IsFixedSize:		System.Boolean		.enumerableObject[IEnumerable][0009].IsFixedSize
+						True
+					
+					IsSynchronized:		System.Boolean		.enumerableObject[IEnumerable][0009].IsSynchronized
+						False
+					
+					[IEnumerable]:		System.Object[]		.enumerableObject[IEnumerable][0009][IEnumerable]
+						[values:]
+							00:     1		[:Int32]
+							01:     		[:Byte[]]							
+							{object number 0015}
+							byte[3]:
+								0001 02
+							02:     		[:Int32[]]							
+							{object number 0016}
+								
+								Length:		System.Int32		.enumerableObject[IEnumerable][0009][IEnumerable][0002].Length
+									3
+								
+								LongLength:		System.Int64		.enumerableObject[IEnumerable][0009][IEnumerable][0002].LongLength
+									3
+								
+								Rank:		System.Int32		.enumerableObject[IEnumerable][0009][IEnumerable][0002].Rank
+									1
+								
+								SyncRoot:		System.Int32[]		.enumerableObject[IEnumerable][0009][IEnumerable][0002].SyncRoot									
+									{already saved with number 0016}
+									
+								
+								IsReadOnly:		System.Boolean		.enumerableObject[IEnumerable][0009][IEnumerable][0002].IsReadOnly
+									False
+								
+								IsFixedSize:		System.Boolean		.enumerableObject[IEnumerable][0009][IEnumerable][0002].IsFixedSize
+									True
+								
+								IsSynchronized:		System.Boolean		.enumerableObject[IEnumerable][0009][IEnumerable][0002].IsSynchronized
+									False
+								
+								[IEnumerable]:		System.Int32[]		.enumerableObject[IEnumerable][0009][IEnumerable][0002][IEnumerable]
+									[values:]
+										00:     0		[:Int32]
+										01:     1
+										02:     2
+									[end values]
+
+
+							end of {0016} .enumerableObject[IEnumerable][0009][IEnumerable][0002]
+						[end values]
+
+
+				end of {0014} .enumerableObject[IEnumerable][0009]
+			[end values]
+
+
+	end of {0002} .enumerableObject
+
+end of {0001} 
