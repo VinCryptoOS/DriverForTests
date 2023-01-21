@@ -240,7 +240,7 @@ public class DriverForTests
                             if (LogFileName != null)
                             lock (tasks)
                             {
-                                File.AppendAllText( LogFileName, $"ERROR in task {task.Name}\n{e.Message}\n{e?.ex?.StackTrace}\n\n" );
+                                File.AppendAllText( LogFileName, $"ERROR in task {task.Name}\n{e.Message}\nException:\n{getFullExceptionString(e?.ex)}" );
                             }
                         }
                     }
@@ -249,6 +249,14 @@ public class DriverForTests
                 Console.WriteLine();
                 PrintMainTaskState(ended, errored, tasks);
             }
+        }
+
+        string getFullExceptionString(Exception? e)
+        {
+            if (e == null)
+                return "";
+
+            return $"{e.Message}\n{e.StackTrace}\n\n" + getFullExceptionString(e.InnerException);
         }
 
         void waitForTasks(ExecuteTestsOptions options, int acceptableThreadCount, bool showWaitTasks = false)
