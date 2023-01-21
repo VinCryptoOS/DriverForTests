@@ -125,7 +125,7 @@ public class DriverForTests
         Console.Clear();
         if ((options.logNamesOfTests & 2) > 0)
         {
-            Console.WriteLine("Tasks positive filtered:");
+            Console.WriteLine("All tasks ended:");
             foreach (var task in tasks)
             {
                 Console.WriteLine($"\t{task.Name, 32}\t{(task.endTime - task.started).TotalMilliseconds:F0} ms");
