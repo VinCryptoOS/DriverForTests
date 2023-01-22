@@ -222,6 +222,12 @@
         <member name="F:DriverForTestsLib.TestTaskTag.priority">
             <summary>Приоритет тега: чем больше, тем выше приоритет</summary>
         </member>
+        <member name="F:DriverForTestsLib.TestTaskTag.duration">
+            <summary>Условная длительность теста (параметр длительности)</summary>
+        </member>
+        <member name="F:DriverForTestsLib.TestTaskTag.maxDuration">
+            <summary>true: тег указывает на то, что duration - это максимальная продолжительность (используется только в тегах для фильтрации). Для задач данный тег не имеет смысла</summary>
+        </member>
         <member name="M:DriverForTestsLib.TestTaskTag.#ctor(System.String,System.Double,System.Double)">
             <param name="tagName">Имя тега</param>
             <param name="tagPriority">Приоритет тега</param>

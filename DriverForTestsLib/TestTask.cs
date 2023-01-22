@@ -242,8 +242,9 @@ public class TestTaskTag
 {
                                                                         /// <summary>Имя тега. Должно быть всегда не null для конкретной задачи. Если null, то это значит, что это тег фильтра: если с таким тегом сравнивается задача, то он будет удовлетворять любому другому тегу</summary>
     public readonly string? name;                                       /// <summary>Приоритет тега: чем больше, тем выше приоритет</summary>
-    public readonly double  priority = 0.0d;
-    public readonly double  duration = -1d;
+    public readonly double  priority = 0.0d;                            /// <summary>Условная длительность теста (параметр длительности)</summary>
+    public readonly double  duration = -1d;                             /// <summary>true: тег указывает на то, что duration - это максимальная продолжительность (используется только в тегах для фильтрации). Для задач данный тег не имеет смысла</summary>
+    public          bool    maxDuration = true;
 
     /// <param name="tagName">Имя тега</param>
     /// <param name="tagPriority">Приоритет тега</param>
@@ -383,6 +384,7 @@ public class TestTaskTagCondition
         if (listOfNeedConditions.Count <= 0)
             return IsSatisfies.UNK;
 
+        var result = IsSatisfies.UNK;
         foreach (var condition in listOfNeedConditions)
         {
             if (condition.isMandatoryExcludingRule)
@@ -393,11 +395,15 @@ public class TestTaskTagCondition
                 continue;
             }
 
-            if (condition.isSatisfiesForTask(task).no)
+            var r = condition.isSatisfiesForTask(task);
+            if (r.no)
                 return IsSatisfies.NO;
+            else
+            if (r.yes && result.unk)
+                result = IsSatisfies.YES;
         }
 
-        return IsSatisfies.YES;
+        return result;
     }
 
     /// <summary>Проверка оператора TreeCount</summary>
@@ -592,13 +598,21 @@ public abstract class TestTask
 
             if (t.priority >= tag.priority)
             if (!isSatisfies.yes)
-            {
                 isSatisfies = IsSatisfies.YES;
-            }
 
             if (t.duration >= 0 && tag.duration >= 0)
-            if (t.duration > tag.duration)
-                return IsSatisfies.NO;
+            {
+                if (tag.maxDuration)
+                {
+                    if (t.duration > tag.duration)      // Выполняем все задачи, которые занимают не более tag.duration. Неравенство строгое
+                        return IsSatisfies.NO;
+                }
+                else
+                {
+                    if (t.duration <= tag.duration)
+                        return IsSatisfies.NO;
+                }
+            }
         }
 
         return isSatisfies;

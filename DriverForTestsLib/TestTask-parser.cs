@@ -127,7 +127,7 @@ public class TestConditionParser
             var cnd = new TestTaskTagCondition()
             {
                 priorityForCondition = p,
-                listOfNeedConditions = new List<TestTaskTagCondition>(mandatory[p].Count),
+                listOfNeedConditions = new List<TestTaskTagCondition>(positive[p].Count),
                 conditionOperator    = ConditionOperator.TreeCount
             };
 
@@ -143,7 +143,7 @@ public class TestConditionParser
                 };
                 cnd.listOfNeedConditions.Add(newCond);
 
-                var newTag = new TestTaskTag(ts.Name, double.MinValue, ts.Duration);
+                var newTag = new TestTaskTag(ts.Name, double.MinValue, ts.Duration)    {    maxDuration = !ts.isPositive    };
                 newCond.listOfNeedTags.Add(newTag);
             }
         }
