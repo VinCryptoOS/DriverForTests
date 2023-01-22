@@ -380,14 +380,23 @@ public class TestTaskTagCondition
         if (listOfNeedTags.Count < countForConditionOperator)
             return IsSatisfies.UNK;
 
-        var cnt = 0;
+        var ycnt = 0;
+        var acnt = 0;
         foreach (var tag in listOfNeedTags)
         {
-            if (task.isSatisfiesTag(tag).yes)
-                cnt++;
+            var tr = task.isSatisfiesTag(tag);
+
+            if (tr.yes)
+                ycnt++;
+
+            if (!tr.unk)
+                acnt++;
         }
 
-        return cnt >= countForConditionOperator ? IsSatisfies.YES : IsSatisfies.NO;
+        if (acnt < countForConditionOperator)
+            return IsSatisfies.UNK;
+
+        return ycnt >= countForConditionOperator ? IsSatisfies.YES : IsSatisfies.NO;
     }
 
     /// <summary>Проверка оператора TreeAnd</summary>
@@ -486,7 +495,7 @@ public class TestTaskTagCondition
                 var tr = condition.isSatisfiesForTask(task);
                 if (!tr.unk)
                 {
-                    result = condition.isSatisfiesForTask(task);
+                    result = tr;
                     curP   = condition.priorityForCondition;
                 }
             }
@@ -610,16 +619,28 @@ public abstract class TestTask
 
     /// <summary>Определяет, удовлетворяет ли задача заданному тегу с учётом указанного приоритета</summary>
     /// <param name="tag">Заданный тег, которому должна удовлетворять задача. Если тегов с таким именем нет - не удовлетворяет</param>
-    /// <returns>true, если задача удовлетворяет тегу</returns>
+    /// <returns>"yes", если задача удовлетворяет тегу</returns>
     public virtual IsSatisfies isSatisfiesTag(TestTaskTag tag)
     {
         IsSatisfies isSatisfies = IsSatisfies.UNK;
         IsSatisfies durFlag     = tag.duration < 0 ? IsSatisfies.YES : IsSatisfies.UNK;
+
+        // Если тегов нет вообще, то мы не удовлетворяем ничему
+        if (tags.Count <= 0)
+        {
+            if (tag.name == null)           // Тег <all tags> всегда всему удовлетворяет
+                return IsSatisfies.YES;
+            else
+                return IsSatisfies.NO;
+        }
+
         foreach (var t in tags)
         {
             if (tag.name != null)           // null удовлетворяет любому поисковому условию
-            if (t.name   != tag.name)
-                continue;
+            {
+                if (t.name != tag.name)
+                    continue;
+            }
 
             // Если maxDuration сброшен, значит мы ищем длительные задачи и приоритет не важен, т.к. все эти задачи идут в инвертированных правилах
             if (t.priority >= tag.priority || !tag.maxDuration)
@@ -644,8 +665,16 @@ public abstract class TestTask
             }
         }
 
-        if (tag.maxDuration || isSatisfies.unk)
+        if (tag.maxDuration)
+        {
+            if (isSatisfies.unk)
+                return IsSatisfies.NO;
+
             return isSatisfies;
+        }
+
+        if (isSatisfies.unk)
+            return IsSatisfies.NO;
 
         return durFlag;
     }

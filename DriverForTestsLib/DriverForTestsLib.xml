@@ -358,7 +358,7 @@
         <member name="M:DriverForTestsLib.TestTask.isSatisfiesTag(DriverForTestsLib.TestTaskTag)">
             <summary>Определяет, удовлетворяет ли задача заданному тегу с учётом указанного приоритета</summary>
             <param name="tag">Заданный тег, которому должна удовлетворять задача. Если тегов с таким именем нет - не удовлетворяет</param>
-            <returns>true, если задача удовлетворяет тегу</returns>
+            <returns>"yes", если задача удовлетворяет тегу</returns>
         </member>
         <member name="T:DriverForTestsLib.TestTagAttribute">
             <summary>Класс определяет атрибут, который навешивается на наследника TestTask.

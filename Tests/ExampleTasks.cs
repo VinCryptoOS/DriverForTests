@@ -9,6 +9,7 @@
 
 using System.Collections.Concurrent;
 using System.Text;
+using System.Text.RegularExpressions;
 using DriverForTestsLib;
 
 namespace Tests;
@@ -39,7 +40,7 @@ class Test1_1: BaseExampleTestTask
         taskFunc = () =>
         {
             Console.WriteLine("Задача Test1_1 началась");
-            Thread.Sleep(1000);
+            Thread.Sleep(200);
             Console.WriteLine("Задача Test1_1 закончилась");
         };
     }
@@ -54,7 +55,7 @@ class Test2_1: TestTask
         taskFunc = () =>
         {
             Console.WriteLine($"Задача {this.Name} началась");
-            Thread.Sleep(1000);
+            Thread.Sleep(200);
             Console.WriteLine($"Задача {Name} закончилась");
         };
     }
@@ -70,7 +71,7 @@ class TestSingleThread_1: TestTask
         taskFunc = () =>
         {
             Console.WriteLine($"Задача {Name} началась");
-            Thread.Sleep(1000);
+            Thread.Sleep(200);
             Console.WriteLine($"Задача {Name} закончилась");
         };
     }
@@ -88,7 +89,7 @@ class TestSlowAndFastAndMedium_1: BaseExampleTestTask
         taskFunc = () =>
         {
             Console.WriteLine($"Задача {Name} началась");
-            Thread.Sleep(1000);
+            Thread.Sleep(200);
 
             var error = new TestError();
             this.error.Add(error);
@@ -253,8 +254,10 @@ class ExampleAutoSaveTask: ExampleAutoSaveTask_parent
 
         var result = new List<string>(256);
         result.Add("");
+        result.Add("?");
         result.Add("1");
         result.Add("-1");
+        result.Add("1 -2");
         result.Add("<0 1");
         result.Add("<1 1");
         result.Add("<2 1");
@@ -281,7 +284,10 @@ class ExampleAutoSaveTask: ExampleAutoSaveTask_parent
         result.Add("+1 -2 -3");
         result.Add("-2 -3 <0 +1");
         result.Add("-2 -3 <1 +1");
+        result.Add("-1 -2 <0 -4");
         result.Add("-1 -2 <1 -4");
+        result.Add("-2 -3 <0 1");
+        result.Add("-2 -3 <1 1");
 
         addPattern(result, strs, 0);
 
@@ -371,6 +377,10 @@ class ExampleAutoSaveTask: ExampleAutoSaveTask_parent
 
     protected class Saver: TaskResultSaver
     {
+        public Regex r1 = new Regex("^[^0-9\\-<]*[0-9][^0-9\\-<]*$", RegexOptions.Compiled);
+        public Regex r2 = new Regex("^[^0-9\\-<]*[0-9][^0-9\\-<]*[0-9][^0-9\\-<]*$", RegexOptions.Compiled);
+        public Regex r3 = new Regex("^[^0-9\\-<]*[0-9][^0-9\\-<]*[0-9][^0-9\\-<]*[0-9][^0-9\\-<]*$", RegexOptions.Compiled);
+        public Regex r4 = new Regex("^[^0-9\\-<]*[0-9][^0-9\\-<]*[0-9][^0-9\\-<]*[0-9][^0-9\\-<]*[0-9][^0-9\\-<]*$", RegexOptions.Compiled);
         public override object ExecuteTest(AutoSaveTestTask generalTask)
         {
             var lst    = new List<(string searchPattern, List<string> tasks)>(256);
@@ -392,6 +402,27 @@ class ExampleAutoSaveTask: ExampleAutoSaveTask_parent
                     {
                         L.Add(task.Name);
                     }
+
+                if (searchPattern == "?" || searchPattern == "" || searchPattern == "1 2 3 4 5")
+                if (L.Count != 32)
+                    throw new Exception($"L.Count != 32 {searchPattern}");
+
+                // Один символ
+                if (r1.IsMatch(searchPattern))
+                if (L.Count != 16)
+                    throw new Exception($"L.Count != 16 {searchPattern}");
+                // Два символа
+                if (r2.IsMatch(searchPattern))
+                if (L.Count != 24)
+                    throw new Exception($"L.Count != 24 {searchPattern}");
+                // Три символа
+                if (r3.IsMatch(searchPattern))
+                if (L.Count != 28)
+                    throw new Exception($"L.Count != 28 {searchPattern}");
+                // Четыре символа
+                if (r4.IsMatch(searchPattern))
+                if (L.Count != 30)
+                    throw new Exception($"L.Count != 30 {searchPattern}");
             }
 
             return lst;
