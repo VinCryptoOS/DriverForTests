@@ -14,7 +14,16 @@ public class TestError
 
 public class IsSatisfies
 {
+    /// <summary>Прдеставляет тип-перечисление возможных значений объекта IsSatisfies</summary>
     public enum Signs { no = -1, unknown = 0, yes = 1 }
+
+    /// <summary>Перечисляет все возможные значения (no, unknown, yes)</summary>
+    public static IEnumerable<IsSatisfies> enumAllPossibleValues()
+    {
+        yield return NO;
+        yield return UNK;
+        yield return YES;
+    }
 
     public class FreezedException: Exception
     {}
@@ -74,7 +83,13 @@ public class IsSatisfies
     }
 
     /// <summary>Осуществляет операцию отрицания над значением val (обращает её с помощью doReverse(Signs @is))</summary>
-    public void doReverse() => this.val = doReverse(val);
+    public IsSatisfies doReverse()
+    {
+        var a = this.LightClone();
+        a.val = a.doReverse(a.val);
+
+        return a;
+    }
 
     /// <summary>Преобразует логическую переменную @is в булеву перменную</summary>
     /// <param name="is">Логическая переменная для преобразования</param>
@@ -121,6 +136,7 @@ public class IsSatisfies
     }
 
     public override int GetHashCode() => (int) val ^ -0x075F_ECAA;
+    public override string ToString() => val.ToString();
 
                                                                                                 /// <summary>Статический объект, представляющий значение yes</summary>
     public static IsSatisfies YES = new IsSatisfies(Signs.yes, true);                           /// <summary>Статический объект, представляёщий значение no</summary>
@@ -272,12 +288,12 @@ public class TestTaskTagCondition
     /// <remarks>Допустимо только одно из значений</remarks>
     public enum ConditionOperator { Error = 0, And = 1, Count = 2, TreeAnd = 4, TreeCount = 8, AlwaysTrue = 16, AlwaysFalse = 32, TreePriority = 64 };
 
-                                                                            /// <summary>Список тегов, участвующих в условии. Используется при операторах And и Count</summary>
-    public List<TestTaskTag>? listOfNeedTags;                               /// <summary>Оператор, который будет применён к тегам (and, count, tree)</summary>
-    public ConditionOperator  conditionOperator;                            /// <summary>Необходимое количество повторов для операторов Count и TreeCount; при использовании этого оператора должно быть больше 0</summary>
-    public Int64              countForConditionOperator = 1;                /// <summary>Результат вычислений подвергается логическому отрицанию</summary>
-    public bool               isReversedCondition = false;                  /// <summary>Если этому правилу соответствует задача, то она вызовет срабатывание false на всём условии вне зависимости от оператора</summary>
-    public bool               isMandatoryExcludingRule = false;             /// <summary>Побеждает задача с большим приоритетом (если она yes, то условие выполнено); только для TreePriority. Для одинакового приоритета - and</summary>
+                                                                                /// <summary>Список тегов, участвующих в условии. Используется при операторах And и Count</summary>
+    public List<TestTaskTag>? listOfNeedTags;                                   /// <summary>Оператор, который будет применён к тегам (and, count, tree)</summary>
+    public ConditionOperator  conditionOperator;                                /// <summary>Необходимое количество повторов для операторов Count и TreeCount; при использовании этого оператора должно быть больше 0</summary>
+    public Int64              countForConditionOperator = 1;                    /// <summary>Результат вычислений подвергается логическому отрицанию</summary>
+    public bool               isReversedCondition = false;                      /// <summary>Если этому правилу соответствует задача, то она вызовет срабатывание false на всём условии вне зависимости от оператора</summary>
+    public bool               isMandatoryExcludingRule = false;                 /// <summary>Побеждает задача с большим приоритетом (если она yes, то условие выполнено); только для TreePriority. Для одинакового приоритета - and</summary>
     public double             priorityForCondition = double.MinValue;
 
     /// <summary>Список подусловий, участвующих в этом условии. Используется с операторами TreeAnd, TreeCount, TreePriority</summary>
@@ -289,7 +305,7 @@ public class TestTaskTagCondition
     {
         var v = isSatisfiesForTask_withoutReverse(task);
         if (isReversedCondition)
-            v.doReverse();
+            v = v.doReverse();
 
         return v;
     }
@@ -430,9 +446,13 @@ public class TestTaskTagCondition
                 continue;
             }
 
-            acnt++;
-            if (condition.isSatisfiesForTask(task).yes)
+            var r = condition.isSatisfiesForTask(task);
+            if (r.yes)
                 ycnt++;
+
+            // Мы подсчитываем только сработавшие задачи. Если их будет недостаточно, то считаем, что само условие просто к этой задаче вообще не применимо
+            if (!r.unk)
+                acnt++;
         }
 
         // Если встретились только isMandatoryExcludingRule-задачи или, в целом, обычных задач было недостаточно, чтобы набрать нужное число, даже если все они удовлетворят условию
@@ -463,8 +483,12 @@ public class TestTaskTagCondition
 
             if (condition.priorityForCondition > curP)
             {
-                result = condition.isSatisfiesForTask(task);
-                curP   = condition.priorityForCondition;
+                var tr = condition.isSatisfiesForTask(task);
+                if (!tr.unk)
+                {
+                    result = condition.isSatisfiesForTask(task);
+                    curP   = condition.priorityForCondition;
+                }
             }
             else
             if (condition.priorityForCondition == curP)

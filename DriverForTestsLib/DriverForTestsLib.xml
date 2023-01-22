@@ -117,7 +117,7 @@
             <summary>Результат работы парсера: условия на выполняемые TestTask</summary>
         </member>
         <member name="M:DriverForTestsLib.TestConditionParser.#ctor(System.String,System.Boolean)">
-            <summary>Парсит простую строку параметров</summary>
+            <summary>Парсит простую строку параметров. Документация по языку фильтрации в TestTask-parser.md</summary>
             <param name="tags">Строка вида +ТегДляПриоритетногоВключения ПростоТегДляВключения -ТегДляИсключения &lt;2 ЕщёОдинТегБудетВключатсяЕслиDurationНеБолее2</param>
             <param name="outputToConsole">true - вывести на консоль теги</param>
             <remarks>
@@ -127,6 +127,12 @@
         </member>
         <member name="T:DriverForTestsLib.TestError">
             <summary>Класс описывает ошибку, возникшую в ходе теста</summary>
+        </member>
+        <member name="T:DriverForTestsLib.IsSatisfies.Signs">
+            <summary>Прдеставляет тип-перечисление возможных значений объекта IsSatisfies</summary>
+        </member>
+        <member name="M:DriverForTestsLib.IsSatisfies.enumAllPossibleValues">
+            <summary>Перечисляет все возможные значения (no, unknown, yes)</summary>
         </member>
         <member name="M:DriverForTestsLib.IsSatisfies.#ctor(DriverForTestsLib.IsSatisfies.Signs,System.Boolean)">
             <summary>Создаёт объект</summary>

@@ -1,0 +1,34 @@
+
+Докажем, что mandatory всегда возвращает значение, отличное от IsSatisfies.no
+
+Список индексов приоритета durations всегда содержит хотя бы один вариант
+    см. addDurationForTestTagDescriptionList(dIndex, duration); перед циклом
+
+Всегда: mandatory содержит не менее одного элемента listOfNeedConditions (назовём его mc). Количество mc зависит от количества уровней duration, заданных в условиях
+
+1.
+Если множество обязательных тегов пусто,
+    Каждый mc содержит пустой список listOfNeedTags, т.к. нет ни одного тега
+    Пустой список mc.listOfNeedTags на условии Count всегда возвращает unknown
+    mc добавляется в mandatory с оператором TreeCount и установленным флагом isMandatoryExcludingRule
+    Следовательно, если все mc возвращают не yes, то TreeCount в mandatory возвращает unknown
+        Это следует из условия if (acnt < countForConditionOperator) в isSatisfiesForTask_TreeCount
+    Т.к. сама mandatory имеет флаг isReversedCondition, то в реальности она возвращает unknown
+    В этом варианте условие теоремы выполнено
+
+2.
+Если множество обязательных тегов не пусто
+    Какой-то из список mc не пуст. Но другие могут быть пусты
+    Пустой список mc (mc.listOfNeedTags) всегда возвращает unknown
+    Непустой список может вернуть следующие варианты:
+        2.mc.1. Если задача совпала по тегу, но не совпала по значениям приоритета и длительности, то no
+        2.mc.2. Если задача не совпала по тегу: то unknown
+        2.mc.2. Если задача совпала, то yes
+
+    Если хотя бы один mc возвращает yes, то TreeCount в mandatory возвращает IsSatisfies.no
+    В противном случае, если все mc возвращают не yes, то TreeCount в mandatory возвращает unknown
+        Это следует из условия if (acnt < countForConditionOperator) в isSatisfiesForTask_TreeCount
+
+    Т.к. сама mandatory имеет флаг isReversedCondition, то в реальности значение IsSatisfies.no она инвертирует на IsSatisfies.yes
+    Значение IsSatisfies.unknown не изменяется.
+    Таким образом, и здесь no нигде не будет возвращено

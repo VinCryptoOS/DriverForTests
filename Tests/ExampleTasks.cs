@@ -216,27 +216,129 @@ class ExampleAutoSaveTask_parent: AutoSaveTestTask
 [TestTagAttribute("autosave")]
 class ExampleAutoSaveTask: ExampleAutoSaveTask_parent
 {
-    public static IEnumerable<string> getTasks()
+    /// <summary>Генерирует шаблоны поиска для тестирования</summary>
+    public static void addPattern(List<string> result, string[] strs, int index)
     {
-        var plus  = new string[] {"+", "", "-"};
+        if (index >= strs.Length)
+            return;
 
-        foreach (var a1 in plus)
-        foreach (var a2 in plus)
-        foreach (var a3 in plus)
-        foreach (var a4 in plus)
-        foreach (var a5 in plus)
+        var variants = new string?[] { null, "", "-", "+", "<1 " };
+
+        foreach (var v in variants)
         {
-            var p = $"{a1}1 {a2}2 {a3}3 {a4}4 {a5}5";
-            yield return p;
+            // Подготавливаем описатель нашей задачи: тега index либо нет, либо он есть в разных вариантах
+            var tagName =  v != null ? strs[index] : "";
+            if (!String.IsNullOrEmpty(tagName))
+                tagName = v + tagName;
+
+            var r = new List<string>(256);
+            addPattern(r, strs, index + 1);
+
+            if (r.Count > 0)
+            foreach (var rv in r)
+            {
+                var name = $"{tagName, 3} {rv}";
+                result.Add(name);
+            }
+            else
+            {
+                result.Add($"{tagName, 3}");
+            }
+        }
+    }
+
+    public static IEnumerable<string> getPatterns()
+    {
+        var strs = TestConstructor_AU.tasksNamesTags;
+
+        var result = new List<string>(256);
+        result.Add("1");
+        result.Add("1 <0 -1");
+        result.Add("<0 1");
+        result.Add("<1 1");
+        result.Add("<2 1");
+        result.Add("<0 -1");
+        result.Add("<1 -1");
+        result.Add("<2 -1");
+        result.Add("1 <1 -1");
+        result.Add("1 <2 -1");
+        result.Add("-1 <0 1");
+        result.Add("-1 <1 1");
+        result.Add("-1 <2 1");
+        result.Add("1 <0 -2");
+        result.Add("-2 <0 1");
+        result.Add("1 <1 -2");
+        result.Add("-2 <1 1");
+        result.Add("1 <2 -2");
+        result.Add("-2 <2 1");
+
+        addPattern(result, strs, 0);
+
+        return result;
+    }
+
+    /// <summary>Конструктор тестовых задач для TestTask_Conditions_Main</summary>
+    public class TestConstructor_AU: TestConstructor
+    {
+        public TestConstructor_AU(): base()
+        {}
+
+        /// <summary>Генерирует шаблоны пустых (незапускаемых) задач для тестирования</summary>
+        public void addTaskTag(List<TestTask_Conditions> result, string[] strs, int index)
+        {
+            if (index >= strs.Length)
+                return;
+
+            var variants = new bool[] { true, false };
+
+            foreach (var v in variants)
+            {
+                // Подготавливаем описатель нашей задачи: тега index либо нет, либо он есть в разных вариантах
+                var tagName =  v ? strs[index] : "";
+
+                var r = new List<TestTask_Conditions>(256);
+                addTaskTag(r, strs, index + 1);
+
+                if (r.Count > 0)
+                foreach (var rv in r)
+                {
+                    var name = $"{tagName, 3} {rv.Name}";
+
+                    var task = new TestTask_Conditions(name, this);
+                    if (v)
+                        task.tags.Add(new TestTaskTag(tagName, -1d, 1d));
+
+                    task.tags.AddRange(rv.tags);
+
+                    result.Add(task);
+                }
+                else
+                {
+                    var name = $"{tagName, 3}";
+
+                    var task = new TestTask_Conditions(name, this);
+                    if (v)
+                        task.tags.Add(new TestTaskTag(tagName, -1d, 1d));
+
+                    result.Add(task);
+                }
+            }
         }
 
-        var testStrs = new string[]
+        public static string[] tasksNamesTags = new string[] { "1", "2", "3", "4", "5" };
+        public IEnumerable<TestTask_Conditions> getTasks()
         {
-            "", "+1", "-1", "1", "tag1", "+tag1", "++tag1", "--tag1", ",", "   ", ",,,"
-        };
-        foreach (var testStr in testStrs)
+            var strs = tasksNamesTags;
+
+            var result = new List<TestTask_Conditions>(256);
+            addTaskTag(result, strs, 0);
+
+            return result;
+        }
+
+        public override void CreateTasksLists(ConcurrentQueue<TestTask> tasks)
         {
-            yield return testStr;
+            TestConstructor.addTasksForQueue(getTasks(), tasks);
         }
     }
 
@@ -258,14 +360,27 @@ class ExampleAutoSaveTask: ExampleAutoSaveTask_parent
 
     protected class Saver: TaskResultSaver
     {
-        public override object ExecuteTest(AutoSaveTestTask task)
+        public override object ExecuteTest(AutoSaveTestTask generalTask)
         {
-            var lst = new List<TestTaskTagCondition?>(256);
+            var lst    = new List<(string searchPattern, List<string> tasks)>(256);
+            var tasks  = new ConcurrentQueue<TestTask>();
+            var tc     = new TestConstructor_AU();
 
-            foreach (var searchPattern in ExampleAutoSaveTask.getTasks())
+            tc.CreateTasksLists(tasks);
+
+            foreach (var searchPattern in getPatterns())
             {
-                var parser = new TestConditionParser(String.Join(',', searchPattern));
-                lst.Add(parser.resultCondition);
+                var parser    = new TestConditionParser(searchPattern);
+                tc.conditions = parser.resultCondition;
+
+                var L = new List<string>(128);
+                lst.Add((searchPattern, L));
+
+                foreach (var task in tasks)
+                    if (tc.ShouldBeExecuted(task))
+                    {
+                        L.Add(task.Name);
+                    }
             }
 
             return lst;
@@ -318,10 +433,10 @@ public class TestConstructor_Conditions: TestConstructor
     }
 }
 
-// Тестовая задача для TestTask_Conditions_Main
+// Тестовая задача для TestTask_Conditions_Main и для задачи ExampleAutoSaveTask
 public class TestTask_Conditions: TestTask
 {
-    public TestTask_Conditions(string name, TestConstructor_Conditions constructor): base(name, constructor)
+    public TestTask_Conditions(string name, TestConstructor constructor): base(name, constructor)
     {}
 }
 

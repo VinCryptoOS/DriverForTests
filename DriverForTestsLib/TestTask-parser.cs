@@ -8,7 +8,7 @@ public class TestConditionParser
     /// <summary>Результат работы парсера: условия на выполняемые TestTask</summary>
     public TestTaskTagCondition? resultCondition = null;
 
-    /// <summary>Парсит простую строку параметров</summary>
+    /// <summary>Парсит простую строку параметров. Документация по языку фильтрации в TestTask-parser.md</summary>
     /// <param name="tags">Строка вида +ТегДляПриоритетногоВключения ПростоТегДляВключения -ТегДляИсключения &lt;2 ЕщёОдинТегБудетВключатсяЕслиDurationНеБолее2</param>
     /// <param name="outputToConsole">true - вывести на консоль теги</param>
     /// <remarks>
@@ -78,19 +78,19 @@ public class TestConditionParser
             // Если задача обязательная (mandatory)
             if (yes)
                 AddNewTestTagDescriptionToList(mandatory, dIndex, duration, true, arg);
-            else
+            // else // Если все теги только mandatory, то positive будет пусто, что приведёт к тому, что фильтр будет срабатывать всегда
                 AddNewTestTagDescriptionToList(positive,  dIndex, duration, !not, arg);
         }
 
-        conditions.conditionOperator = ConditionOperator.TreePriority;
-        conditions.countForConditionOperator = 1;
+        conditions.conditionOperator    = ConditionOperator.TreePriority;
         conditions.listOfNeedConditions = new List<TestTaskTagCondition>(8);
 
         var mandatoryConditions = new TestTaskTagCondition()
                                         {
                                             priorityForCondition = double.MaxValue,
                                             listOfNeedConditions = new List<TestTaskTagCondition>(),
-                                            conditionOperator    = ConditionOperator.TreeCount
+                                            conditionOperator    = ConditionOperator.TreeCount,
+                                            isReversedCondition  = true
                                         };
         var aConditions         = new TestTaskTagCondition()
                                         {
@@ -110,7 +110,8 @@ public class TestConditionParser
             var cnd = new TestTaskTagCondition()
             {
                 listOfNeedTags    = new List<TestTaskTag>(),
-                conditionOperator = ConditionOperator.Count
+                conditionOperator = ConditionOperator.Count,
+                isMandatoryExcludingRule = true
             };
 
             mandatoryConditions.listOfNeedConditions.Add(cnd);
@@ -122,6 +123,8 @@ public class TestConditionParser
             }
         }
 
+        // Добавляем во всем уровни приоритетов позитивные условия
+        // 4 <0 4 <0 4 - чем правее тег, тем он более приоритетный. Значение duration не важно
         for (int p = 0; p < durations.Count; p++)
         {
             var cnd = new TestTaskTagCondition()
@@ -135,16 +138,31 @@ public class TestConditionParser
 
             foreach (var ts in positive[p])
             {
-                var newCond = new TestTaskTagCondition()
-                {
-                    listOfNeedTags           = new List<TestTaskTag>(1),
-                    isMandatoryExcludingRule = !ts.isPositive,
-                    conditionOperator        = ConditionOperator.Count
-                };
-                cnd.listOfNeedConditions.Add(newCond);
+                if (!ts.isPositive)
+                    continue;
 
-                var newTag = new TestTaskTag(ts.Name, double.MinValue, ts.Duration)    {    maxDuration = !ts.isPositive    };
-                newCond.listOfNeedTags.Add(newTag);
+                TestTaskTagCondition newCond = newTestTaskTagCondition(ts);
+
+                cnd.listOfNeedConditions.Add(newCond);
+            }
+        }
+
+        // Негативные условия нужно добавить так, чтобы они выбивали позитивные по всем уровням приоритетов
+        // Например, условие -4 <0 5 должно выбивать и условие "5", то есть попасть на более высокий приоритет
+        for (int p = 0; p < durations.Count; p++)
+        {
+            foreach (var ts in positive[p])
+            {
+                if (ts.isPositive)
+                    continue;
+
+                TestTaskTagCondition newCond = newTestTaskTagCondition(ts);
+
+                for (int pa = p; pa < durations.Count; pa++)
+                {
+                    var cnd = findConditionByPriority(aConditions.listOfNeedConditions, pa); if (cnd.listOfNeedConditions is null) throw new Exception();
+                    cnd.listOfNeedConditions.Add(newCond);
+                }
             }
         }
 
@@ -161,6 +179,30 @@ public class TestConditionParser
         {
             var ttd = new TestTagDescription { Name = arg, Duration = duration, isPositive = isPositive };
             list[dIndex].Add(ttd);
+        }
+
+        TestTaskTagCondition findConditionByPriority(List<TestTaskTagCondition> list, int p)
+        {
+            foreach (var cnd in list)
+                if (cnd.priorityForCondition == p)
+                    return cnd;
+
+            throw new Exception("TestConditionParser.findConditionByPriority: fatal algorithmic error");
+        }
+
+        static TestTaskTagCondition newTestTaskTagCondition(TestTagDescription ts)
+        {
+            var newCond = new TestTaskTagCondition()
+            {
+                listOfNeedTags = new List<TestTaskTag>(1),
+                isMandatoryExcludingRule = !ts.isPositive,
+                conditionOperator = ConditionOperator.Count
+            };
+
+            // maxDuration = !ts.isPositive - если идёт исключение каких-то задач, то оно идёт для задач большего времени, а не меньшего
+            var newTag = new TestTaskTag(ts.Name, double.MinValue, ts.Duration) { maxDuration = !ts.isPositive };
+            newCond.listOfNeedTags.Add(newTag);
+            return newCond;
         }
     }
 
