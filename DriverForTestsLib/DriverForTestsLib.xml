@@ -232,7 +232,7 @@
             <summary>Условная длительность теста (параметр длительности)</summary>
         </member>
         <member name="F:DriverForTestsLib.TestTaskTag.maxDuration">
-            <summary>true: тег указывает на то, что duration - это максимальная продолжительность (используется только в тегах для фильтрации). Для задач данный тег не имеет смысла</summary>
+            <summary>Для аттрибутов задач данный тег не имеет смысла. true - нормальное значение тега. Указывает на то, что duration - это максимальная продолжительность (false используется только в тегах для фильтрации и указывает на то, что задача должна быть строго более duration)</summary>
         </member>
         <member name="M:DriverForTestsLib.TestTaskTag.#ctor(System.String,System.Double,System.Double)">
             <param name="tagName">Имя тега</param>

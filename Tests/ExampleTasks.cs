@@ -3,8 +3,8 @@
 */
 
 // #define CAN_CREATEFILE_FOR_TestBytes
-#define CAN_CREATEFILE_FOR_conditions
-#define CAN_CREATEFILE_FOR_AUTOSAVE
+// #define CAN_CREATEFILE_FOR_conditions
+// #define CAN_CREATEFILE_FOR_AUTOSAVE
 
 
 using System.Collections.Concurrent;
@@ -252,25 +252,36 @@ class ExampleAutoSaveTask: ExampleAutoSaveTask_parent
         var strs = TestConstructor_AU.tasksNamesTags;
 
         var result = new List<string>(256);
+        result.Add("");
         result.Add("1");
-        result.Add("1 <0 -1");
+        result.Add("-1");
         result.Add("<0 1");
         result.Add("<1 1");
         result.Add("<2 1");
+        result.Add("1 <0 -1");
+        result.Add("1 <1 -1");
         result.Add("<0 -1");
+        result.Add("? <0 -1");
         result.Add("<1 -1");
+        result.Add("? <1 -1");
         result.Add("<2 -1");
+        result.Add("? <2 -1");
         result.Add("1 <1 -1");
         result.Add("1 <2 -1");
         result.Add("-1 <0 1");
         result.Add("-1 <1 1");
         result.Add("-1 <2 1");
         result.Add("1 <0 -2");
-        result.Add("-2 <0 1");
         result.Add("1 <1 -2");
+        result.Add("-2 <0 1");
         result.Add("-2 <1 1");
         result.Add("1 <2 -2");
         result.Add("-2 <2 1");
+
+        result.Add("+1 -2 -3");
+        result.Add("-2 -3 <0 +1");
+        result.Add("-2 -3 <1 +1");
+        result.Add("-1 -2 <1 -4");
 
         addPattern(result, strs, 0);
 

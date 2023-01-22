@@ -259,7 +259,7 @@ public class TestTaskTag
                                                                         /// <summary>Имя тега. Должно быть всегда не null для конкретной задачи. Если null, то это значит, что это тег фильтра: если с таким тегом сравнивается задача, то он будет удовлетворять любому другому тегу</summary>
     public readonly string? name;                                       /// <summary>Приоритет тега: чем больше, тем выше приоритет</summary>
     public readonly double  priority = 0.0d;                            /// <summary>Условная длительность теста (параметр длительности)</summary>
-    public readonly double  duration = -1d;                             /// <summary>true: тег указывает на то, что duration - это максимальная продолжительность (используется только в тегах для фильтрации). Для задач данный тег не имеет смысла</summary>
+    public readonly double  duration = -1d;                             /// <summary>Для аттрибутов задач данный тег не имеет смысла. true - нормальное значение тега. Указывает на то, что duration - это максимальная продолжительность (false используется только в тегах для фильтрации и указывает на то, что задача должна быть строго более duration)</summary>
     public          bool    maxDuration = true;
 
     /// <param name="tagName">Имя тега</param>
@@ -614,32 +614,40 @@ public abstract class TestTask
     public virtual IsSatisfies isSatisfiesTag(TestTaskTag tag)
     {
         IsSatisfies isSatisfies = IsSatisfies.UNK;
+        IsSatisfies durFlag     = tag.duration < 0 ? IsSatisfies.YES : IsSatisfies.UNK;
         foreach (var t in tags)
         {
             if (tag.name != null)           // null удовлетворяет любому поисковому условию
             if (t.name   != tag.name)
                 continue;
 
-            if (t.priority >= tag.priority)
-            if (!isSatisfies.yes)
-                isSatisfies = IsSatisfies.YES;
+            // Если maxDuration сброшен, значит мы ищем длительные задачи и приоритет не важен, т.к. все эти задачи идут в инвертированных правилах
+            if (t.priority >= tag.priority || !tag.maxDuration)
+            {
+                if (!isSatisfies.yes)
+                    isSatisfies = IsSatisfies.YES;
+            }
 
+            // Даже если приоритет неверный, всё равно проверяем задачу на длительность
             if (t.duration >= 0 && tag.duration >= 0)
             {
-                if (tag.maxDuration)
+                if (durFlag.unk)
+                    durFlag = IsSatisfies.NO;
+
+                if (t.duration > tag.duration)      // Выполняем все задачи, которые занимают не более tag.duration. Неравенство строгое
                 {
-                    if (t.duration > tag.duration)      // Выполняем все задачи, которые занимают не более tag.duration. Неравенство строгое
+                    if (tag.maxDuration)
                         return IsSatisfies.NO;
-                }
-                else
-                {
-                    if (t.duration <= tag.duration)
-                        return IsSatisfies.NO;
+                    else
+                        durFlag = IsSatisfies.YES;
                 }
             }
         }
 
-        return isSatisfies;
+        if (tag.maxDuration || isSatisfies.unk)
+            return isSatisfies;
+
+        return durFlag;
     }
 }
 
