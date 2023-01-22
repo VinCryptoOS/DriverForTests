@@ -3,11 +3,131 @@ using System.Diagnostics;
 
 namespace DriverForTestsLib;
 
+using static IsSatisfies;
+
 /// <summary>Класс описывает ошибку, возникшую в ходе теста</summary>
 public class TestError
 {
     public Exception? ex = null;
     public string     Message = "";
+}
+
+public class IsSatisfies
+{
+    public enum Signs { no = -1, unknown = 0, yes = 1 }
+
+    public class FreezedException: Exception
+    {}
+
+    protected Signs _val;
+    public    Signs  val
+    {
+        get => _val;
+        set
+        {
+            if (_isFreezed)
+                throw new FreezedException();
+
+            _val = value;
+        }
+    }
+
+    protected bool _isFreezed = false;
+    public    bool  isFreezed
+    {
+        get => _isFreezed;
+        set
+        {
+            if (value)
+                _isFreezed = true;
+        }
+    }
+
+    /// <summary>Создаёт объект</summary>
+    /// <param name="value">Значение объекта</param>
+    /// <param name="freezed">Объект заморожен (нет возможности изменять значение объекта)</param>
+    public IsSatisfies(Signs value, bool freezed = false)
+    {
+        this.val       = value;
+        this.isFreezed = freezed;
+    }
+
+    /// <summary>Создаёт объект из булевской переменной: true == yes, false = no</summary>
+    /// <param name="bValue">Булевская переменная</param>
+    public IsSatisfies(bool bValue): this(bValue ? Signs.yes : Signs.no)
+    {}
+
+    /// <summary>Осуществляет операцию отрицания (обращает логическую переменную @is)</summary>
+    /// <param name="is">Переменная для обращения</param>
+    /// <returns>Результат обращения</returns>
+    public Signs doReverse(Signs @is)
+    {
+        switch (@is)
+        {
+            case Signs.yes:     return Signs.no;
+            case Signs.no :     return Signs.yes;
+            case Signs.unknown: return Signs.unknown;
+
+            default:
+                throw new NotImplementedException($"IsSatisfies_helper.doReverse (for {@is})");
+        }
+    }
+
+    /// <summary>Осуществляет операцию отрицания над значением val (обращает её с помощью doReverse(Signs @is))</summary>
+    public void doReverse() => this.val = doReverse(val);
+
+    /// <summary>Преобразует логическую переменную @is в булеву перменную</summary>
+    /// <param name="is">Логическая переменная для преобразования</param>
+    /// <param name="unknown">Значение по умолчанию, если @is не определена</param>
+    /// <returns></returns>
+    public bool toBool(Signs @is, bool unknown = true)
+    {
+        switch (@is)
+        {
+            case Signs.yes:     return true;
+            case Signs.no :     return false;
+            case Signs.unknown: return unknown;
+
+            default:
+                throw new NotImplementedException($"IsSatisfies.toBool (for {@is})");
+        }
+    }
+
+    /// <summary>Преобразует значение объекта (поле val) в булеву перменную и возвращает полученный результат (val не изменяется)</summary>
+    /// <param name="unknown">Значение по умолчанию, если @is не определена</param>
+    /// <returns>Вычисленное значение</returns>
+    public bool toBool(bool unknown = true) => toBool(this.val, unknown);
+                                                                                                /// <summary>Возвращает true, если значение объекта равно yes</summary>
+    public bool yes => val == Signs.yes;                                                        /// <summary>Возвращает true, если значение объекта равно no</summary>
+    public bool no  => val == Signs.no;                                                         /// <summary>Возвращает true, если значение объекта равно unknown</summary>
+    public bool unk => val == Signs.unknown;
+
+    public static bool operator ==(IsSatisfies a, IsSatisfies b)
+    {
+        return a.val == b.val;
+    }
+
+    public static bool operator !=(IsSatisfies a, IsSatisfies b)
+    {
+        return a.val != b.val;
+    }
+
+    public override bool Equals(object? obj)
+    {
+        if (obj is IsSatisfies v)
+            return this == v;
+
+        return false;
+    }
+
+    public override int GetHashCode() => (int) val ^ -0x075F_ECAA;
+
+                                                                                                /// <summary>Статический объект, представляющий значение yes</summary>
+    public static IsSatisfies YES = new IsSatisfies(Signs.yes, true);                           /// <summary>Статический объект, представляёщий значение no</summary>
+    public static IsSatisfies NO  = new IsSatisfies(Signs.no, true);                            /// <summary>Статический объект, представляёщий значение unknown</summary>
+    public static IsSatisfies UNK = new IsSatisfies(Signs.unknown);
+                                                                                                /// <summary>Копирует значение val в новый незамороженный объект</summary>
+    public IsSatisfies LightClone() => new IsSatisfies(this.val);
 }
 
 /// <summary>Этот класс должен быть переопределён потомком.
@@ -26,13 +146,13 @@ public abstract class TestConstructor
     /// <returns>true - задачу нужно запускать</returns>
     public virtual bool ShouldBeExecuted(TestTask task)
     {
-        if (!task.isSatisfiesThePriorityAndDuration(generalPriorityForTasks, generalDuration))
+        if (task.isSatisfiesThePriorityAndDuration(generalPriorityForTasks, generalDuration).no)
             return false;
 
         if (conditions == null)
             return true;
 
-        return conditions.isSatisfiesForTask(task);
+        return conditions.isSatisfiesForTask(task).toBool();
     }
 
     /// <summary>Этот метод используется для сообщения в вызывающую программу о том,
@@ -154,9 +274,9 @@ public class TestTaskTagCondition
                                                                             /// <summary>Список тегов, участвующих в условии. Используется при операторах And и Count</summary>
     public List<TestTaskTag>? listOfNeedTags;                               /// <summary>Оператор, который будет применён к тегам (and, count, tree)</summary>
     public ConditionOperator  conditionOperator;                            /// <summary>Необходимое количество повторов для операторов Count и TreeCount; при использовании этого оператора должно быть больше 0</summary>
-    public Int64              countForConditionOperator;                    /// <summary>Результат вычислений подвергается логическому отрицанию</summary>
+    public Int64              countForConditionOperator = 1;                /// <summary>Результат вычислений подвергается логическому отрицанию</summary>
     public bool               isReversedCondition = false;                  /// <summary>Если этому правилу соответствует задача, то она вызовет срабатывание false на всём условии вне зависимости от оператора</summary>
-    public bool               isMandatoryExcludingRule = false;             /// <summary>Побеждает задача с большим приоритетом; только для TreePriority. Для одинакового приоритета - and</summary>
+    public bool               isMandatoryExcludingRule = false;             /// <summary>Побеждает задача с большим приоритетом (если она yes, то условие выполнено); только для TreePriority. Для одинакового приоритета - and</summary>
     public double             priorityForCondition = double.MinValue;
 
     /// <summary>Список подусловий, участвующих в этом условии. Используется с операторами TreeAnd, TreeCount, TreePriority</summary>
@@ -164,14 +284,18 @@ public class TestTaskTagCondition
 
     /// <summary>Проверяет, удовлетворяет ли задача task этому условию</summary>
     /// <param name="task">Проверяемая задача</param><returns>true, если задача удовлетворяет этому условию</returns>
-    public virtual bool isSatisfiesForTask(TestTask task)
+    public virtual IsSatisfies isSatisfiesForTask(TestTask task)
     {
-        return isSatisfiesForTask_withoutReverse(task) ^ isReversedCondition;
+        var v = isSatisfiesForTask_withoutReverse(task);
+        if (isReversedCondition)
+            v.doReverse();
+
+        return v;
     }
 
     /// <summary>Проверка, аналогичная isSatisfiesForTask, но без учёта isReversedCondition</summary>
     /// <param name="task">Проверяемая задача</param><returns>true, если задача удовлетворяет этому условию без учёта isReversedCondition</returns>
-    protected virtual bool isSatisfiesForTask_withoutReverse(TestTask task)
+    protected virtual IsSatisfies isSatisfiesForTask_withoutReverse(TestTask task)
     {
         switch (conditionOperator)
         {
@@ -188,10 +312,10 @@ public class TestTaskTagCondition
                 return isSatisfiesForTask_TreeCount(task);
 
             case ConditionOperator.AlwaysTrue:
-                return true;
-            
+                return new IsSatisfies(Signs.yes);
+
             case ConditionOperator.AlwaysFalse:
-                return false;
+                return new IsSatisfies(Signs.no);
 
             case ConditionOperator.TreePriority:
                 return isSatisfiesForTask_TreePriority(task);
@@ -203,105 +327,130 @@ public class TestTaskTagCondition
 
     /// <summary>Проверка оператора And</summary>
     /// <param name="task">Задача для проверки</param><returns>true, если задача удовлетворяет этому условию без учёта isReversedCondition</returns>
-    protected virtual bool isSatisfiesForTask_And(TestTask task)
+    protected virtual IsSatisfies isSatisfiesForTask_And(TestTask task)
     {
         if (listOfNeedTags == null)
             throw new Exception($"TestTaskTagCondition.isSatisfiesForTask_And: {nameof(listOfNeedTags)} == null");
 
+        IsSatisfies iss = IsSatisfies.UNK;
         foreach (var tag in listOfNeedTags)
         {
-            if (!task.isSatisfiesTag(tag))
-                return false;
+            var v = task.isSatisfiesTag(tag);
+            if (v.yes)
+            {
+                if (iss.unk)
+                    iss = IsSatisfies.YES;
+            }
+            else
+            if (v.no)
+            {
+                return IsSatisfies.NO;
+            }
         }
 
-        return true;
+        return iss;
     }
 
     /// <summary>Проверка оператора Count</summary>
     /// <param name="task">Задача для проверки</param><returns>true, если задача удовлетворяет этому условию без учёта isReversedCondition</returns>
-    protected virtual bool isSatisfiesForTask_Count(TestTask task)
+    protected virtual IsSatisfies isSatisfiesForTask_Count(TestTask task)
     {
         if (listOfNeedTags == null)
             throw new Exception($"TestTaskTagCondition.isSatisfiesForTask_Count: {nameof(listOfNeedTags)} == null");
         if (countForConditionOperator <= 0)
             throw new Exception($"TestTaskTagCondition.isSatisfiesForTask_Count: {nameof(countForConditionOperator)} <= 0");
 
+        if (listOfNeedTags.Count < countForConditionOperator)
+            return IsSatisfies.UNK;
+
         var cnt = 0;
         foreach (var tag in listOfNeedTags)
         {
-            if (task.isSatisfiesTag(tag))
+            if (task.isSatisfiesTag(tag).yes)
                 cnt++;
         }
 
-        return cnt >= countForConditionOperator;
+        return cnt >= countForConditionOperator ? IsSatisfies.YES : IsSatisfies.NO;
     }
 
     /// <summary>Проверка оператора TreeAnd</summary>
     /// <param name="task">Задача для проверки</param><returns>true, если задача удовлетворяет этому условию без учёта isReversedCondition</returns>
-    protected virtual bool isSatisfiesForTask_TreeAnd(TestTask task)
+    protected virtual IsSatisfies isSatisfiesForTask_TreeAnd(TestTask task)
     {
         if (listOfNeedConditions == null)
             throw new Exception($"TestTaskTagCondition.isSatisfiesForTask_And: {nameof(listOfNeedConditions)} == null");
+
+        if (listOfNeedConditions.Count <= 0)
+            return IsSatisfies.UNK;
 
         foreach (var condition in listOfNeedConditions)
         {
             if (condition.isMandatoryExcludingRule)
             {
-                if (condition.isSatisfiesForTask(task))
-                    return false;
+                if (condition.isSatisfiesForTask(task).yes)
+                    return IsSatisfies.NO;
 
                 continue;
             }
 
-            if (!condition.isSatisfiesForTask(task))
-                return false;
+            if (condition.isSatisfiesForTask(task).no)
+                return IsSatisfies.NO;
         }
 
-        return true;
+        return IsSatisfies.YES;
     }
 
     /// <summary>Проверка оператора TreeCount</summary>
     /// <param name="task">Задача для проверки</param><returns>true, если задача удовлетворяет этому условию без учёта isReversedCondition</returns>
-    protected virtual bool isSatisfiesForTask_TreeCount(TestTask task)
+    protected virtual IsSatisfies isSatisfiesForTask_TreeCount(TestTask task)
     {
         if (listOfNeedConditions == null)
             throw new Exception($"TestTaskTagCondition.isSatisfiesForTask_Count: {nameof(listOfNeedTags)} == null");
         if (countForConditionOperator <= 0)
             throw new Exception($"TestTaskTagCondition.isSatisfiesForTask_Count: {nameof(countForConditionOperator)} <= 0");
+        
+        if (listOfNeedConditions.Count < countForConditionOperator)
+            return IsSatisfies.UNK;
 
-        var cnt = 0;
+        var ycnt = 0;
+        var acnt = 0;
         foreach (var condition in listOfNeedConditions)
         {
             if (condition.isMandatoryExcludingRule)
             {
-                if (condition.isSatisfiesForTask(task))
-                    return false;
+                if (condition.isSatisfiesForTask(task).yes)
+                    return IsSatisfies.NO;
 
                 continue;
             }
 
-            if (condition.isSatisfiesForTask(task))
-                cnt++;
+            acnt++;
+            if (condition.isSatisfiesForTask(task).yes)
+                ycnt++;
         }
 
-        return cnt >= countForConditionOperator;
+        // Если встретились только isMandatoryExcludingRule-задачи или, в целом, обычных задач было недостаточно, чтобы набрать нужное число, даже если все они удовлетворят условию
+        if (acnt < countForConditionOperator)
+            return IsSatisfies.UNK;
+
+        return ycnt >= countForConditionOperator ? IsSatisfies.YES : IsSatisfies.NO;
     }
 
-    /// <summary>Проверка оператора TreePriority</summary>
+    /// <summary>Проверка оператора TreePriority: побеждает задача с большим приоритетом (если yes, то yes, если no, то no). Если задач с одним и тем же приоритетом более одной, ни одна не должна возвратить IsSatisfies.NO</summary>
     /// <param name="task">Задача для проверки</param><returns>true, если задача удовлетворяет этому условию без учёта isReversedCondition</returns>
-    protected virtual bool isSatisfiesForTask_TreePriority(TestTask task)
+    protected virtual IsSatisfies isSatisfiesForTask_TreePriority(TestTask task)
     {
         if (listOfNeedConditions == null)
             throw new Exception($"TestTaskTagCondition.isSatisfiesForTask_TreePriority: {nameof(listOfNeedTags)} == null");
 
-        var result = true;
+        var result = IsSatisfies.UNK;
         var curP   = double.MinValue;
         foreach (var condition in listOfNeedConditions)
         {
             if (condition.isMandatoryExcludingRule)
             {
-                if (condition.isSatisfiesForTask(task))
-                    return false;
+                if (condition.isSatisfiesForTask(task).yes)
+                    return IsSatisfies.NO;
 
                 continue;
             }
@@ -309,12 +458,13 @@ public class TestTaskTagCondition
             if (condition.priorityForCondition > curP)
             {
                 result = condition.isSatisfiesForTask(task);
+                curP   = condition.priorityForCondition;
             }
             else
             if (condition.priorityForCondition == curP)
             {
-                if (!condition.isSatisfiesForTask(task))
-                    result = false;
+                if (condition.isSatisfiesForTask(task).no)
+                    result = IsSatisfies.NO;
             }
         }
 
@@ -396,10 +546,10 @@ public abstract class TestTask
     /// <param name="generalPriorityForTasks">Заданный приоритет</param>
     /// <param name="maxDuration">Заданный параметр времени выполнения (-1d - нет требований)</param>
     /// <returns>true, если нет тегов вообще и или есть хоть один тег с приоритетом не менее generalPriorityForTasks</returns>
-    public virtual bool isSatisfiesThePriorityAndDuration(double generalPriorityForTasks, double maxDuration)
+    public virtual IsSatisfies isSatisfiesThePriorityAndDuration(double generalPriorityForTasks, double maxDuration)
     {
         if (tags.Count <= 0)
-            return true;
+            return IsSatisfies.UNK;
 
         bool isSatisfiesThePriority = false;
         foreach (var tag in tags)
@@ -411,30 +561,29 @@ public abstract class TestTask
             }
         }
         if (!isSatisfiesThePriority)
-            return false;
+            return IsSatisfies.NO;
 
         // Если maxDuration - значит, требований не предъявляется
         if (maxDuration < 0)
-            return true;
-
+            return IsSatisfies.YES;
 
         foreach (var tag in tags)
         {
             if (tag.duration > maxDuration)
             {
-                return false;
+                return IsSatisfies.NO;
             }
         }
 
-        return true;
+        return IsSatisfies.YES;
     }
 
     /// <summary>Определяет, удовлетворяет ли задача заданному тегу с учётом указанного приоритета</summary>
     /// <param name="tag">Заданный тег, которому должна удовлетворять задача. Если тегов с таким именем нет - не удовлетворяет</param>
     /// <returns>true, если задача удовлетворяет тегу</returns>
-    public virtual bool isSatisfiesTag(TestTaskTag tag)
+    public virtual IsSatisfies isSatisfiesTag(TestTaskTag tag)
     {
-        bool isSatisfiesThePriority = false;
+        IsSatisfies isSatisfies = IsSatisfies.UNK;
         foreach (var t in tags)
         {
             if (tag.name != null)           // null удовлетворяет любому поисковому условию
@@ -442,14 +591,17 @@ public abstract class TestTask
                 continue;
 
             if (t.priority >= tag.priority)
-                isSatisfiesThePriority = true;
+            if (!isSatisfies.yes)
+            {
+                isSatisfies = IsSatisfies.YES;
+            }
 
             if (t.duration >= 0 && tag.duration >= 0)
             if (t.duration > tag.duration)
-                return false;
+                return IsSatisfies.NO;
         }
 
-        return isSatisfiesThePriority;
+        return isSatisfies;
     }
 }
 

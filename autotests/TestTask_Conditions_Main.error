@@ -1,0 +1,656 @@
+
+{object number 0001}
+	
+	results:		System.Collections.Generic.List`1[[Tests.TestTask_Conditions_Main+Saver+TestResult+ResultTasks, Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]		.results	
+	{object number 0002}
+		
+		Capacity:		System.Int32		.results.Capacity
+			128
+		
+		Count:		System.Int32		.results.Count
+			24
+		
+		[IEnumerable]:		System.Collections.Generic.List`1[[Tests.TestTask_Conditions_Main+Saver+TestResult+ResultTasks, Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]		.results[IEnumerable]
+			[values:]
+				00:     		[:ResultTasks]				
+				{object number 0003}
+					
+					conditionString:		System.String		.results[IEnumerable][0000].conditionString
+						1 <2 -1
+					
+					tasks:		System.Collections.Generic.List`1[[System.String, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]		.results[IEnumerable][0000].tasks					
+					{object number 0004}
+						
+						Capacity:		System.Int32		.results[IEnumerable][0000].tasks.Capacity
+							128
+						
+						Count:		System.Int32		.results[IEnumerable][0000].tasks.Count
+							0
+						
+						[IEnumerable]:		System.Collections.Generic.List`1[[System.String, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]		.results[IEnumerable][0000].tasks[IEnumerable]
+							[values:]
+							[end values]
+
+
+					end of {0004} .results[IEnumerable][0000].tasks
+
+				end of {0003} .results[IEnumerable][0000]
+				01:     				
+				{object number 0005}
+					
+					conditionString:		System.String		.results[IEnumerable][0001].conditionString
+						
+					
+					tasks:		System.Collections.Generic.List`1[[System.String, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]		.results[IEnumerable][0001].tasks					
+					{object number 0006}
+						
+						Capacity:		System.Int32		.results[IEnumerable][0001].tasks.Capacity
+							128
+						
+						Count:		System.Int32		.results[IEnumerable][0001].tasks.Count
+							0
+						
+						[IEnumerable]:		System.Collections.Generic.List`1[[System.String, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]		.results[IEnumerable][0001].tasks[IEnumerable]
+							[values:]
+							[end values]
+
+
+					end of {0006} .results[IEnumerable][0001].tasks
+
+				end of {0005} .results[IEnumerable][0001]
+				02:     				
+				{object number 0007}
+					
+					conditionString:		System.String		.results[IEnumerable][0002].conditionString
+						?
+					
+					tasks:		System.Collections.Generic.List`1[[System.String, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]		.results[IEnumerable][0002].tasks					
+					{object number 0008}
+						
+						Capacity:		System.Int32		.results[IEnumerable][0002].tasks.Capacity
+							128
+						
+						Count:		System.Int32		.results[IEnumerable][0002].tasks.Count
+							0
+						
+						[IEnumerable]:		System.Collections.Generic.List`1[[System.String, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]		.results[IEnumerable][0002].tasks[IEnumerable]
+							[values:]
+							[end values]
+
+
+					end of {0008} .results[IEnumerable][0002].tasks
+
+				end of {0007} .results[IEnumerable][0002]
+				03:     				
+				{object number 0009}
+					
+					conditionString:		System.String		.results[IEnumerable][0003].conditionString
+						3
+					
+					tasks:		System.Collections.Generic.List`1[[System.String, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]		.results[IEnumerable][0003].tasks					
+					{object number 0010}
+						
+						Capacity:		System.Int32		.results[IEnumerable][0003].tasks.Capacity
+							128
+						
+						Count:		System.Int32		.results[IEnumerable][0003].tasks.Count
+							0
+						
+						[IEnumerable]:		System.Collections.Generic.List`1[[System.String, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]		.results[IEnumerable][0003].tasks[IEnumerable]
+							[values:]
+							[end values]
+
+
+					end of {0010} .results[IEnumerable][0003].tasks
+
+				end of {0009} .results[IEnumerable][0003]
+				04:     				
+				{object number 0011}
+					
+					conditionString:		System.String		.results[IEnumerable][0004].conditionString
+						1
+					
+					tasks:		System.Collections.Generic.List`1[[System.String, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]		.results[IEnumerable][0004].tasks					
+					{object number 0012}
+						
+						Capacity:		System.Int32		.results[IEnumerable][0004].tasks.Capacity
+							128
+						
+						Count:		System.Int32		.results[IEnumerable][0004].tasks.Count
+							0
+						
+						[IEnumerable]:		System.Collections.Generic.List`1[[System.String, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]		.results[IEnumerable][0004].tasks[IEnumerable]
+							[values:]
+							[end values]
+
+
+					end of {0012} .results[IEnumerable][0004].tasks
+
+				end of {0011} .results[IEnumerable][0004]
+				05:     				
+				{object number 0013}
+					
+					conditionString:		System.String		.results[IEnumerable][0005].conditionString
+						1 ?
+					
+					tasks:		System.Collections.Generic.List`1[[System.String, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]		.results[IEnumerable][0005].tasks					
+					{object number 0014}
+						
+						Capacity:		System.Int32		.results[IEnumerable][0005].tasks.Capacity
+							128
+						
+						Count:		System.Int32		.results[IEnumerable][0005].tasks.Count
+							0
+						
+						[IEnumerable]:		System.Collections.Generic.List`1[[System.String, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]		.results[IEnumerable][0005].tasks[IEnumerable]
+							[values:]
+							[end values]
+
+
+					end of {0014} .results[IEnumerable][0005].tasks
+
+				end of {0013} .results[IEnumerable][0005]
+				06:     				
+				{object number 0015}
+					
+					conditionString:		System.String		.results[IEnumerable][0006].conditionString
+						1 2
+					
+					tasks:		System.Collections.Generic.List`1[[System.String, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]		.results[IEnumerable][0006].tasks					
+					{object number 0016}
+						
+						Capacity:		System.Int32		.results[IEnumerable][0006].tasks.Capacity
+							128
+						
+						Count:		System.Int32		.results[IEnumerable][0006].tasks.Count
+							0
+						
+						[IEnumerable]:		System.Collections.Generic.List`1[[System.String, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]		.results[IEnumerable][0006].tasks[IEnumerable]
+							[values:]
+							[end values]
+
+
+					end of {0016} .results[IEnumerable][0006].tasks
+
+				end of {0015} .results[IEnumerable][0006]
+				07:     				
+				{object number 0017}
+					
+					conditionString:		System.String		.results[IEnumerable][0007].conditionString
+						3 4
+					
+					tasks:		System.Collections.Generic.List`1[[System.String, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]		.results[IEnumerable][0007].tasks					
+					{object number 0018}
+						
+						Capacity:		System.Int32		.results[IEnumerable][0007].tasks.Capacity
+							128
+						
+						Count:		System.Int32		.results[IEnumerable][0007].tasks.Count
+							0
+						
+						[IEnumerable]:		System.Collections.Generic.List`1[[System.String, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]		.results[IEnumerable][0007].tasks[IEnumerable]
+							[values:]
+							[end values]
+
+
+					end of {0018} .results[IEnumerable][0007].tasks
+
+				end of {0017} .results[IEnumerable][0007]
+				08:     				
+				{object number 0019}
+					
+					conditionString:		System.String		.results[IEnumerable][0008].conditionString
+						1 2 3 4
+					
+					tasks:		System.Collections.Generic.List`1[[System.String, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]		.results[IEnumerable][0008].tasks					
+					{object number 0020}
+						
+						Capacity:		System.Int32		.results[IEnumerable][0008].tasks.Capacity
+							128
+						
+						Count:		System.Int32		.results[IEnumerable][0008].tasks.Count
+							0
+						
+						[IEnumerable]:		System.Collections.Generic.List`1[[System.String, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]		.results[IEnumerable][0008].tasks[IEnumerable]
+							[values:]
+							[end values]
+
+
+					end of {0020} .results[IEnumerable][0008].tasks
+
+				end of {0019} .results[IEnumerable][0008]
+				09:     				
+				{object number 0021}
+					
+					conditionString:		System.String		.results[IEnumerable][0009].conditionString
+						-3
+					
+					tasks:		System.Collections.Generic.List`1[[System.String, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]		.results[IEnumerable][0009].tasks					
+					{object number 0022}
+						
+						Capacity:		System.Int32		.results[IEnumerable][0009].tasks.Capacity
+							128
+						
+						Count:		System.Int32		.results[IEnumerable][0009].tasks.Count
+							0
+						
+						[IEnumerable]:		System.Collections.Generic.List`1[[System.String, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]		.results[IEnumerable][0009].tasks[IEnumerable]
+							[values:]
+							[end values]
+
+
+					end of {0022} .results[IEnumerable][0009].tasks
+
+				end of {0021} .results[IEnumerable][0009]
+				10:     				
+				{object number 0023}
+					
+					conditionString:		System.String		.results[IEnumerable][0010].conditionString
+						-1
+					
+					tasks:		System.Collections.Generic.List`1[[System.String, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]		.results[IEnumerable][0010].tasks					
+					{object number 0024}
+						
+						Capacity:		System.Int32		.results[IEnumerable][0010].tasks.Capacity
+							128
+						
+						Count:		System.Int32		.results[IEnumerable][0010].tasks.Count
+							0
+						
+						[IEnumerable]:		System.Collections.Generic.List`1[[System.String, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]		.results[IEnumerable][0010].tasks[IEnumerable]
+							[values:]
+							[end values]
+
+
+					end of {0024} .results[IEnumerable][0010].tasks
+
+				end of {0023} .results[IEnumerable][0010]
+				11:     				
+				{object number 0025}
+					
+					conditionString:		System.String		.results[IEnumerable][0011].conditionString
+						-1 ?
+					
+					tasks:		System.Collections.Generic.List`1[[System.String, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]		.results[IEnumerable][0011].tasks					
+					{object number 0026}
+						
+						Capacity:		System.Int32		.results[IEnumerable][0011].tasks.Capacity
+							128
+						
+						Count:		System.Int32		.results[IEnumerable][0011].tasks.Count
+							0
+						
+						[IEnumerable]:		System.Collections.Generic.List`1[[System.String, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]		.results[IEnumerable][0011].tasks[IEnumerable]
+							[values:]
+							[end values]
+
+
+					end of {0026} .results[IEnumerable][0011].tasks
+
+				end of {0025} .results[IEnumerable][0011]
+				12:     				
+				{object number 0027}
+					
+					conditionString:		System.String		.results[IEnumerable][0012].conditionString
+						-1 <1 ?
+					
+					tasks:		System.Collections.Generic.List`1[[System.String, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]		.results[IEnumerable][0012].tasks					
+					{object number 0028}
+						
+						Capacity:		System.Int32		.results[IEnumerable][0012].tasks.Capacity
+							128
+						
+						Count:		System.Int32		.results[IEnumerable][0012].tasks.Count
+							0
+						
+						[IEnumerable]:		System.Collections.Generic.List`1[[System.String, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]		.results[IEnumerable][0012].tasks[IEnumerable]
+							[values:]
+							[end values]
+
+
+					end of {0028} .results[IEnumerable][0012].tasks
+
+				end of {0027} .results[IEnumerable][0012]
+				13:     				
+				{object number 0029}
+					
+					conditionString:		System.String		.results[IEnumerable][0013].conditionString
+						1 <0 2 <1 3 <2 4
+					
+					tasks:		System.Collections.Generic.List`1[[System.String, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]		.results[IEnumerable][0013].tasks					
+					{object number 0030}
+						
+						Capacity:		System.Int32		.results[IEnumerable][0013].tasks.Capacity
+							128
+						
+						Count:		System.Int32		.results[IEnumerable][0013].tasks.Count
+							0
+						
+						[IEnumerable]:		System.Collections.Generic.List`1[[System.String, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]		.results[IEnumerable][0013].tasks[IEnumerable]
+							[values:]
+							[end values]
+
+
+					end of {0030} .results[IEnumerable][0013].tasks
+
+				end of {0029} .results[IEnumerable][0013]
+				14:     				
+				{object number 0031}
+					
+					conditionString:		System.String		.results[IEnumerable][0014].conditionString
+						1 <2 2 <1 3 <0 4
+					
+					tasks:		System.Collections.Generic.List`1[[System.String, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]		.results[IEnumerable][0014].tasks					
+					{object number 0032}
+						
+						Capacity:		System.Int32		.results[IEnumerable][0014].tasks.Capacity
+							128
+						
+						Count:		System.Int32		.results[IEnumerable][0014].tasks.Count
+							0
+						
+						[IEnumerable]:		System.Collections.Generic.List`1[[System.String, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]		.results[IEnumerable][0014].tasks[IEnumerable]
+							[values:]
+							[end values]
+
+
+					end of {0032} .results[IEnumerable][0014].tasks
+
+				end of {0031} .results[IEnumerable][0014]
+				15:     				
+				{object number 0033}
+					
+					conditionString:		System.String		.results[IEnumerable][0015].conditionString
+						1 <2 2 <1 3 <0 -4
+					
+					tasks:		System.Collections.Generic.List`1[[System.String, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]		.results[IEnumerable][0015].tasks					
+					{object number 0034}
+						
+						Capacity:		System.Int32		.results[IEnumerable][0015].tasks.Capacity
+							128
+						
+						Count:		System.Int32		.results[IEnumerable][0015].tasks.Count
+							0
+						
+						[IEnumerable]:		System.Collections.Generic.List`1[[System.String, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]		.results[IEnumerable][0015].tasks[IEnumerable]
+							[values:]
+							[end values]
+
+
+					end of {0034} .results[IEnumerable][0015].tasks
+
+				end of {0033} .results[IEnumerable][0015]
+				16:     				
+				{object number 0035}
+					
+					conditionString:		System.String		.results[IEnumerable][0016].conditionString
+						1 -4 <0 2 <1 3 <2 ?
+					
+					tasks:		System.Collections.Generic.List`1[[System.String, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]		.results[IEnumerable][0016].tasks					
+					{object number 0036}
+						
+						Capacity:		System.Int32		.results[IEnumerable][0016].tasks.Capacity
+							128
+						
+						Count:		System.Int32		.results[IEnumerable][0016].tasks.Count
+							0
+						
+						[IEnumerable]:		System.Collections.Generic.List`1[[System.String, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]		.results[IEnumerable][0016].tasks[IEnumerable]
+							[values:]
+							[end values]
+
+
+					end of {0036} .results[IEnumerable][0016].tasks
+
+				end of {0035} .results[IEnumerable][0016]
+				17:     				
+				{object number 0037}
+					
+					conditionString:		System.String		.results[IEnumerable][0017].conditionString
+						1 <1 ?
+					
+					tasks:		System.Collections.Generic.List`1[[System.String, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]		.results[IEnumerable][0017].tasks					
+					{object number 0038}
+						
+						Capacity:		System.Int32		.results[IEnumerable][0017].tasks.Capacity
+							128
+						
+						Count:		System.Int32		.results[IEnumerable][0017].tasks.Count
+							0
+						
+						[IEnumerable]:		System.Collections.Generic.List`1[[System.String, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]		.results[IEnumerable][0017].tasks[IEnumerable]
+							[values:]
+							[end values]
+
+
+					end of {0038} .results[IEnumerable][0017].tasks
+
+				end of {0037} .results[IEnumerable][0017]
+				18:     				
+				{object number 0039}
+					
+					conditionString:		System.String		.results[IEnumerable][0018].conditionString
+						1 <3 4
+					
+					tasks:		System.Collections.Generic.List`1[[System.String, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]		.results[IEnumerable][0018].tasks					
+					{object number 0040}
+						
+						Capacity:		System.Int32		.results[IEnumerable][0018].tasks.Capacity
+							128
+						
+						Count:		System.Int32		.results[IEnumerable][0018].tasks.Count
+							0
+						
+						[IEnumerable]:		System.Collections.Generic.List`1[[System.String, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]		.results[IEnumerable][0018].tasks[IEnumerable]
+							[values:]
+							[end values]
+
+
+					end of {0040} .results[IEnumerable][0018].tasks
+
+				end of {0039} .results[IEnumerable][0018]
+				19:     				
+				{object number 0041}
+					
+					conditionString:		System.String		.results[IEnumerable][0019].conditionString
+						? <1 1
+					
+					tasks:		System.Collections.Generic.List`1[[System.String, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]		.results[IEnumerable][0019].tasks					
+					{object number 0042}
+						
+						Capacity:		System.Int32		.results[IEnumerable][0019].tasks.Capacity
+							128
+						
+						Count:		System.Int32		.results[IEnumerable][0019].tasks.Count
+							0
+						
+						[IEnumerable]:		System.Collections.Generic.List`1[[System.String, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]		.results[IEnumerable][0019].tasks[IEnumerable]
+							[values:]
+							[end values]
+
+
+					end of {0042} .results[IEnumerable][0019].tasks
+
+				end of {0041} .results[IEnumerable][0019]
+				20:     				
+				{object number 0043}
+					
+					conditionString:		System.String		.results[IEnumerable][0020].conditionString
+						+1 <1 4 <2 3
+					
+					tasks:		System.Collections.Generic.List`1[[System.String, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]		.results[IEnumerable][0020].tasks					
+					{object number 0044}
+						
+						Capacity:		System.Int32		.results[IEnumerable][0020].tasks.Capacity
+							128
+						
+						Count:		System.Int32		.results[IEnumerable][0020].tasks.Count
+							30
+						
+						[IEnumerable]:		System.Collections.Generic.List`1[[System.String, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]		.results[IEnumerable][0020].tasks[IEnumerable]
+							[values:]
+								00:     1   -1		[:String]
+								01:     1 2 -1 -1
+								02:     1 2 -1  0
+								03:     1 2 -1  1
+								04:     1 2 -1  2
+								05:     1 2 -1  9
+								06:     1    0
+								07:     1 2  0 -1
+								08:     1 2  0  0
+								09:     1 2  0  1
+								10:     1 2  0  2
+								11:     1 2  0  9
+								12:     1    1
+								13:     1 2  1 -1
+								14:     1 2  1  0
+								15:     1 2  1  1
+								16:     1 2  1  2
+								17:     1 2  1  9
+								18:     1    2
+								19:     1 2  2 -1
+								20:     1 2  2  0
+								21:     1 2  2  1
+								22:     1 2  2  2
+								23:     1 2  2  9
+								24:     1    9
+								25:     1 2  9 -1
+								26:     1 2  9  0
+								27:     1 2  9  1
+								28:     1 2  9  2
+								29:     1 2  9  9
+							[end values]
+
+
+					end of {0044} .results[IEnumerable][0020].tasks
+
+				end of {0043} .results[IEnumerable][0020]
+				21:     				
+				{object number 0045}
+					
+					conditionString:		System.String		.results[IEnumerable][0021].conditionString
+						+4 -1 <0  1
+					
+					tasks:		System.Collections.Generic.List`1[[System.String, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]		.results[IEnumerable][0021].tasks					
+					{object number 0046}
+						
+						Capacity:		System.Int32		.results[IEnumerable][0021].tasks.Capacity
+							128
+						
+						Count:		System.Int32		.results[IEnumerable][0021].tasks.Count
+							5
+						
+						[IEnumerable]:		System.Collections.Generic.List`1[[System.String, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]		.results[IEnumerable][0021].tasks[IEnumerable]
+							[values:]
+								00:     4   -1		[:String]
+								01:     4    0
+								02:     4    1
+								03:     4    2
+								04:     4    9
+							[end values]
+
+
+					end of {0046} .results[IEnumerable][0021].tasks
+
+				end of {0045} .results[IEnumerable][0021]
+				22:     				
+				{object number 0047}
+					
+					conditionString:		System.String		.results[IEnumerable][0022].conditionString
+						+4 -1 <0 +1
+					
+					tasks:		System.Collections.Generic.List`1[[System.String, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]		.results[IEnumerable][0022].tasks					
+					{object number 0048}
+						
+						Capacity:		System.Int32		.results[IEnumerable][0022].tasks.Capacity
+							128
+						
+						Count:		System.Int32		.results[IEnumerable][0022].tasks.Count
+							17
+						
+						[IEnumerable]:		System.Collections.Generic.List`1[[System.String, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]		.results[IEnumerable][0022].tasks[IEnumerable]
+							[values:]
+								00:     1   -1		[:String]
+								01:     4   -1
+								02:     1 2 -1 -1
+								03:     1 2 -1  0
+								04:     1 2 -1  1
+								05:     1 2 -1  2
+								06:     1 2 -1  9
+								07:     1    0
+								08:     4    0
+								09:     1 2  0 -1
+								10:     1 2  0  0
+								11:     1 2  0  1
+								12:     1 2  0  2
+								13:     1 2  0  9
+								14:     4    1
+								15:     4    2
+								16:     4    9
+							[end values]
+
+
+					end of {0048} .results[IEnumerable][0022].tasks
+
+				end of {0047} .results[IEnumerable][0022]
+				23:     				
+				{object number 0049}
+					
+					conditionString:		System.String		.results[IEnumerable][0023].conditionString
+						+1 -4 <0 +4
+					
+					tasks:		System.Collections.Generic.List`1[[System.String, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]		.results[IEnumerable][0023].tasks					
+					{object number 0050}
+						
+						Capacity:		System.Int32		.results[IEnumerable][0023].tasks.Capacity
+							128
+						
+						Count:		System.Int32		.results[IEnumerable][0023].tasks.Count
+							32
+						
+						[IEnumerable]:		System.Collections.Generic.List`1[[System.String, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]		.results[IEnumerable][0023].tasks[IEnumerable]
+							[values:]
+								00:     1   -1		[:String]
+								01:     4   -1
+								02:     1 2 -1 -1
+								03:     1 2 -1  0
+								04:     1 2 -1  1
+								05:     1 2 -1  2
+								06:     1 2 -1  9
+								07:     1    0
+								08:     4    0
+								09:     1 2  0 -1
+								10:     1 2  0  0
+								11:     1 2  0  1
+								12:     1 2  0  2
+								13:     1 2  0  9
+								14:     1    1
+								15:     1 2  1 -1
+								16:     1 2  1  0
+								17:     1 2  1  1
+								18:     1 2  1  2
+								19:     1 2  1  9
+								20:     1    2
+								21:     1 2  2 -1
+								22:     1 2  2  0
+								23:     1 2  2  1
+								24:     1 2  2  2
+								25:     1 2  2  9
+								26:     1    9
+								27:     1 2  9 -1
+								28:     1 2  9  0
+								29:     1 2  9  1
+								30:     1 2  9  2
+								31:     1 2  9  9
+							[end values]
+
+
+					end of {0050} .results[IEnumerable][0023].tasks
+
+				end of {0049} .results[IEnumerable][0023]
+			[end values]
+
+
+	end of {0002} .results
+
+end of {0001} 

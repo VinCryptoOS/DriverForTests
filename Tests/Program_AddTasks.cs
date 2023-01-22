@@ -4,7 +4,6 @@
 */
 
 // Раскомментировать, если нужно заново создать файлы
-// #define CAN_CREATEFILE_FOR_AUTOSAVE
 // #define CAN_CREATEFILE_FOR_PTT
 
 using System.Collections.Concurrent;
@@ -45,6 +44,7 @@ class Example1TestConstructor : TestConstructor
         }
 
         var canCreateFile = false;
+        /*
         // Добавляем вручную задачи, реализующие AutoSaveTestTask
         // Если надо, устанавливаем разрешение на запись в файл в первый раз
         #if CAN_CREATEFILE_FOR_AUTOSAVE
@@ -55,7 +55,7 @@ class Example1TestConstructor : TestConstructor
         (
             source:     ExampleAutoSaveTask.getTasks(this, canCreateFile: canCreateFile),
             tasksQueue: tasks
-        );
+        );*/
 
         // Добавляем задачи ParallelTasks_Tests - это задачи проверки на то, что тесты выполняются в заданном порядке (waitBefore)
         canCreateFile = false;

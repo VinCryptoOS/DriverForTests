@@ -9,7 +9,7 @@ public class TestConditionParser
     public TestTaskTagCondition? resultCondition = null;
 
     /// <summary>Парсит простую строку параметров</summary>
-    /// <param name="tags">Строка вида +ТегДляПриоритетногоВключения ПростоТегДляВключения -ТегДляИсключения</param>
+    /// <param name="tags">Строка вида +ТегДляПриоритетногоВключения ПростоТегДляВключения -ТегДляИсключения &lt;2 ЕщёОдинТегБудетВключатсяЕслиDurationНеБолее2</param>
     /// <param name="outputToConsole">true - вывести на консоль теги</param>
     /// <remarks>
     /// <para>Теги для приоритетного включения являются тегами, которые будут обязательно включены</para>
@@ -17,33 +17,18 @@ public class TestConditionParser
     /// </remarks>
     public TestConditionParser(string tags, bool outputToConsole = false)
     {
-        resultCondition     = null;
-        var conditions      = new TestTaskTagCondition();
+        resultCondition = null;
+        var conditions  = new TestTaskTagCondition();
 
-        var notCondition    = new TestTaskTagCondition();
-        var yesCondition    = new TestTaskTagCondition();
+        var args = tags.Split(new string[] { " ", "," }, StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
 
-        conditions.conditionOperator         = ConditionOperator.TreeAnd;
-        conditions.countForConditionOperator = 1;
-        conditions.listOfNeedConditions      = new List<TestTaskTagCondition>
-        {
-            notCondition, yesCondition
-        };
-
-        notCondition.conditionOperator         = ConditionOperator.TreeCount;
-        notCondition.countForConditionOperator = 1;
-        yesCondition.conditionOperator         = ConditionOperator.Count;
-        yesCondition.countForConditionOperator = 1;
-
-        notCondition.isReversedCondition      = true;
-        notCondition.isMandatoryExcludingRule = false;
-        notCondition.listOfNeedConditions     = new List<TestTaskTagCondition>();
-
-        yesCondition.listOfNeedTags           = new List<TestTaskTag>();
-
-        var args = tags.Split(new string[] {" ", ","}, StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+        var positive  = new SortedList<int, List<TestTagDescription>>(8);
+        var mandatory = new SortedList<int, List<TestTagDescription>>(8);
+        var durations = new SortedList<int, double>(8);
 
         double duration = -1d;
+        int    dIndex   = 0;
+        addDurationForTestTagDescriptionList(dIndex, duration);
 
         // Каждый аргумент - имя тега
         foreach (var _arg in args)
@@ -51,7 +36,6 @@ public class TestConditionParser
             var arg = _arg;
             var not = false;
             var yes = false;
-            var dur = false;
             // Убираем "-", говорящий, что данный тег нужно исключить
             if (arg.StartsWith("-"))
             {
@@ -68,8 +52,13 @@ public class TestConditionParser
             if (arg.StartsWith("<"))
             {
                 arg = arg.Substring(1);
-                dur = true;
                 duration = double.Parse(arg);
+                addDurationForTestTagDescriptionList(++dIndex, duration);
+
+                if (outputToConsole)
+                    Console.WriteLine($"test with duration <= '{duration}'");
+
+                continue;
             }
             else
             if (arg == "?")
@@ -83,44 +72,102 @@ public class TestConditionParser
                 if (yes)
                     Console.WriteLine($"test with  mandatory  tag '{arg}'");
                 else
-                if (dur)
-                {
-                    Console.WriteLine($"test with duration <= '{duration}'");
-                    continue;
-                }
-                else
                     Console.WriteLine($"test with tag '{arg ?? "<all tags>"}'");
             }
 
-            if (not || yes)
-            {
-                var condition               = new TestTaskTagCondition();
-                condition.conditionOperator = TestTaskTagCondition.ConditionOperator.Count;
-                condition.listOfNeedTags    = new List<TestTaskTag>
-                {
-                    new TestTaskTag(arg, double.MinValue, duration)
-                };
+            // Если задача обязательная (mandatory)
+            if (yes)
+                AddNewTestTagDescriptionToList(mandatory, dIndex, duration, true, arg);
+            else
+                AddNewTestTagDescriptionToList(positive,  dIndex, duration, !not, arg);
+        }
 
-                condition.countForConditionOperator = 1;
-                condition.isMandatoryExcludingRule  = yes;
-                notCondition.listOfNeedConditions.Add(condition);
-            }
+        conditions.conditionOperator = ConditionOperator.TreePriority;
+        conditions.countForConditionOperator = 1;
+        conditions.listOfNeedConditions = new List<TestTaskTagCondition>(8);
 
-            if (!not)
+        var mandatoryConditions = new TestTaskTagCondition()
+                                        {
+                                            priorityForCondition = double.MaxValue,
+                                            listOfNeedConditions = new List<TestTaskTagCondition>(),
+                                            conditionOperator    = ConditionOperator.TreeCount
+                                        };
+        var aConditions         = new TestTaskTagCondition()
+                                        {
+                                            priorityForCondition = 0,
+                                            listOfNeedConditions = new List<TestTaskTagCondition>(),
+                                            conditionOperator    = ConditionOperator.TreeCount
+                                        };
+
+        conditions.listOfNeedConditions.Add(mandatoryConditions);
+        conditions.listOfNeedConditions.Add(aConditions);
+
+        // Сначала добавляем mandatory-задачи
+        // Их добавление происходит без приоритета,
+        // т.к. они никогда не ничем не переопределяются и приоритет не имеет значения
+        for (int p = 0; p < durations.Count; p++)
+        {
+            var cnd = new TestTaskTagCondition()
             {
-                var tag = new TestTaskTag(arg, double.MinValue, duration);
-                yesCondition.listOfNeedTags.Add(tag);
+                listOfNeedTags    = new List<TestTaskTag>(),
+                conditionOperator = ConditionOperator.Count
+            };
+
+            mandatoryConditions.listOfNeedConditions.Add(cnd);
+
+            foreach (var ts in mandatory[p])
+            {
+                var newTag = new TestTaskTag(ts.Name, double.MinValue, ts.Duration);
+                cnd.listOfNeedTags.Add(newTag);
             }
         }
 
-        // Если этого не сделать,
-        // эта штука всегда будет выдавать false,
-        // если нет никаких условий и isReversedCondition = true
-        if (notCondition.listOfNeedConditions.Count <= 0)
-            notCondition.conditionOperator = ConditionOperator.AlwaysFalse;
-        if (yesCondition.listOfNeedTags.Count <= 0)
-            yesCondition.conditionOperator = ConditionOperator.AlwaysTrue;
+        for (int p = 0; p < durations.Count; p++)
+        {
+            var cnd = new TestTaskTagCondition()
+            {
+                priorityForCondition = p,
+                listOfNeedConditions = new List<TestTaskTagCondition>(mandatory[p].Count),
+                conditionOperator    = ConditionOperator.TreeCount
+            };
+
+            aConditions.listOfNeedConditions.Add(cnd);
+
+            foreach (var ts in positive[p])
+            {
+                var newCond = new TestTaskTagCondition()
+                {
+                    listOfNeedTags           = new List<TestTaskTag>(1),
+                    isMandatoryExcludingRule = !ts.isPositive,
+                    conditionOperator        = ConditionOperator.Count
+                };
+                cnd.listOfNeedConditions.Add(newCond);
+
+                var newTag = new TestTaskTag(ts.Name, double.MinValue, ts.Duration);
+                newCond.listOfNeedTags.Add(newTag);
+            }
+        }
 
         resultCondition = conditions;
+
+        void addDurationForTestTagDescriptionList(int index, double duration)
+        {
+            durations.Add(index, duration);
+            positive .Add(index, new List<TestTagDescription>(8));
+            mandatory.Add(index, new List<TestTagDescription>(8));
+        }
+
+        static void AddNewTestTagDescriptionToList(SortedList<int, List<TestTagDescription>> list, int dIndex, double duration, bool isPositive, string? arg)
+        {
+            var ttd = new TestTagDescription { Name = arg, Duration = duration, isPositive = isPositive };
+            list[dIndex].Add(ttd);
+        }
+    }
+
+    public class TestTagDescription
+    {
+        public string? Name         {get; init;}
+        public double  Duration     {get; init;}
+        public bool    isPositive   {get; init;}
     }
 }

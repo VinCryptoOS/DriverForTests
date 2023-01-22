@@ -3,8 +3,11 @@
 */
 
 // #define CAN_CREATEFILE_FOR_TestBytes
+#define CAN_CREATEFILE_FOR_conditions
+#define CAN_CREATEFILE_FOR_AUTOSAVE
 
 
+using System.Collections.Concurrent;
 using System.Text;
 using DriverForTestsLib;
 
@@ -210,10 +213,10 @@ class ExampleAutoSaveTask_parent: AutoSaveTestTask
     }
 }
 
-[TestTagAttribute("autosave", double.MaxValue, notAutomatic: true)]
+[TestTagAttribute("autosave")]
 class ExampleAutoSaveTask: ExampleAutoSaveTask_parent
 {
-    public static IEnumerable<ExampleAutoSaveTask> getTasks(TestConstructor constructor, bool canCreateFile = false)
+    public static IEnumerable<string> getTasks()
     {
         var plus  = new string[] {"+", "", "-"};
 
@@ -224,9 +227,7 @@ class ExampleAutoSaveTask: ExampleAutoSaveTask_parent
         foreach (var a5 in plus)
         {
             var p = $"{a1}1 {a2}2 {a3}3 {a4}4 {a5}5";
-            var t = new ExampleAutoSaveTask(p, constructor, canCreateFile);
-
-            yield return t;
+            yield return p;
         }
 
         var testStrs = new string[]
@@ -235,40 +236,188 @@ class ExampleAutoSaveTask: ExampleAutoSaveTask_parent
         };
         foreach (var testStr in testStrs)
         {
-            var t = new ExampleAutoSaveTask(testStr, constructor, canCreateFile);
-            yield return t;
+            yield return testStr;
         }
     }
 
-    public ExampleAutoSaveTask(string searchPattern, TestConstructor constructor, bool canCreateFile = false):
+    public ExampleAutoSaveTask(TestConstructor constructor):
                     base
                     (
-                        name:               "AutoSaveTask " + searchPattern,
+                        name:               "AutoSaveTask_parser",
                         dirForFiles:        ExampleAutoSaveTask.getDirectoryPath(),
-                        executer_and_saver: new Saver(searchPattern),
+                        executer_and_saver: new Saver(),
                         constructor:        constructor
                     )
     {
-        this.executer_and_saver.canCreateFile = canCreateFile;
+        this.executer_and_saver.canCreateFile = false;
+        #if CAN_CREATEFILE_FOR_AUTOSAVE
+            #warning CAN_CREATEFILE_FOR_AUTOSAVE
+            this.executer_and_saver.canCreateFile = true;
+        #endif
     }
 
     protected class Saver: TaskResultSaver
     {
-        public readonly string searchPattern;
-        public Saver(string searchPattern)
-        {
-            this.searchPattern = searchPattern;
-        }
-
         public override object ExecuteTest(AutoSaveTestTask task)
         {
-            var parser = new TestConditionParser(String.Join(',', searchPattern));
+            var lst = new List<TestTaskTagCondition?>(256);
 
-            return parser;
+            foreach (var searchPattern in ExampleAutoSaveTask.getTasks())
+            {
+                var parser = new TestConditionParser(String.Join(',', searchPattern));
+                lst.Add(parser.resultCondition);
+            }
+
+            return lst;
         }
     }
 }
 
+// -------------------------------- Тестирование условий --------------------------------
+/// <summary>Конструктор тестовых задач для TestTask_Conditions_Main</summary>
+public class TestConstructor_Conditions: TestConstructor
+{
+    public TestConstructor_Conditions(): base()
+    {}
+
+    public IEnumerable<TestTask_Conditions> getTasks()
+    {
+        var dbl = new double[] {-1d, 0d, 1d, 2d, 9d};
+
+        foreach (var db1 in dbl)
+        {
+            var a = new TestTask_Conditions($"1   {db1,2}", this);
+            a.tags.Add(new TestTaskTag("1", -1d, db1));
+            yield return a;
+
+            a = new TestTask_Conditions($"2   {db1,2}", this);
+            a.tags.Add(new TestTaskTag("2", -1d, db1));
+            yield return a;
+
+            a = new TestTask_Conditions($"3   {db1,2}", this);
+            a.tags.Add(new TestTaskTag("3", -1d, db1));
+            yield return a;
+
+            a = new TestTask_Conditions($"4   {db1,2}", this);
+            a.tags.Add(new TestTaskTag("4", -1d, db1));
+            yield return a;
+
+            foreach (var db2 in dbl)
+            {
+                a = new TestTask_Conditions($"1 2 {db1,2} {db2,2}", this);
+                a.tags.Add(new TestTaskTag("1", -1d, db1));
+                a.tags.Add(new TestTaskTag("2", -1d, db2));
+                yield return a;
+            }
+        }
+    }
+
+    public override void CreateTasksLists(ConcurrentQueue<TestTask> tasks)
+    {
+        TestConstructor.addTasksForQueue(getTasks(), tasks);
+    }
+}
+
+// Тестовая задача для TestTask_Conditions_Main
+public class TestTask_Conditions: TestTask
+{
+    public TestTask_Conditions(string name, TestConstructor_Conditions constructor): base(name, constructor)
+    {}
+}
+
+[TestTagAttribute("autosave")]
+class TestTask_Conditions_Main: ExampleAutoSaveTask_parent
+{
+    public TestTask_Conditions_Main(TestConstructor constructor):
+                        base
+                        (
+                            name:               "TestTask_Conditions_Main",
+                            dirForFiles:        ExampleAutoSaveTask.getDirectoryPath(),
+                            executer_and_saver: new Saver(),
+                            constructor:        constructor
+                        )
+    {
+        #if CAN_CREATEFILE_FOR_conditions
+            this.executer_and_saver.canCreateFile = true;
+            #warning CAN_CREATEFILE_FOR_conditions
+        #else
+            this.executer_and_saver.canCreateFile = false;
+        #endif
+    }
+
+    protected class Saver: TaskResultSaver
+    {
+        public Saver()
+        {}
+
+        class TestResult
+        {
+            public class ResultTasks
+            {
+                public readonly string       conditionString;
+                public readonly List<string> tasks = new List<string>(128);
+
+                public ResultTasks(string conditionString) => this.conditionString = conditionString;
+            }
+
+            public readonly List<ResultTasks> results = new List<ResultTasks>(128);
+        }
+
+        public override object ExecuteTest(AutoSaveTestTask task)
+        {
+            var result = new TestResult();
+
+            System.Collections.Concurrent.ConcurrentQueue<TestTask> AllTasks = new ConcurrentQueue<TestTask>();
+            var c = new TestConstructor_Conditions();
+            c.CreateTasksLists(AllTasks);
+
+            addTaskGroup("1 <2 -1",             result, AllTasks, c);
+
+            addTaskGroup("",                    result, AllTasks, c);
+            addTaskGroup("?",                   result, AllTasks, c);
+            addTaskGroup("3",                   result, AllTasks, c);
+            addTaskGroup("1",                   result, AllTasks, c);
+            addTaskGroup("1 ?",                 result, AllTasks, c);
+            addTaskGroup("1 2",                 result, AllTasks, c);
+            addTaskGroup("3 4",                 result, AllTasks, c);
+            addTaskGroup("1 2 3 4",             result, AllTasks, c);
+            addTaskGroup("-3",                  result, AllTasks, c);
+            addTaskGroup("-1",                  result, AllTasks, c);
+            addTaskGroup("-1 ?",                result, AllTasks, c);
+            addTaskGroup("-1 <1 ?",             result, AllTasks, c);
+            addTaskGroup("1 <0 2 <1 3 <2 4",    result, AllTasks, c);
+            addTaskGroup("1 <2 2 <1 3 <0 4",    result, AllTasks, c);
+            addTaskGroup("1 <2 2 <1 3 <0 -4",   result, AllTasks, c);
+            addTaskGroup("1 -4 <0 2 <1 3 <2 ?", result, AllTasks, c);
+            addTaskGroup("1 <1 ?",              result, AllTasks, c);
+            addTaskGroup("1 <3 4",              result, AllTasks, c);
+            addTaskGroup("? <1 1",              result, AllTasks, c);
+            addTaskGroup("+1 <1 4 <2 3",        result, AllTasks, c);
+            addTaskGroup("+4 -1 <0  1",         result, AllTasks, c);
+            addTaskGroup("+4 -1 <0 +1",         result, AllTasks, c);
+            addTaskGroup("+1 -4 <0 +4",         result, AllTasks, c);
+
+            return result;
+        }
+
+        private static void addTaskGroup(String conditionString, TestResult result, ConcurrentQueue<TestTask> AllTasks, TestConstructor_Conditions c)
+        {
+            c.conditions = new TestConditionParser(conditionString).resultCondition;
+
+            var rt = new TestResult.ResultTasks(conditionString);
+            result.results.Add(rt);
+
+            foreach (var t in AllTasks)
+            {
+                if (t.ShouldBeExecuted())
+                    rt.tasks.Add(t.Name);
+            }
+        }
+    }
+}
+
+
+// --------------------------------   --------------------------------
 
 [TestTagAttribute("autosave")]
 class TestBytes_TestTask: ExampleAutoSaveTask_parent

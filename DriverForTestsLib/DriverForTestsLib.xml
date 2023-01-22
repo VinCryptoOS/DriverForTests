@@ -118,7 +118,7 @@
         </member>
         <member name="M:DriverForTestsLib.TestConditionParser.#ctor(System.String,System.Boolean)">
             <summary>Парсит простую строку параметров</summary>
-            <param name="tags">Строка вида +ТегДляПриоритетногоВключения ПростоТегДляВключения -ТегДляИсключения</param>
+            <param name="tags">Строка вида +ТегДляПриоритетногоВключения ПростоТегДляВключения -ТегДляИсключения &lt;2 ЕщёОдинТегБудетВключатсяЕслиDurationНеБолее2</param>
             <param name="outputToConsole">true - вывести на консоль теги</param>
             <remarks>
             <para>Теги для приоритетного включения являются тегами, которые будут обязательно включены</para>
@@ -127,6 +127,55 @@
         </member>
         <member name="T:DriverForTestsLib.TestError">
             <summary>Класс описывает ошибку, возникшую в ходе теста</summary>
+        </member>
+        <member name="M:DriverForTestsLib.IsSatisfies.#ctor(DriverForTestsLib.IsSatisfies.Signs,System.Boolean)">
+            <summary>Создаёт объект</summary>
+            <param name="value">Значение объекта</param>
+            <param name="freezed">Объект заморожен (нет возможности изменять значение объекта)</param>
+        </member>
+        <member name="M:DriverForTestsLib.IsSatisfies.#ctor(System.Boolean)">
+            <summary>Создаёт объект из булевской переменной: true == yes, false = no</summary>
+            <param name="bValue">Булевская переменная</param>
+        </member>
+        <member name="M:DriverForTestsLib.IsSatisfies.doReverse(DriverForTestsLib.IsSatisfies.Signs)">
+            <summary>Осуществляет операцию отрицания (обращает логическую переменную @is)</summary>
+            <param name="is">Переменная для обращения</param>
+            <returns>Результат обращения</returns>
+        </member>
+        <member name="M:DriverForTestsLib.IsSatisfies.doReverse">
+            <summary>Осуществляет операцию отрицания над значением val (обращает её с помощью doReverse(Signs @is))</summary>
+        </member>
+        <member name="M:DriverForTestsLib.IsSatisfies.toBool(DriverForTestsLib.IsSatisfies.Signs,System.Boolean)">
+            <summary>Преобразует логическую переменную @is в булеву перменную</summary>
+            <param name="is">Логическая переменная для преобразования</param>
+            <param name="unknown">Значение по умолчанию, если @is не определена</param>
+            <returns></returns>
+        </member>
+        <member name="M:DriverForTestsLib.IsSatisfies.toBool(System.Boolean)">
+            <summary>Преобразует значение объекта (поле val) в булеву перменную и возвращает полученный результат (val не изменяется)</summary>
+            <param name="unknown">Значение по умолчанию, если @is не определена</param>
+            <returns>Вычисленное значение</returns>
+        </member>
+        <member name="P:DriverForTestsLib.IsSatisfies.yes">
+            <summary>Возвращает true, если значение объекта равно yes</summary>
+        </member>
+        <member name="P:DriverForTestsLib.IsSatisfies.no">
+            <summary>Возвращает true, если значение объекта равно no</summary>
+        </member>
+        <member name="P:DriverForTestsLib.IsSatisfies.unk">
+            <summary>Возвращает true, если значение объекта равно unknown</summary>
+        </member>
+        <member name="F:DriverForTestsLib.IsSatisfies.YES">
+            <summary>Статический объект, представляющий значение yes</summary>
+        </member>
+        <member name="F:DriverForTestsLib.IsSatisfies.NO">
+            <summary>Статический объект, представляёщий значение no</summary>
+        </member>
+        <member name="F:DriverForTestsLib.IsSatisfies.UNK">
+            <summary>Статический объект, представляёщий значение unknown</summary>
+        </member>
+        <member name="M:DriverForTestsLib.IsSatisfies.LightClone">
+            <summary>Копирует значение val в новый незамороженный объект</summary>
         </member>
         <member name="T:DriverForTestsLib.TestConstructor">
             <summary>Этот класс должен быть переопределён потомком.
@@ -205,7 +254,7 @@
             <summary>Если этому правилу соответствует задача, то она вызовет срабатывание false на всём условии вне зависимости от оператора</summary>
         </member>
         <member name="F:DriverForTestsLib.TestTaskTagCondition.priorityForCondition">
-            <summary>Побеждает задача с большим приоритетом; только для TreePriority. Для одинакового приоритета - and</summary>
+            <summary>Побеждает задача с большим приоритетом (если она yes, то условие выполнено); только для TreePriority. Для одинакового приоритета - and</summary>
         </member>
         <member name="F:DriverForTestsLib.TestTaskTagCondition.listOfNeedConditions">
             <summary>Список подусловий, участвующих в этом условии. Используется с операторами TreeAnd, TreeCount, TreePriority</summary>
@@ -235,7 +284,7 @@
             <param name="task">Задача для проверки</param><returns>true, если задача удовлетворяет этому условию без учёта isReversedCondition</returns>
         </member>
         <member name="M:DriverForTestsLib.TestTaskTagCondition.isSatisfiesForTask_TreePriority(DriverForTestsLib.TestTask)">
-            <summary>Проверка оператора TreePriority</summary>
+            <summary>Проверка оператора TreePriority: побеждает задача с большим приоритетом (если yes, то yes, если no, то no). Если задач с одним и тем же приоритетом более одной, ни одна не должна возвратить IsSatisfies.NO</summary>
             <param name="task">Задача для проверки</param><returns>true, если задача удовлетворяет этому условию без учёта isReversedCondition</returns>
         </member>
         <member name="T:DriverForTestsLib.TestTask">
