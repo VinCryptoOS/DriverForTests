@@ -128,7 +128,8 @@ public class DriverForTests
             Console.WriteLine("All tasks ended:");
             foreach (var task in tasks)
             {
-                Console.WriteLine($"\t{task.Name, 32}\t{(task.endTime - task.started).TotalMilliseconds:F0} ms");
+                var tm = $"{(task.endTime - task.started).TotalMilliseconds:F0} ms";
+                Console.WriteLine($"\t{tm, 8}\t{task.Name, 32}");
             }
         }
         WaitMessages(options, false, true);

@@ -109,6 +109,18 @@
         <member name="T:DriverForTestsLib.HelperDateClass">
             <summary>Вспомогательный класс для вывода форматированной даты и времени</summary>
         </member>
+        <member name="T:DriverForTestsLib.SimpleTimeMeter">
+            <summary>Помогает легко замерить время между двумя точками кода</summary>
+        </member>
+        <member name="M:DriverForTestsLib.SimpleTimeMeter.Dispose">
+            <summary>Заканчивает измерение времени. Можно вызывать повторно без изменения интервала времени</summary>
+        </member>
+        <member name="P:DriverForTestsLib.SimpleTimeMeter.TotalMilliseconds">
+            <summary>Возвращает полное количество миллисекунд. Если задача не завершена, вызывает исключение NotEndedException</summary>
+        </member>
+        <member name="P:DriverForTestsLib.SimpleTimeMeter.TotalSeconds">
+            <summary>Возвращает полное количество секунд. Если задача не завершена, вызывает исключение NotEndedException</summary>
+        </member>
         <member name="T:DriverForTestsLib.TestConditionParser">
             <summary>Этот класс может быть использован для того,
             чтобы распарсить простые правила исключения тегов</summary>
