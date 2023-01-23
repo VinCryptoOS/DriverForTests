@@ -258,8 +258,8 @@ public class TestTaskTag
 {
                                                                         /// <summary>Имя тега. Должно быть всегда не null для конкретной задачи. Если null, то это значит, что это тег фильтра: если с таким тегом сравнивается задача, то он будет удовлетворять любому другому тегу</summary>
     public readonly string? name;                                       /// <summary>Приоритет тега: чем больше, тем выше приоритет</summary>
-    public readonly double  priority = 0.0d;                            /// <summary>Условная длительность теста (параметр длительности)</summary>
-    public readonly double  duration = -1d;                             /// <summary>Для аттрибутов задач данный тег не имеет смысла. true - нормальное значение тега. Указывает на то, что duration - это максимальная продолжительность (false используется только в тегах для фильтрации и указывает на то, что задача должна быть строго более duration)</summary>
+    public readonly double  priority = 0.0d;                            /// <summary>Условная длительность теста (параметр длительности). В конструкторе TestTask на каждый тег устанавливается максимальная длительность, вычисленная со всех тегов</summary>
+    public          double  duration = -1d;                             /// <summary>Для аттрибутов задач данный тег не имеет смысла. true - нормальное значение тега. Указывает на то, что duration - это максимальная продолжительность (false используется только в тегах для фильтрации и указывает на то, что задача должна быть строго более duration)</summary>
     public          bool    maxDuration = true;
 
     /// <param name="tagName">Имя тега</param>
@@ -541,6 +541,7 @@ public abstract class TestTask
         var attributes   = (  TestTagAttribute []  )
                            this.GetType().GetCustomAttributes(typeof(TestTagAttribute), true);
 
+        var maxTagsDuration = double.MinValue;
         // Применение атрибутов к задаче
         foreach (var attribute in attributes)
         {
@@ -551,6 +552,8 @@ public abstract class TestTask
                     throw new ArgumentNullException("TestTaskTag can not null (null for filter patterns only)");
 
                 tags.Add(attribute.tag);
+                if (maxTagsDuration < attribute.tag.duration)
+                    maxTagsDuration = attribute.tag.duration;
             }
 
             // Устанавливаем флаг экслюзивной задачи, который выделен весь процессор целиком
@@ -559,6 +562,12 @@ public abstract class TestTask
                 waitBefore = true;
                 waitAfter  = true;
             }
+        }
+
+        // Устанавливаем максимальную длительность, чтобы не нужно было в атрибутах дублировать эти длительности
+        foreach (var tag in tags)
+        {
+            tag.duration = maxTagsDuration;
         }
     }
                                                                     /// <summary>Каким тегам удовлетворяет задача</summary>
