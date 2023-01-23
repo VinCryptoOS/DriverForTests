@@ -11,7 +11,7 @@ For [.NET 7.0](https://dotnet.microsoft.com/download)
 Каждый тест должен быть вручную оформлен как класс-наследник TestTask
 
 ## Билд и извлечение:
-Если нужно использовать совместно с VinKekFish - см. build VinKekFish
+Если нужно использовать совместно с VinKekFish - см. build [VinKekFish](https://github.com/VinKekFish/VinKekFish)
 
 В каталоге, где нужно создать директорию
 git clone https://github.com/VinCryptoOS/DriverForTests
