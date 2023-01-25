@@ -79,6 +79,7 @@ public class DriverForTests
             (
                 delegate
                 {
+                    bool ExceptionOccured = false;
                     try
                     {
                         task.started = DateTime.Now;
@@ -88,15 +89,14 @@ public class DriverForTests
                     catch (Exception e)
                     {
                         task.error.Add(new TestError() { ex = e, Message = "During the test the exception occured\n" + e.Message });
-                        if (task.error.Count > 0)
-                            Interlocked.Increment(ref errored);
+                        ExceptionOccured = true;
                     }
                     finally
                     {
                         Interlocked.Decrement(ref started);
                         Interlocked.Increment(ref ended);
 
-                        if (task.error.Count > 0)
+                        if (ExceptionOccured || task.error.Count > 0)
                             Interlocked.Increment(ref errored);
 
                         task.ended   = true;
