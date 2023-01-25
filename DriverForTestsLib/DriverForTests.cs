@@ -131,7 +131,8 @@ public class DriverForTests
             foreach (var task in tasks)
             {
                 var tm = $"{(task.endTime - task.started).TotalMilliseconds:F0} ms";
-                Console.WriteLine($"\t{tm, 8}\t{task.Name, 32}");
+                var sc = task.error.Count > 0 ? "!" : "+";
+                Console.WriteLine($"{sc}\t{tm, 8}\t{task.Name, 32}");
             }
         }
         WaitMessages(options, false, true);
