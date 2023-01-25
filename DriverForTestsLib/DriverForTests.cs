@@ -88,6 +88,8 @@ public class DriverForTests
                     catch (Exception e)
                     {
                         task.error.Add(new TestError() { ex = e, Message = "During the test the exception occured\n" + e.Message });
+                        if (task.error.Count > 0)
+                            Interlocked.Increment(ref errored);
                     }
                     finally
                     {
