@@ -73,7 +73,7 @@ public class DriverForTests
         {
             var acceptableThreadCount = task.waitBefore ? 1 : PC;
             waitForTasks(options, acceptableThreadCount, true);
-            if (acceptableThreadCount == 1)
+            if (task.waitBefore)
                 GC.Collect();
 
             Interlocked.Increment(ref started);
