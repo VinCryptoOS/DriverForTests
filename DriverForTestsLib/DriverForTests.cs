@@ -127,6 +127,7 @@ public class DriverForTests
 
         waitForTasks(options, 1,     true);
         Console.Clear();
+        GC.Collect();   // Принудительно пытаемся вызвать деструкторы всех тестов
         if ((options.logNamesOfTests & 2) > 0)
         {
             Console.WriteLine("All tasks ended:");
