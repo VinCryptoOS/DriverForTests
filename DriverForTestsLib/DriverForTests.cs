@@ -69,65 +69,80 @@ public class DriverForTests
         }
 
 
-        foreach (var task in tasks)
+        try
         {
-            var acceptableThreadCount = task.waitBefore ? 1 : PC;
-            waitForTasks(options, acceptableThreadCount, true);
-            if (task.waitBefore)
-                GC.Collect();
-
-            Interlocked.Increment(ref started);
-            ThreadPool.QueueUserWorkItem
-            (
-                delegate
+            foreach (var _task in tasks)
+            {
+                var task = _task;
+                var acceptableThreadCount = task.waitBefore ? 1 : PC;
+                waitForTasks(options, acceptableThreadCount, true);
+                try
                 {
-                    bool ExceptionOccured = false;
-                    try
+                    if (task.waitBefore)
+                        GC.Collect();
+                }
+                catch (Exception e)
+                {
+                    task.error.Add(new TestError() { ex = e, Message = "During the GC.Collect() before the task the exception occured\n" + e.Message });
+                }
+
+                Interlocked.Increment(ref started);
+                ThreadPool.QueueUserWorkItem
+                (
+                    delegate
                     {
-                        task.started = DateTime.Now;
-                        task.start   = true;
-                        task.taskFunc();
-                    }
-                    catch (Exception e)
-                    {
-                        task.error.Add(new TestError() { ex = e, Message = "During the test the exception occured\n" + e.Message });
-                        ExceptionOccured = true;
-                    }
-                    finally
-                    {
-                        Interlocked.Decrement(ref started);
-                        Interlocked.Increment(ref ended);
-
-                        if (ExceptionOccured || task.error.Count > 0)
-                            Interlocked.Increment(ref errored);
-
-                        task.ended   = true;
-                        task.done    = 100f;
-                        task.endTime = DateTime.Now;
-
-                        lock (sync)
-                            Monitor.PulseAll(sync);
-
-                        if (LogFileName != null)
-                        if ((options.logNamesOfTests & 1) > 0)
-                        lock (tasks)
+                        bool ExceptionOccured = false;
+                        try
                         {
-                            File.AppendAllText(LogFileName, "task " + task.Name + "\n");
-                            File.AppendAllText(LogFileName, "task started at " + HelperDateClass.DateToDateString(task.started) + "\n");
-                            File.AppendAllText(LogFileName, $"Duration: {(task.endTime - task.started).TotalMilliseconds:F0} ms\n");
-                            File.AppendAllText(LogFileName, "task ended   at " + HelperDateClass.DateToDateString(task.endTime) + "\n\n");
+                            task.started = DateTime.Now;
+                            task.start   = true;
+                            task.taskFunc();
+                        }
+                        catch (Exception e)
+                        {
+                            lock (task.error)
+                            task.error.Add(new TestError() { ex = e, Message = "During the test the exception occured\n" + e.Message });
+                            ExceptionOccured = true;
+                        }
+                        finally
+                        {
+                            Interlocked.Decrement(ref started);
+                            Interlocked.Increment(ref ended);
+
+                            if (ExceptionOccured || task.error.Count > 0)
+                                Interlocked.Increment(ref errored);
+
+                            task.ended   = true;
+                            task.done    = 100f;
+                            task.endTime = DateTime.Now;
+
+                            lock (sync)
+                                Monitor.PulseAll(sync);
+
+                            if (LogFileName != null)
+                            if ((options.logNamesOfTests & 1) > 0)
+                            lock (tasks)
+                            {
+                                File.AppendAllText(LogFileName, "task " + task.Name + "\n");
+                                File.AppendAllText(LogFileName, "task started at " + HelperDateClass.DateToDateString(task.started) + "\n");
+                                File.AppendAllText(LogFileName, $"Duration: {(task.endTime - task.started).TotalMilliseconds:F0} ms\n");
+                                File.AppendAllText(LogFileName, "task ended   at " + HelperDateClass.DateToDateString(task.endTime) + "\n\n");
+                            }
                         }
                     }
-                }
-            );
+                );
 
-            acceptableThreadCount = task.waitAfter ? 1 : PC;
-            waitForTasks(options, acceptableThreadCount, true);
+                acceptableThreadCount = task.waitAfter ? 1 : PC;
+                waitForTasks(options, acceptableThreadCount, true);
+            }
         }
-
-        waitForTasks(options, 1,     true);
+        finally
+        {
+            // Обязательно ждём завершения начатых задач, чтобы не было перезаписи started там, где её уже нет (это - возможное нарушение безопасности памяти)
+            waitForTasks(options, 1, true);
+        }
         Console.Clear();
-        GC.Collect();   // Принудительно пытаемся вызвать деструкторы всех тестов
+
         if ((options.logNamesOfTests & 2) > 0)
         {
             Console.WriteLine("All tasks ended:");
@@ -135,11 +150,17 @@ public class DriverForTests
             {
                 var tm = $"{(task.endTime - task.started).TotalMilliseconds:F0} ms";
                 var sc = task.error.Count > 0 ? "!" : "+";
-                Console.WriteLine($"{sc}\t{tm, 8}\t{task.Name, 32}");
+                Console.WriteLine($"{sc}{tm, 11}    {task.Name, -48}");
             }
         }
         WaitMessages(options, false, true);
 
+        // Принудительно пытаемся вызвать деструкторы всех тестов
+        for (int i = 0; i < 16; i++)
+        {
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+        }
 
         var endTime = DateTime.Now;
         var endMsg  = "Tests ended in time " + HelperDateClass.TimeStampTo_HHMMSSfff_String(endTime - startTime) + "\t\t" + DateTime.Now.ToLongDateString() + "\t" + DateTime.Now.ToLongTimeString();
@@ -162,7 +183,10 @@ public class DriverForTests
         {
             try
             {
-                return Console.KeyAvailable;
+                // Убрано, т.к. с этой строкой появляется ошибка, похожая на тихое нарушение безопасности памяти
+                //lock (tasks)
+                //return Console.KeyAvailable;
+                return false;
             }
             catch
             {
@@ -174,7 +198,7 @@ public class DriverForTests
         {
             var now = DateTime.Now;
 
-            // Ожидаем задержку во времени первого вывода
+            // Ожидаем задержку во времени для первого вывода
             // Если это промежуточный вывод, и на консоли нет ввода, и время ожидания вывода ещё не истекло
             if (!endedAllTasks)
             if (options.sleepInMs_ForFirstOutput > 0 && !keyAvailable())
@@ -189,8 +213,11 @@ public class DriverForTests
             Thread.CurrentThread.Priority = ThreadPriority.Highest;
             if (!endedAllTasks)     // В конце очистка идёт в другом месте
             {
-                Console.Clear();
-                PrintMainTaskState(ended, errored, tasks);
+                lock (tasks)
+                {
+                    Console.Clear();
+                    PrintMainTaskState(ended, errored, tasks);
+                }
             }
 
 /*
@@ -227,6 +254,7 @@ public class DriverForTests
                 if (cntToMessage > 0)
                 {
                     sb.Insert(0, $"Выполняемые задачи: ({cnt})\t[{HelperDateClass.TimeStampTo_HHMMSSfff_String(now - startTime)}]\n");
+                    lock (tasks)
                     Console.WriteLine(sb.ToString());
                 }
             }
@@ -240,6 +268,7 @@ public class DriverForTests
                     {
                         Console.WriteLine();
                         Console.WriteLine("ERRORS for task " + task.Name);
+                        lock (task.error)
                         foreach (var e in task.error)
                         {
                             Console.WriteLine(e.Message);
