@@ -10,6 +10,9 @@ For [.NET 7.0](https://dotnet.microsoft.com/download)
 
 Каждый тест должен быть вручную оформлен как класс-наследник TestTask
 
+[Справка по языку настройки задач](./DriverForTestsLib/TestTask-parser.md)
+
+
 ## Билд и извлечение:
 Если нужно использовать совместно с VinKekFish - см. build [VinKekFish](https://github.com/VinKekFish/VinKekFish)
 
