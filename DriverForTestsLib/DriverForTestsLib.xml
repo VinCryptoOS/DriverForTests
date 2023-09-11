@@ -361,6 +361,9 @@
         <member name="F:DriverForTestsLib.TestTask.done">
             <summary>Выполнение задачи в процентах (0-100)</summary><remarks>Задача может не использовать этот параметр</remarks>
         </member>
+        <member name="P:DriverForTestsLib.TestTask.doneFunc">
+            <summary>Когда необходимо обновить поле done, вызывается эта функция</summary>
+        </member>
         <member name="M:DriverForTestsLib.TestTask.isSatisfiesThePriorityAndDuration(System.Double,System.Double)">
             <summary>Проверяет, удовлетворяет ли задача указанному приоритету и параметру длительности</summary>
             <param name="generalPriorityForTasks">Заданный приоритет</param>

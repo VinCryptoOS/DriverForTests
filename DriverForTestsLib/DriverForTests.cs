@@ -136,6 +136,18 @@ public class DriverForTests
                 waitForTasks(options, acceptableThreadCount, true);
             }
         }
+        catch (Exception ex)
+        {
+            var errmsg = $"ERROR in the test driver\n{ex.Message}\nException:\n{getFullExceptionString(ex)}";
+            if (LogFileName != null)
+            lock (tasks)
+            {
+                File.AppendAllText( LogFileName, errmsg );
+            }
+
+            Console.WriteLine(errmsg);
+            throw;
+        }
         finally
         {
             // Обязательно ждём завершения начатых задач, чтобы не было перезаписи started там, где её уже нет (это - возможное нарушение безопасности памяти)
@@ -143,23 +155,39 @@ public class DriverForTests
         }
         Console.Clear();
 
-        if ((options.logNamesOfTests & 2) > 0)
+        try
         {
-            Console.WriteLine("All tasks ended:");
-            foreach (var task in tasks)
+            if ((options.logNamesOfTests & 2) > 0)
             {
-                var tm = $"{(task.endTime - task.started).TotalMilliseconds:F0} ms";
-                var sc = task.error.Count > 0 ? "!" : "+";
-                Console.WriteLine($"{sc}{tm, 11}    {task.Name, -48}");
+                Console.WriteLine("All tasks ended:");
+                foreach (var task in tasks)
+                {
+                    var tm = $"{(task.endTime - task.started).TotalMilliseconds:F0} ms";
+                    var sc = task.error.Count > 0 ? "!" : "+";
+                    Console.WriteLine($"{sc}{tm, 11}    {task.Name, -48}");
+                }
+            }
+            WaitMessages(options, false, true);
+
+
+            // Принудительно пытаемся вызвать деструкторы всех тестов
+            for (int i = 0; i < 16; i++)
+            {
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
             }
         }
-        WaitMessages(options, false, true);
-
-        // Принудительно пытаемся вызвать деструкторы всех тестов
-        for (int i = 0; i < 16; i++)
+        catch (Exception ex)
         {
-            GC.Collect();
-            GC.WaitForPendingFinalizers();
+            var errmsg = $"ERROR in the test driver (ending)\n{ex.Message}\nException:\n{getFullExceptionString(ex)}";
+            if (LogFileName != null)
+            lock (tasks)
+            {
+                File.AppendAllText( LogFileName, errmsg );
+            }
+
+            Console.WriteLine(errmsg);
+            throw;
         }
 
         var endTime = DateTime.Now;
@@ -240,6 +268,16 @@ public class DriverForTests
 
                         var str = "";
                         // if (task.done > 0)
+                        try
+                        {
+                            if (task.doneFunc is not null)
+                                task.doneFunc();
+                        }
+                        catch (Exception ex)
+                        {
+                            sb.AppendLine(ex.Message);
+                        }
+
                         str = task.done.ToString("F0") + "%";
 
                         var ts  = now - task.started;

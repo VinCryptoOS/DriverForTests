@@ -537,6 +537,7 @@ public abstract class TestTask
         this.Name        = Name;
         this.constructor = constructor;
         this.taskFunc    = () => { throw new NotImplementedException(); };
+        this.doneFunc    = () => {};
 
         var attributes   = (  TestTagAttribute []  )
                            this.GetType().GetCustomAttributes(typeof(TestTagAttribute), true);
@@ -575,7 +576,7 @@ public abstract class TestTask
 
                                                                     /// <summary>Функция тестирования, которая вызывается библиотекой</summary>
     public virtual TestTaskFn   taskFunc {get; protected set;}      /// <summary>Имя задачи</summary>
-    public virtual  string      Name     {get; protected set;}      /// <summary>Если true, то задача стартовала (остаётся true навсегда)</summary>
+    public virtual  string      Name     {get;           set;}      /// <summary>Если true, то задача стартовала (остаётся true навсегда)</summary>
     public          bool        start = false;                      /// <summary>Если true, то задача завершена (в том числе, с исключением)</summary>
     public          bool        ended = false;                      /// <summary>Список ошибок, возникших при исполнении данной тестовой задачи</summary>
     public readonly List<TestError> error = new List<TestError>();
@@ -589,6 +590,8 @@ public abstract class TestTask
 
     /// <summary>Выполнение задачи в процентах (0-100)</summary><remarks>Задача может не использовать этот параметр</remarks>
     public float done = 0f;
+    /// <summary>Когда необходимо обновить поле done, вызывается эта функция</summary>
+    public virtual TestTaskFn? doneFunc {get; protected set;}
 
     /// <summary>Проверяет, удовлетворяет ли задача указанному приоритету и параметру длительности</summary>
     /// <param name="generalPriorityForTasks">Заданный приоритет</param>
