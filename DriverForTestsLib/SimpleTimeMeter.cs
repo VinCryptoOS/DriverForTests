@@ -15,7 +15,10 @@ public class SimpleTimeMeter : IDisposable
     public void Dispose()
     {
         if (end == default)
+        {
             end = DateTime.Now;
+            setTimeSpan();
+        }
     }
 
     public class NotEndedException: Exception
@@ -30,7 +33,6 @@ public class SimpleTimeMeter : IDisposable
     {
         get
         {
-            setTimeSpan();
             return totalMilliseconds;
         }
     }
@@ -40,7 +42,6 @@ public class SimpleTimeMeter : IDisposable
     {
         get
         {
-            setTimeSpan();
             return totalSeconds;
         }
     }
