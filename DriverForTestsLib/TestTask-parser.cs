@@ -182,7 +182,7 @@ public class TestConditionParser
             foreach (var ts in positive[p])
             {
                 var aConditions = aConditionsN;
-                if (ts.isPositive)
+                if (ts.IsPositive)
                     aConditions = aConditionsY;
 
                 TestTaskTagCondition newCond = newTestTaskTagCondition(ts);
@@ -200,12 +200,12 @@ public class TestConditionParser
             var newCond = new TestTaskTagCondition()
             {
                 listOfNeedTags = new List<TestTaskTag>(1),
-                isMandatoryExcludingRule = !ts.isPositive,
+                isMandatoryExcludingRule = !ts.IsPositive,
                 conditionOperator = ConditionOperator.Count
             };
 
             // maxDuration = !ts.isPositive - если идёт исключение каких-то задач, то оно идёт для задач большего времени, а не меньшего
-            var newTag = new TestTaskTag(ts.Name, double.MinValue, ts.Duration) { maxDuration = ts.isPositive };
+            var newTag = new TestTaskTag(ts.Name, double.MinValue, ts.Duration) { maxDuration = ts.IsPositive };
             newCond.listOfNeedTags.Add(newTag);
             return newCond;
         }
@@ -219,7 +219,7 @@ public class TestConditionParser
 
         static void AddNewTestTagDescriptionToList(SortedList<int, List<TestTagDescription>> list, int dIndex, double duration, bool isPositive, string? arg)
         {
-            var ttd = new TestTagDescription { Name = arg, Duration = duration, isPositive = isPositive };
+            var ttd = new TestTagDescription { Name = arg, Duration = duration, IsPositive = isPositive };
             list[dIndex].Add(ttd);
         }
 
@@ -237,6 +237,6 @@ public class TestConditionParser
     {
         public string? Name         {get; init;}
         public double  Duration     {get; init;}
-        public bool    isPositive   {get; init;}
+        public bool    IsPositive   {get; init;}
     }
 }

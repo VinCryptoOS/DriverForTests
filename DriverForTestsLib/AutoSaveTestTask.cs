@@ -9,18 +9,18 @@ public class AutoSaveTestTask: TestTask
     #nullable disable
     protected DirectoryInfo _dirForFiles;
                                                                 /// <summary>Директория для хранения файлов</summary>
-    public DirectoryInfo dirForFiles
+    public DirectoryInfo DirForFiles
     {
         get => _dirForFiles;
         protected set
         {
             this._dirForFiles = value;
-            this.path         = Path.Combine(dirForFiles.FullName, Name);
+            this.Path         = System.IO.Path.Combine(DirForFiles.FullName, base.Name);
         }
     }
 
     public string _path;                                            /// <summary>Путь для файла</summary>
-    public string  path
+    public string  Path
     {
         get => _path;
         protected set
@@ -41,15 +41,15 @@ public class AutoSaveTestTask: TestTask
     /// <param name="constructor">Конструктор задач, который создаёт эту задачу</param>
     public AutoSaveTestTask(string name, DirectoryInfo dirForFiles, TaskResultSaver executer_and_saver, TestConstructor constructor): base(name, constructor)
     {
-        this.dirForFiles = dirForFiles;
+        this.DirForFiles = dirForFiles;
 
         this.executer_and_saver = executer_and_saver;
         this._taskFunc = () =>
         {
             // this - т.к. dirForFiles может измениться к моменту запуска тестов
-            if (this.executer_and_saver.canCreateFile)
-            if (!this.dirForFiles.Exists)
-                this.dirForFiles.Create();
+            if (this.executer_and_saver.CanCreateFile)
+            if (!this.DirForFiles.Exists)
+                this.DirForFiles.Create();
 
             var result = this.executer_and_saver.ExecuteTest(this);
             this.executer_and_saver.Save(this, result);
@@ -58,7 +58,7 @@ public class AutoSaveTestTask: TestTask
 
     protected TestTaskFn _taskFunc;
     /// <summary>Функция тестирования, которая вызывается библиотекой. См. executer_and_saver </summary>
-    public override TestTaskFn taskFunc
+    public override TestTaskFn TaskFunc
     {
         get
         {
@@ -85,7 +85,7 @@ public class AutoSaveTestError: TestError
 /// <summary>Класс, определяющий функцию, которая выполняет тестирование</summary>
 public abstract class TaskResultSaver
 {
-    public virtual bool canCreateFile {get; set;} = false;
+    public virtual bool CanCreateFile {get; set;} = false;
 
     /// <summary>Функция, вызываемая при выполнении тестирования</summary>
     /// <param name="task">FirstSaveTestTask, из которой вызывается данная функция</param>
@@ -97,7 +97,7 @@ public abstract class TaskResultSaver
     /// <param name="result">Объект для сохранения</param>
     public virtual void Save(AutoSaveTestTask task, object result)
     {
-        var fi = getSaveFileInfo(task, result);
+        var fi = GetSaveFileInfo(task, result);
 
         // Все сохранения должны быть в идентичной культуре
         var cc = Thread.CurrentThread.CurrentCulture;
@@ -105,14 +105,13 @@ public abstract class TaskResultSaver
         {
             Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
 
-            var text = getText(task, result);
-            if (text is null)
-                throw new Exception($"TaskResultSaver.Save.getText == null for task '{task.Name}'");
+            var text = GetText(task, result)
+                ?? throw new Exception($"TaskResultSaver.Save.getText == null for task '{task.Name}'");
 
             fi.Refresh();
             if (fi.Exists)
             {
-                if (!doCompare(fi, text))
+                if (!DoCompare(fi, text))
                 {
                     var e = new AutoSaveTestError();
                     e.Message = $"AutoSaveTestError: new string is not equal to string that was got from file '{fi.FullName}'";
@@ -125,7 +124,7 @@ public abstract class TaskResultSaver
             }
             else
             {
-                if (canCreateFile)
+                if (CanCreateFile)
                 {
                     var e = new AutoSaveTestError();
                     e.Message = $"AutoSaveTestError: file '{fi.FullName}' not exists; created";
@@ -151,12 +150,12 @@ public abstract class TaskResultSaver
         }
     }
 
-    public virtual FileInfo getSaveFileInfo(AutoSaveTestTask task, object result)
+    public virtual FileInfo GetSaveFileInfo(AutoSaveTestTask task, object result)
     {
-        return new FileInfo(task.path);
+        return new FileInfo(task.Path);
     }
 
-    public virtual bool doCompare(FileInfo fi, string text)
+    public virtual bool DoCompare(FileInfo fi, string text)
     {
         var textFromFile = File.ReadAllText(fi.FullName);
 
@@ -198,31 +197,31 @@ public abstract class TaskResultSaver
             }
         }
 
-        public ListOfObjects listOfObjects = new ListOfObjects(128);
+        public ListOfObjects listOfObjects = new(128);
         public TextFromFieldProcess(AutoSaveTestTask task)
         {
             this.task      = task;
         }
     }
 
-    public static bool haveTaskResultSaver_DoNotSaveAttribute(Type type)
+    public static bool HaveTaskResultSaver_DoNotSaveAttribute(Type type)
     {
         return type.GetCustomAttributes(typeof(TaskResultSaver_DoNotSaveAttribute), true).Length > 0;
     }
 
-    public static bool haveTaskResultSaver_DoNotSaveAttribute(MemberInfo type)
+    public static bool HaveTaskResultSaver_DoNotSaveAttribute(MemberInfo type)
     {
         if (type.GetCustomAttributes(typeof(TaskResultSaver_DoNotSaveAttribute), true).Length > 0)
             return true;
 
         var f = type as FieldInfo;
         if (f is not null)
-        if (haveTaskResultSaver_DoNotSaveAttribute(f.FieldType))
+        if (HaveTaskResultSaver_DoNotSaveAttribute(f.FieldType))
             return true;
 
         var p = type as PropertyInfo;
         if (p is not null)
-        if (haveTaskResultSaver_DoNotSaveAttribute(p.PropertyType))
+        if (HaveTaskResultSaver_DoNotSaveAttribute(p.PropertyType))
             return true;
 
         return false;
@@ -238,8 +237,8 @@ public abstract class TaskResultSaver
         public readonly IEnumerable<object> enumerableObject;
     }
 
-    protected SortedList<int, string> indentationStrings = new SortedList<int, string>();
-    public string getIndent(int nesting)
+    protected SortedList<int, string> indentationStrings = new();
+    public string GetIndent(int nesting)
     {
         if (indentationStrings.ContainsKey(nesting))
             return indentationStrings[nesting];
@@ -253,36 +252,36 @@ public abstract class TaskResultSaver
         return val;
     }
 
-    public string addIndentation(int nesting, string? stringToChange, bool addToStart = true)
+    public string AddIndentation(int nesting, string? stringToChange, bool addToStart = true)
     {
         if (stringToChange == null)
-            return "null" + getIndent(nesting);
+            return "null" + GetIndent(nesting);
 
-        var replaced = stringToChange.Replace("\n", "\n" + getIndent(nesting));
+        var replaced = stringToChange.Replace("\n", "\n" + GetIndent(nesting));
 
         if (addToStart)
-            return getIndent(nesting) + replaced;
+            return GetIndent(nesting) + replaced;
 
         return replaced;
     }
 
-    public virtual string? getText(AutoSaveTestTask task, object? result, string FullName = "", TextFromFieldProcess? _tffp = null, int nesting = 0)
+    public virtual string? GetText(AutoSaveTestTask task, object? result, string FullName = "", TextFromFieldProcess? _tffp = null, int nesting = 0)
     {
         var tffp   = _tffp;
             tffp ??= new TextFromFieldProcess(task);
         var sb     = new StringBuilder(128);
 
         if (result == null)
-            return addIndentation(nesting, "null");
+            return AddIndentation(nesting, "null");
 
         if (_tffp == null && result is byte[] bytes)
         {
-            return getTextForByteArray(nesting, bytes);
+            return GetTextForByteArray(nesting, bytes);
         }
 
         if (_tffp == null && result is IEnumerable<object> obj)
         {
-            return getText
+            return GetText
             (
                 task:      task,
                 result:    new IEnumerable_Object_Wrapper(obj),
@@ -294,7 +293,7 @@ public abstract class TaskResultSaver
 
         if (isContainsOrRegisterNew(result, out TextFromFieldProcess.ListedObject? lob))
         {
-            return addIndentation
+            return AddIndentation
             (
               nesting:        nesting + 1,
               stringToChange: $"\n{{already saved with number {lob?.number:D4}{"}"}\n"
@@ -303,7 +302,7 @@ public abstract class TaskResultSaver
 
         sb.AppendLine
         (
-            addIndentation
+            AddIndentation
             (
                 nesting:        nesting,
                 stringToChange: $"\n{{object number {lob?.number:D4}{"}"}"
@@ -312,12 +311,12 @@ public abstract class TaskResultSaver
 
         if (result is byte[] bytes2)
         {
-            return sb.ToString() + getTextForByteArray(nesting, bytes2);
+            return sb.ToString() + GetTextForByteArray(nesting, bytes2);
         }
 
         var rt       = result.GetType();
         var members  = rt.GetMembers();
-        var allField = !haveTaskResultSaver_DoNotSaveAttribute(rt);
+        var allField = !HaveTaskResultSaver_DoNotSaveAttribute(rt);
 
         // Это, в общем-то, не нужно: на случай, если объекты в разных задачах случайно начнут работать одновременно (и то весь доступ на чтение идёт)
         // lock (result)
@@ -332,11 +331,11 @@ public abstract class TaskResultSaver
             {
                 // Если над свойством или полем стоит атрибут - его не сохраняем
                 // Если сам тип поля/свойства с атрибутом - не сохраняем
-                if (haveTaskResultSaver_DoNotSaveAttribute(member))
+                if (HaveTaskResultSaver_DoNotSaveAttribute(member))
                     continue;
             }
 
-            var text = getTextFromField(member, lob, tffp, nesting + 1, FullName + "." + member.Name);
+            var text = GetTextFromField(member, lob, tffp, nesting + 1, FullName + "." + member.Name);
 
             if (text is not null)
                 sb.AppendLine(text);
@@ -344,7 +343,7 @@ public abstract class TaskResultSaver
 
         if (result is System.Collections.Generic.IEnumerable<object> || result is System.Collections.IEnumerable)
         {
-            var text = getTextFromField(null, lob, tffp, nesting + 1, FullName + "[IEnumerable]");
+            var text = GetTextFromField(null, lob, tffp, nesting + 1, FullName + "[IEnumerable]");
 
             if (text is not null)
                 sb.AppendLine(text);
@@ -352,7 +351,7 @@ public abstract class TaskResultSaver
 
         sb.Append
         (
-            addIndentation
+            AddIndentation
             (
                 nesting: nesting,
                 stringToChange: $"\nend of {"{"}{lob?.number:D4}{"}"} {FullName}",
@@ -382,14 +381,14 @@ public abstract class TaskResultSaver
         }
     }
 
-    protected string AddSpacesToHexString(string str)
+    protected static string AddSpacesToHexString(string str)
     {
         var sb  = new StringBuilder();
         int i = 0;
         for (; i < str.Length - 4; i += 4)
         {
             sb.Append(  str[i .. (i+4)]  );
-            sb.Append(" ");
+            sb.Append(' ');
 
             if ((i % hexMax) == hexMax - 4)
                 sb.Append("  ");
@@ -403,7 +402,7 @@ public abstract class TaskResultSaver
     protected const int hexMax  = 2 << 3;   // 2 << 3 == 4
     protected const int hexMax2 = hexMax  * 2;
     protected const int hexMax4 = hexMax2 * 2;
-    protected string getTextForByteArray(int nesting, byte[] bytes)
+    protected string GetTextForByteArray(int nesting, byte[] bytes)
     {
         var str = Convert.ToHexString(bytes);
         var sb  = new StringBuilder();
@@ -420,13 +419,13 @@ public abstract class TaskResultSaver
             sb.Append("\n" + ns);
         }
 
-        return addIndentation
+        return AddIndentation
                 (
                     nesting,
                     $"byte[{bytes.LongLength}]:"
                 )
             +
-                addIndentation
+                AddIndentation
                 (
                     nesting + 1,
                     sb.ToString(),
@@ -434,7 +433,7 @@ public abstract class TaskResultSaver
                 );
     }
 
-    public static bool isElementaryType(Type type, object? obj)
+    public static bool IsElementaryType(Type type, object? obj)
     {
         if (type == null)
             return true;
@@ -443,13 +442,13 @@ public abstract class TaskResultSaver
                 || typeof(String).IsInstanceOfType(obj);
     }
 
-    public virtual string? getTextFromField(System.Reflection.MemberInfo? member, in TextFromFieldProcess.ListedObject? source, TextFromFieldProcess tffp, int nesting, string FullName)
+    public virtual string? GetTextFromField(System.Reflection.MemberInfo? member, in TextFromFieldProcess.ListedObject? source, TextFromFieldProcess tffp, int nesting, string FullName)
     {
         System.Reflection.FieldInfo?    field = member as System.Reflection.FieldInfo;
         System.Reflection.PropertyInfo? prop  = member as System.Reflection.PropertyInfo;
 
-        bool isField = field is not null ? true: false;
-        bool isProp  = prop  is not null ? true: false;
+        bool isField = field is not null;
+        bool isProp  = prop  is not null;
         
         /*if (!isField && !isProp)
             throw new Exception("TaskResultSaver.getTextFromField: !isField && !isProp");
@@ -476,7 +475,7 @@ public abstract class TaskResultSaver
 //        var bstr = $"\n----------------\nseparator: number:{source?.number:D4}/{tffp.separator}/{nesting:D4}\n{member.Name}: {mType?.FullName}\t\tFrom type {source?.obj.GetType().FullName}\n";
 //         var estr = $"\nend separator: {source?.number:D4}/{tffp.separator}/{nesting:D4}\t{member.Name}\n----------------\n\n";
 
-        var bstr = addIndentation
+        var bstr = AddIndentation
             (
               nesting:        nesting,
               stringToChange: $"\n{member?.Name ?? "[IEnumerable]"}:\t\t{mType?.FullName}\t\t{FullName}"
@@ -485,25 +484,25 @@ public abstract class TaskResultSaver
 
         if (val is byte[] bytes)
         {
-            return getText(tffp.task, bytes, FullName, tffp, nesting);
+            return GetText(tffp.task, bytes, FullName, tffp, nesting);
         }
 
         var  vstr = "";
         bool isEnumerable = val is IEnumerable<object> || val is System.Collections.IEnumerable;
         if (val is null || mType == null)
         {
-            vstr = addIndentation(nesting+1, "\nnull", false);
+            vstr = AddIndentation(nesting+1, "\nnull", false);
         }
         else
-        if (  TaskResultSaver.isElementaryType(mType, val)  )
+        if (  TaskResultSaver.IsElementaryType(mType, val)  )
         {
-            vstr = addIndentation(nesting+1, "\n" + val.ToString(), false);
+            vstr = AddIndentation(nesting+1, "\n" + val.ToString(), false);
         }
         else
         if (isEnumerable && member == null)
         {
             var sba  = new StringBuilder(128);
-            sba.Append("\n" + getIndent(nesting+1) + "[values:]\n");
+            sba.Append("\n" + GetIndent(nesting+1) + "[values:]\n");
 
             int   cnt   = 0;
             Type? pType = null;
@@ -511,7 +510,7 @@ public abstract class TaskResultSaver
             {
                 foreach (var v in vals)
                 {
-                    cnt = getTextForArrayVal(tffp, nesting, FullName, sba, cnt, v, ref pType);
+                    cnt = GetTextForArrayVal(tffp, nesting, FullName, sba, cnt, v, ref pType);
                 }
             }
             else
@@ -519,10 +518,10 @@ public abstract class TaskResultSaver
             {
                 foreach (var v in valsA)
                 {
-                    cnt = getTextForArrayVal(tffp, nesting, FullName, sba, cnt, v, ref pType);
+                    cnt = GetTextForArrayVal(tffp, nesting, FullName, sba, cnt, v, ref pType);
                 }
             }
-            sba.AppendLine(getIndent(nesting+1) + "[end values]");
+            sba.AppendLine(GetIndent(nesting+1) + "[end values]");
 
             if (vstr != null && vstr.Length > 0)
                 vstr += "\n\n" + sba.ToString();
@@ -532,7 +531,7 @@ public abstract class TaskResultSaver
         else
         if (member != null && source != null)
         {
-            getMemberText(source, tffp, nesting, FullName, val, out estr, out vstr, source.number);
+            GetMemberText(source, tffp, nesting, FullName, val, out estr, out vstr, source.number);
         }
         else
             throw new Exception();
@@ -540,14 +539,14 @@ public abstract class TaskResultSaver
         return bstr + vstr + estr;
     }
 
-    private void getMemberText(TextFromFieldProcess.ListedObject? source, TextFromFieldProcess tffp, int nesting, string FullName, object? val, out string estr, out string? vstr, long objectNumber)
+    private void GetMemberText(TextFromFieldProcess.ListedObject? source, TextFromFieldProcess tffp, int nesting, string FullName, object? val, out string estr, out string? vstr, long objectNumber)
     {
-        vstr = getText(tffp.task, val, FullName, tffp, nesting);
+        vstr = GetText(tffp.task, val, FullName, tffp, nesting);
 
         estr = "";
     }
 
-    protected int getTextForArrayVal(TextFromFieldProcess tffp, int nesting, string FullName, StringBuilder sba, int cnt, object v, ref Type? prevType)
+    protected int GetTextForArrayVal(TextFromFieldProcess tffp, int nesting, string FullName, StringBuilder sba, int cnt, object v, ref Type? prevType)
     {
         var vt      = v.GetType();
         var typeStr = "";
@@ -558,12 +557,12 @@ public abstract class TaskResultSaver
         }
 
         var cntStr = $"{cnt:D2}:";
-        var number = getIndent(nesting + 2) + $"{cntStr, -8}";
+        var number = GetIndent(nesting + 2) + $"{cntStr, -8}";
 
-        if (TaskResultSaver.isElementaryType(vt, v))
+        if (TaskResultSaver.IsElementaryType(vt, v))
             sba.AppendLine(number + v.ToString() + typeStr);
         else
-            sba.AppendLine(number + typeStr + getText(tffp.task, v, FullName + $"[{cnt:D4}]", tffp, nesting + 2));
+            sba.AppendLine(number + typeStr + GetText(tffp.task, v, FullName + $"[{cnt:D4}]", tffp, nesting + 2));
 
         cnt++;
         return cnt;

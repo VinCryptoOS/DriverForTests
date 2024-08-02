@@ -14,7 +14,7 @@ namespace DriverForTestsLib;
 
 public class DriverForTests
 {                                                                    /// <summary>Наиболее позднее время вывода на консоль информации о состоянии задач</summary><remarks>Не нужно пользователю</remarks>
-    public DateTime waitForTasks_lastDateTime {get; protected set;} = default;
+    public DateTime WaitForTasks_lastDateTime {get; protected set;} = default;
                                                                     /// <summary>Время в миллисекундах для обновления состояния задач на консоли</summary>
     public int msToRefreshMessagesAtDisplay = 2000;                 /// <summary>Время в секундах, которое должна выполняться задача, чтобы вызвать своё отображение на консоли</summary>
     public int minSecondsToMessageAboutExecutedTask = 8;
@@ -24,17 +24,17 @@ public class DriverForTests
 
     public readonly struct ExecuteTestsOptions
     {                                                                           /// <summary>После окончания тестов ожидать ввода Enter [Console.ReadLine()]</summary>
-        public readonly bool doConsole_ReadLine       {get; init;}              /// <summary>Вести лог-файл</summary>
-        public readonly bool doKeepLogFile            {get; init;}              /// <summary>До первого вывода ожидать n миллисекунд. Используется, чтобы дать возможность программисту прочитать сообщения, которые выдавались на консоль перед запуском тестов</summary>
-        public readonly int  sleepInMs_ForFirstOutput {get; init;}              /// <summary>Макисмальное количество потоков, которое будет исползовано для одновременного запуска тестов</summary>
-        public readonly int? maxThreadCount           {get; init;}              /// <summary>Вести учёт запущенных тестов. 0 - не вести, 1 - вести в логе, 2 - вести в консоли, 3 - оба варианта</summary>
-        public readonly int  logNamesOfTests          {get; init;}
+        public readonly bool DoConsole_ReadLine       {get; init;}              /// <summary>Вести лог-файл</summary>
+        public readonly bool DoKeepLogFile            {get; init;}              /// <summary>До первого вывода ожидать n миллисекунд. Используется, чтобы дать возможность программисту прочитать сообщения, которые выдавались на консоль перед запуском тестов</summary>
+        public readonly int  SleepInMs_ForFirstOutput {get; init;}              /// <summary>Макисмальное количество потоков, которое будет исползовано для одновременного запуска тестов</summary>
+        public readonly int? MaxThreadCount           {get; init;}              /// <summary>Вести учёт запущенных тестов. 0 - не вести, 1 - вести в логе, 2 - вести в консоли, 3 - оба варианта</summary>
+        public readonly int  LogNamesOfTests          {get; init;}
 
         public ExecuteTestsOptions()
         {}
     }
 
-    public DateTime startTime {get; protected set;}
+    public DateTime StartTime {get; protected set;}
 
     /// <summary>Получает список тестов и выполняет их</summary>
     /// <param name="testConstructors">Список контрукторов тестов, которые сконструируют задачи</param>
@@ -45,20 +45,20 @@ public class DriverForTests
         using var processPrioritySetter = new ProcessPrioritySetter(ProcessPriorityClass.Idle, true);
 
         var now     = DateTime.Now;
-        startTime   = now;
+        StartTime   = now;
         LogFileName = LogFileNameTempl?.Replace("$", HelperDateClass.DateToDateFileString(now));
-        if (!options.doKeepLogFile)
+        if (!options.DoKeepLogFile)
             LogFileName = null;
 
-        System.Collections.Concurrent.ConcurrentQueue<TestTask> AllTasks = new ConcurrentQueue<TestTask>();
+        System.Collections.Concurrent.ConcurrentQueue<TestTask> AllTasks = new();
         foreach (var testConstructor in testConstructors)
             testConstructor.CreateTasksLists(AllTasks);
 
-        Object sync = new Object();
+        Object sync = new();
         int started = 0;            // Количество запущенных прямо сейчас задач
         int ended   = 0;            // Количество завершённых задач
         int errored = 0;            // Количество задач, завершённых с ошибкой
-        int PC = options.maxThreadCount ?? Environment.ProcessorCount;
+        int PC = options.MaxThreadCount ?? Environment.ProcessorCount;
 
         // Это специально делается последовательно, чтобы сохранить порядок задач для выполнения
         var tasks = new ConcurrentQueue<TestTask>();
@@ -96,7 +96,7 @@ public class DriverForTests
                         {
                             task.started = DateTime.Now;
                             task.start   = true;
-                            task.taskFunc();
+                            task.TaskFunc();
                         }
                         catch (Exception e)
                         {
@@ -120,7 +120,7 @@ public class DriverForTests
                                 Monitor.PulseAll(sync);
 
                             if (LogFileName != null)
-                            if ((options.logNamesOfTests & 1) > 0)
+                            if ((options.LogNamesOfTests & 1) > 0)
                             lock (tasks)
                             {
                                 File.AppendAllText(LogFileName, "task " + task.Name + "\n");
@@ -157,7 +157,7 @@ public class DriverForTests
 
         try
         {
-            if ((options.logNamesOfTests & 2) > 0)
+            if ((options.LogNamesOfTests & 2) > 0)
             {
                 Console.WriteLine("All tasks ended:");
                 foreach (var task in tasks)
@@ -191,14 +191,14 @@ public class DriverForTests
         }
 
         var endTime = DateTime.Now;
-        var endMsg  = "Tests ended in time " + HelperDateClass.TimeStampTo_HHMMSSfff_String(endTime - startTime) + "\t\t" + DateTime.Now.ToLongDateString() + "\t" + DateTime.Now.ToLongTimeString();
+        var endMsg  = "Tests ended in time " + HelperDateClass.TimeStampTo_HHMMSSfff_String(endTime - StartTime) + "\t\t" + DateTime.Now.ToLongDateString() + "\t" + DateTime.Now.ToLongTimeString();
         Console.WriteLine(endMsg);
 
         if (LogFileName != null)
         lock (tasks)
             File.AppendAllText(LogFileName, "\n" + endMsg + "\n\n");
 
-        if (options.doConsole_ReadLine)
+        if (options.DoConsole_ReadLine)
         {
             Console.WriteLine("Press 'Enter' to exit");
             Console.ReadLine();
@@ -229,14 +229,14 @@ public class DriverForTests
             // Ожидаем задержку во времени для первого вывода
             // Если это промежуточный вывод, и на консоли нет ввода, и время ожидания вывода ещё не истекло
             if (!endedAllTasks)
-            if (options.sleepInMs_ForFirstOutput > 0 && !keyAvailable())
-            if ((now - startTime).TotalMilliseconds < options.sleepInMs_ForFirstOutput)
+            if (options.SleepInMs_ForFirstOutput > 0 && !keyAvailable())
+            if ((now - StartTime).TotalMilliseconds < options.SleepInMs_ForFirstOutput)
                 return;
 
-            if (!endedAllTasks && (now - waitForTasks_lastDateTime).TotalMilliseconds < msToRefreshMessagesAtDisplay)
+            if (!endedAllTasks && (now - WaitForTasks_lastDateTime).TotalMilliseconds < msToRefreshMessagesAtDisplay)
                 return;
 
-            waitForTasks_lastDateTime = now;
+            WaitForTasks_lastDateTime = now;
 
             Thread.CurrentThread.Priority = ThreadPriority.Highest;
             if (!endedAllTasks)     // В конце очистка идёт в другом месте
@@ -270,8 +270,8 @@ public class DriverForTests
                         // if (task.done > 0)
                         try
                         {
-                            if (task.doneFunc is not null)
-                                task.doneFunc();
+                            if (task.DoneFunc is not null)
+                                task.DoneFunc();
                         }
                         catch (Exception ex)
                         {
@@ -291,7 +291,7 @@ public class DriverForTests
 
                 if (cntToMessage > 0)
                 {
-                    sb.Insert(0, $"Выполняемые задачи: ({cnt})\t[{HelperDateClass.TimeStampTo_HHMMSSfff_String(now - startTime)}]\n");
+                    sb.Insert(0, $"Выполняемые задачи: ({cnt})\t[{HelperDateClass.TimeStampTo_HHMMSSfff_String(now - StartTime)}]\n");
                     lock (tasks)
                     Console.WriteLine(sb.ToString());
                 }

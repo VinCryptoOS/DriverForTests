@@ -4,10 +4,10 @@
         <name>DriverForTestsLib</name>
     </assembly>
     <members>
-        <member name="P:DriverForTestsLib.AutoSaveTestTask.dirForFiles">
+        <member name="P:DriverForTestsLib.AutoSaveTestTask.DirForFiles">
             <summary>Директория для хранения файлов</summary>
         </member>
-        <member name="P:DriverForTestsLib.AutoSaveTestTask.path">
+        <member name="P:DriverForTestsLib.AutoSaveTestTask.Path">
             <summary>Путь для файла</summary>
         </member>
         <member name="M:DriverForTestsLib.AutoSaveTestTask.#ctor(System.String,System.IO.DirectoryInfo,DriverForTestsLib.TaskResultSaver,DriverForTestsLib.TestConstructor)">
@@ -16,7 +16,7 @@
             <param name="executer_and_saver">Задача, которая будет выполняться</param>
             <param name="constructor">Конструктор задач, который создаёт эту задачу</param>
         </member>
-        <member name="P:DriverForTestsLib.AutoSaveTestTask.taskFunc">
+        <member name="P:DriverForTestsLib.AutoSaveTestTask.TaskFunc">
             <summary>Функция тестирования, которая вызывается библиотекой. См. executer_and_saver </summary>
         </member>
         <member name="F:DriverForTestsLib.AutoSaveTestTask.executer_and_saver">
@@ -35,7 +35,7 @@
             <param name="task">FirstSaveTestTask, из которой вызывается данная функция</param>
             <param name="result">Объект для сохранения</param>
         </member>
-        <member name="P:DriverForTestsLib.DriverForTests.waitForTasks_lastDateTime">
+        <member name="P:DriverForTestsLib.DriverForTests.WaitForTasks_lastDateTime">
             <summary>Наиболее позднее время вывода на консоль информации о состоянии задач</summary><remarks>Не нужно пользователю</remarks>
         </member>
         <member name="F:DriverForTestsLib.DriverForTests.msToRefreshMessagesAtDisplay">
@@ -50,19 +50,19 @@
         <member name="F:DriverForTestsLib.DriverForTests.LogFileName">
             <summary>Имя лог-файла, в который будет выведено время начала и конца задач, а также исключения, возникшие в ходе выполнения задач</summary><remarks>Генерируется автоматически из LogFileNameTempl</remarks>
         </member>
-        <member name="P:DriverForTestsLib.DriverForTests.ExecuteTestsOptions.doConsole_ReadLine">
+        <member name="P:DriverForTestsLib.DriverForTests.ExecuteTestsOptions.DoConsole_ReadLine">
             <summary>После окончания тестов ожидать ввода Enter [Console.ReadLine()]</summary>
         </member>
-        <member name="P:DriverForTestsLib.DriverForTests.ExecuteTestsOptions.doKeepLogFile">
+        <member name="P:DriverForTestsLib.DriverForTests.ExecuteTestsOptions.DoKeepLogFile">
             <summary>Вести лог-файл</summary>
         </member>
-        <member name="P:DriverForTestsLib.DriverForTests.ExecuteTestsOptions.sleepInMs_ForFirstOutput">
+        <member name="P:DriverForTestsLib.DriverForTests.ExecuteTestsOptions.SleepInMs_ForFirstOutput">
             <summary>До первого вывода ожидать n миллисекунд. Используется, чтобы дать возможность программисту прочитать сообщения, которые выдавались на консоль перед запуском тестов</summary>
         </member>
-        <member name="P:DriverForTestsLib.DriverForTests.ExecuteTestsOptions.maxThreadCount">
+        <member name="P:DriverForTestsLib.DriverForTests.ExecuteTestsOptions.MaxThreadCount">
             <summary>Макисмальное количество потоков, которое будет исползовано для одновременного запуска тестов</summary>
         </member>
-        <member name="P:DriverForTestsLib.DriverForTests.ExecuteTestsOptions.logNamesOfTests">
+        <member name="P:DriverForTestsLib.DriverForTests.ExecuteTestsOptions.LogNamesOfTests">
             <summary>Вести учёт запущенных тестов. 0 - не вести, 1 - вести в логе, 2 - вести в консоли, 3 - оба варианта</summary>
         </member>
         <member name="M:DriverForTestsLib.DriverForTests.ExecuteTests(System.Collections.Generic.IEnumerable{DriverForTestsLib.TestConstructor},DriverForTestsLib.DriverForTests.ExecuteTestsOptions)">
@@ -143,7 +143,7 @@
         <member name="T:DriverForTestsLib.IsSatisfies.Signs">
             <summary>Прдеставляет тип-перечисление возможных значений объекта IsSatisfies</summary>
         </member>
-        <member name="M:DriverForTestsLib.IsSatisfies.enumAllPossibleValues">
+        <member name="M:DriverForTestsLib.IsSatisfies.EnumAllPossibleValues">
             <summary>Перечисляет все возможные значения (no, unknown, yes)</summary>
         </member>
         <member name="M:DriverForTestsLib.IsSatisfies.#ctor(DriverForTestsLib.IsSatisfies.Signs,System.Boolean)">
@@ -155,32 +155,32 @@
             <summary>Создаёт объект из булевской переменной: true == yes, false = no</summary>
             <param name="bValue">Булевская переменная</param>
         </member>
-        <member name="M:DriverForTestsLib.IsSatisfies.doReverse(DriverForTestsLib.IsSatisfies.Signs)">
+        <member name="M:DriverForTestsLib.IsSatisfies.DoReverse(DriverForTestsLib.IsSatisfies.Signs)">
             <summary>Осуществляет операцию отрицания (обращает логическую переменную @is)</summary>
             <param name="is">Переменная для обращения</param>
             <returns>Результат обращения</returns>
         </member>
-        <member name="M:DriverForTestsLib.IsSatisfies.doReverse">
+        <member name="M:DriverForTestsLib.IsSatisfies.DoReverse">
             <summary>Осуществляет операцию отрицания над значением val (обращает её с помощью doReverse(Signs @is))</summary>
         </member>
-        <member name="M:DriverForTestsLib.IsSatisfies.toBool(DriverForTestsLib.IsSatisfies.Signs,System.Boolean)">
+        <member name="M:DriverForTestsLib.IsSatisfies.ToBool(DriverForTestsLib.IsSatisfies.Signs,System.Boolean)">
             <summary>Преобразует логическую переменную @is в булеву перменную</summary>
             <param name="is">Логическая переменная для преобразования</param>
             <param name="unknown">Значение по умолчанию, если @is не определена</param>
             <returns></returns>
         </member>
-        <member name="M:DriverForTestsLib.IsSatisfies.toBool(System.Boolean)">
+        <member name="M:DriverForTestsLib.IsSatisfies.ToBool(System.Boolean)">
             <summary>Преобразует значение объекта (поле val) в булеву перменную и возвращает полученный результат (val не изменяется)</summary>
             <param name="unknown">Значение по умолчанию, если @is не определена</param>
             <returns>Вычисленное значение</returns>
         </member>
-        <member name="P:DriverForTestsLib.IsSatisfies.yes">
+        <member name="P:DriverForTestsLib.IsSatisfies.Yes">
             <summary>Возвращает true, если значение объекта равно yes</summary>
         </member>
-        <member name="P:DriverForTestsLib.IsSatisfies.no">
+        <member name="P:DriverForTestsLib.IsSatisfies.No">
             <summary>Возвращает true, если значение объекта равно no</summary>
         </member>
-        <member name="P:DriverForTestsLib.IsSatisfies.unk">
+        <member name="P:DriverForTestsLib.IsSatisfies.Unk">
             <summary>Возвращает true, если значение объекта равно unknown</summary>
         </member>
         <member name="F:DriverForTestsLib.IsSatisfies.YES">
@@ -222,12 +222,12 @@
             <param name="TaskType">Тип тестовой задачи, которую метод пытался поставить</param>
             <param name="notAutomatic">Если true, то в одном из атрибутов задачи установлен флаг notAutomatic, то есть она штатно не должна добавляться автоматически</param>
         </member>
-        <member name="M:DriverForTestsLib.TestConstructor.getTasksFromAppDomain(DriverForTestsLib.TestConstructor.ErrorTaskHandler)">
+        <member name="M:DriverForTestsLib.TestConstructor.GetTasksFromAppDomain(DriverForTestsLib.TestConstructor.ErrorTaskHandler)">
             <summary>Это статический метод, который получает тестовые задачи из всех загруженных сборок</summary>
             <param name="errorHandler">Обработчик задач, которые автоматически не могут быть получены</param>
             <returns>Возвращает список задач, которые можно вручную добавить в список на выполнение (смотреть addTasksForQueue)</returns>
         </member>
-        <member name="M:DriverForTestsLib.TestConstructor.addTasksForQueue(System.Collections.Generic.IEnumerable{DriverForTestsLib.TestTask},System.Collections.Concurrent.ConcurrentQueue{DriverForTestsLib.TestTask})">
+        <member name="M:DriverForTestsLib.TestConstructor.AddTasksForQueue(System.Collections.Generic.IEnumerable{DriverForTestsLib.TestTask},System.Collections.Concurrent.ConcurrentQueue{DriverForTestsLib.TestTask})">
             <summary>Добавляет задачи, полученные с помощью getTasksFromAppDomain</summary>
             <param name="source">Исходный список задач (например, из getTasksFromAppDomain)</param><param name="tasksQueue">Список, куда будем добавлять задачи</param>
         </member>
@@ -283,31 +283,31 @@
         <member name="F:DriverForTestsLib.TestTaskTagCondition.listOfNeedConditions">
             <summary>Список подусловий, участвующих в этом условии. Используется с операторами TreeAnd, TreeCount, TreePriority</summary>
         </member>
-        <member name="M:DriverForTestsLib.TestTaskTagCondition.isSatisfiesForTask(DriverForTestsLib.TestTask)">
+        <member name="M:DriverForTestsLib.TestTaskTagCondition.IsSatisfiesForTask(DriverForTestsLib.TestTask)">
             <summary>Проверяет, удовлетворяет ли задача task этому условию</summary>
             <param name="task">Проверяемая задача</param><returns>true, если задача удовлетворяет этому условию</returns>
         </member>
-        <member name="M:DriverForTestsLib.TestTaskTagCondition.isSatisfiesForTask_withoutReverse(DriverForTestsLib.TestTask)">
+        <member name="M:DriverForTestsLib.TestTaskTagCondition.IsSatisfiesForTask_withoutReverse(DriverForTestsLib.TestTask)">
             <summary>Проверка, аналогичная isSatisfiesForTask, но без учёта isReversedCondition</summary>
             <param name="task">Проверяемая задача</param><returns>true, если задача удовлетворяет этому условию без учёта isReversedCondition</returns>
         </member>
-        <member name="M:DriverForTestsLib.TestTaskTagCondition.isSatisfiesForTask_And(DriverForTestsLib.TestTask)">
+        <member name="M:DriverForTestsLib.TestTaskTagCondition.IsSatisfiesForTask_And(DriverForTestsLib.TestTask)">
             <summary>Проверка оператора And</summary>
             <param name="task">Задача для проверки</param><returns>true, если задача удовлетворяет этому условию без учёта isReversedCondition</returns>
         </member>
-        <member name="M:DriverForTestsLib.TestTaskTagCondition.isSatisfiesForTask_Count(DriverForTestsLib.TestTask)">
+        <member name="M:DriverForTestsLib.TestTaskTagCondition.IsSatisfiesForTask_Count(DriverForTestsLib.TestTask)">
             <summary>Проверка оператора Count</summary>
             <param name="task">Задача для проверки</param><returns>true, если задача удовлетворяет этому условию без учёта isReversedCondition</returns>
         </member>
-        <member name="M:DriverForTestsLib.TestTaskTagCondition.isSatisfiesForTask_TreeAnd(DriverForTestsLib.TestTask)">
+        <member name="M:DriverForTestsLib.TestTaskTagCondition.IsSatisfiesForTask_TreeAnd(DriverForTestsLib.TestTask)">
             <summary>Проверка оператора TreeAnd</summary>
             <param name="task">Задача для проверки</param><returns>true, если задача удовлетворяет этому условию без учёта isReversedCondition</returns>
         </member>
-        <member name="M:DriverForTestsLib.TestTaskTagCondition.isSatisfiesForTask_TreeCount(DriverForTestsLib.TestTask)">
+        <member name="M:DriverForTestsLib.TestTaskTagCondition.IsSatisfiesForTask_TreeCount(DriverForTestsLib.TestTask)">
             <summary>Проверка оператора TreeCount</summary>
             <param name="task">Задача для проверки</param><returns>true, если задача удовлетворяет этому условию без учёта isReversedCondition</returns>
         </member>
-        <member name="M:DriverForTestsLib.TestTaskTagCondition.isSatisfiesForTask_TreePriority(DriverForTestsLib.TestTask)">
+        <member name="M:DriverForTestsLib.TestTaskTagCondition.IsSatisfiesForTask_TreePriority(DriverForTestsLib.TestTask)">
             <summary>Проверка оператора TreePriority: побеждает задача с большим приоритетом (если yes, то yes, если no, то no). Если задач с одним и тем же приоритетом более одной, ни одна не должна возвратить IsSatisfies.NO</summary>
             <param name="task">Задача для проверки</param><returns>true, если задача удовлетворяет этому условию без учёта isReversedCondition</returns>
         </member>
@@ -317,7 +317,7 @@
         <member name="T:DriverForTestsLib.TestTask.TestTaskFn">
             <summary>Определение типа делегата для вызова конкретной задачи</summary>
         </member>
-        <member name="P:DriverForTestsLib.TestTask.constructor">
+        <member name="P:DriverForTestsLib.TestTask.Constructor">
             <summary>Конструктор этой тестовой задачи для вызова метода ShouldBeExecuted</summary>
         </member>
         <member name="M:DriverForTestsLib.TestTask.ShouldBeExecuted">
@@ -331,7 +331,7 @@
         <member name="F:DriverForTestsLib.TestTask.tags">
             <summary>Каким тегам удовлетворяет задача</summary>
         </member>
-        <member name="P:DriverForTestsLib.TestTask.taskFunc">
+        <member name="P:DriverForTestsLib.TestTask.TaskFunc">
             <summary>Функция тестирования, которая вызывается библиотекой</summary>
         </member>
         <member name="P:DriverForTestsLib.TestTask.Name">
@@ -361,16 +361,16 @@
         <member name="F:DriverForTestsLib.TestTask.done">
             <summary>Выполнение задачи в процентах (0-100)</summary><remarks>Задача может не использовать этот параметр</remarks>
         </member>
-        <member name="P:DriverForTestsLib.TestTask.doneFunc">
+        <member name="P:DriverForTestsLib.TestTask.DoneFunc">
             <summary>Когда необходимо обновить поле done, вызывается эта функция</summary>
         </member>
-        <member name="M:DriverForTestsLib.TestTask.isSatisfiesThePriorityAndDuration(System.Double,System.Double)">
+        <member name="M:DriverForTestsLib.TestTask.IsSatisfiesThePriorityAndDuration(System.Double,System.Double)">
             <summary>Проверяет, удовлетворяет ли задача указанному приоритету и параметру длительности</summary>
             <param name="generalPriorityForTasks">Заданный приоритет</param>
             <param name="maxDuration">Заданный параметр времени выполнения (-1d - нет требований)</param>
             <returns>true, если нет тегов вообще и или есть хоть один тег с приоритетом не менее generalPriorityForTasks</returns>
         </member>
-        <member name="M:DriverForTestsLib.TestTask.isSatisfiesTag(DriverForTestsLib.TestTaskTag)">
+        <member name="M:DriverForTestsLib.TestTask.IsSatisfiesTag(DriverForTestsLib.TestTaskTag)">
             <summary>Определяет, удовлетворяет ли задача заданному тегу с учётом указанного приоритета</summary>
             <param name="tag">Заданный тег, которому должна удовлетворять задача. Если тегов с таким именем нет - не удовлетворяет</param>
             <returns>"yes", если задача удовлетворяет тегу</returns>

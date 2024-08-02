@@ -96,6 +96,7 @@ public class ProcessPrioritySetter: IDisposable
     void IDisposable.Dispose()
     {
         Disposing();
+        GC.SuppressFinalize(this);
     }
 
     public delegate void ExceptionInConstructorEvent  (Exception e, ref bool doCancelWorkInClass);

@@ -4,21 +4,23 @@ namespace DriverForTestsLib;
 public class SimpleTimeMeter : IDisposable
 {
     public readonly DateTime start;
-    public          DateTime end   {get; protected set;}
+    public          DateTime End   {get; protected set;}
     public SimpleTimeMeter()
     {
         start = DateTime.Now;
-        end   = default;
+        End   = default;
     }
 
     /// <summary>Заканчивает измерение времени. Можно вызывать повторно без изменения интервала времени</summary>
     public void Dispose()
     {
-        if (end == default)
+        if (End == default)
         {
-            end = DateTime.Now;
-            setTimeSpan();
+            End = DateTime.Now;
+            SetTimeSpan();
         }
+
+        GC.SuppressFinalize(this);
     }
 
     public class NotEndedException: Exception
@@ -46,15 +48,15 @@ public class SimpleTimeMeter : IDisposable
         }
     }
 
-    protected void setTimeSpan()
+    protected void SetTimeSpan()
     {
         if (ts != default)
             return;
 
-        if (end == default)
+        if (End == default)
             throw new NotEndedException();
 
-        ts = (end - start);
+        ts = (End - start);
         totalMilliseconds = ts.TotalMilliseconds;
         totalSeconds      = ts.TotalSeconds;
     }
