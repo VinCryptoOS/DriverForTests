@@ -35,6 +35,12 @@
             <param name="task">FirstSaveTestTask, из которой вызывается данная функция</param>
             <param name="result">Объект для сохранения</param>
         </member>
+        <member name="M:DriverForTestsLib.TaskResultSaver.TrimEndOutsideQuotes(System.String)">
+            <summary>
+            Обрезает хвостовые пробелы и табы, но только вне двойных кавычек.
+            Внутри кавычек пробельные символы сохраняются дословно.
+            </summary>
+        </member>
         <member name="P:DriverForTestsLib.DriverForTests.WaitForTasks_lastDateTime">
             <summary>Наиболее позднее время вывода на консоль информации о состоянии задач</summary><remarks>Не нужно пользователю</remarks>
         </member>

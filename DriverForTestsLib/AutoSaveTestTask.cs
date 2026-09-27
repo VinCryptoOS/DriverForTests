@@ -1,5 +1,6 @@
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace DriverForTestsLib;
 
@@ -155,12 +156,72 @@ public abstract class TaskResultSaver
         return new FileInfo(task.Path);
     }
 
+
+    // ===== Настройки нормализации =====
+    private static readonly Regex AssemblySpecPattern = new(
+        @"(Version=)[0-9.]+(, Culture=[^,]+, PublicKeyToken=)(?:null|[a-fA-F0-9]+)",
+        RegexOptions.Compiled);
+
     public virtual bool DoCompare(FileInfo fi, string text)
     {
         var textFromFile = File.ReadAllText(fi.FullName);
-
-        return textFromFile == text;
+        return NormalizeForComparison(textFromFile) == NormalizeForComparison(text);
     }
+
+    private static string NormalizeForComparison(string text)
+    {
+        text = text.Replace("\r\n", "\n").Replace("\r", "\n");
+
+        // Заменяем Version и PublicKeyToken только в контексте assembly-описания
+        text = AssemblySpecPattern.Replace(text, "$1__IGNORED__$2__IGNORED__");
+
+        var lines = text.Split('\n');
+        var sb = new StringBuilder(text.Length);
+
+        for (int i = 0; i < lines.Length; i++)
+        {
+            if (i > 0)
+                sb.Append('\n');
+            sb.Append(TrimEndOutsideQuotes(lines[i]));
+        }
+
+        return sb.ToString().TrimEnd('\n');
+    }
+
+    /// <summary>
+    /// Обрезает хвостовые пробелы и табы, но только вне двойных кавычек.
+    /// Внутри кавычек пробельные символы сохраняются дословно.
+    /// </summary>
+    private static string TrimEndOutsideQuotes(string line)
+    {
+        int lastSignificant = -1;
+        bool inQuotes = false;
+
+        for (int i = 0; i < line.Length; i++)
+        {
+            char c = line[i];
+
+            if (c == '"')
+            {
+                inQuotes = !inQuotes;
+                lastSignificant = i;
+            }
+            else if (inQuotes)
+            {
+                // Внутри кавычек — всё значимо, включая пробелы
+                lastSignificant = i;
+            }
+            else if (c != ' ' && c != '\t')
+            {
+                lastSignificant = i;
+            }
+        }
+
+        return lastSignificant >= 0
+            ? line.Substring(0, lastSignificant + 1)
+            : string.Empty;
+    }
+
 
 
     public class TextFromFieldProcess
